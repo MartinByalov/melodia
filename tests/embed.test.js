@@ -8,8 +8,9 @@ test('Embed shows intro with mobile-style spacing and zoom fade at every frame w
   assert.match(css,/body\[data-embed=true\] \.intro.visible\{opacity:1\}/);
   assert.doesNotMatch(css,/body\[data-embed=true\] \.intro[^\n]*display:none/);
   assert.match(globe,/const mobileIntro=innerWidth<=760\|\|document.body.dataset.embed==='true'/);
-  assert.match(globe,/const target=\(innerWidth<=760\|\|document.body.dataset.embed==='true'\?mobileGlobeTarget:0\)\*entranceScale/);
+  assert.match(globe,/const target=\(mobileDrift&&!idleMotion\.active\?mobileGlobeTarget:0\)\*entranceScale/);
   assert.match(globe,/const introTop=mobileIntro\?Math\.max\(18,\(playerTop-box\.top-2\*radius-rect\.height\)\/3\):18/);
+  assert.match(globe,/const showIntro=visible&&\!\(mobileIntro&&idleMotion\.active\)/);
 });
 
 test('intro asks What\'s yours in the main and embedded views',async()=>{

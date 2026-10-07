@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {createGlobeIdle} from '../public/globe-idle.js';
+import {createGlobeIdle,verticalDriftBounds} from '../public/globe-idle.js';
 
 test('drift starts after thirty seconds and bounces inside available bounds',()=>{
   const idle=createGlobeIdle();idle.update(0,0,40,30);
@@ -36,5 +36,32 @@ test('zoomed globe with no available space stays centered',()=>{
 test('bounce limits use sphere silhouette without ray lengths or safety padding',async()=>{
   const source=await readFile(new URL('../public/globe.js',import.meta.url),'utf8');
   assert.match(source,/Math\.asin\(1\/camera\.position\.length\(\)\)/);
-  assert.match(source,/idleMotion\.update\(time,dt\/1000,idleWidth\/2-globeRadius,idleHeight\/2-globeRadius-Math\.abs\(mobileGlobeOffset\),/);
+  assert.match(source,/verticalDriftBounds\(document\.querySelector\('header'\)\.getBoundingClientRect\(\)\.bottom,document\.querySelector\('\.player'\)\.getBoundingClientRect\(\)\.top,center,globeRadius\)/);
+  assert.match(source,/idleMotion\.update\(time,dt\/1000,idleWidth\/2-globeRadius,verticalLimit,/);
+});
+
+test('mobile and embed drift stays between the header and player edges',()=>{
+  const bounds=verticalDriftBounds(100,500,300,80);
+  assert.deepEqual(bounds,{min:-120,max:120});
+  const idle=createGlobeIdle();idle.update(0,0,100,bounds);
+  for(let i=0;i<300;i++){
+    const state=idle.update(30000+i*50,.05,100,bounds);
+    assert.ok(300+state.y-80>=100);
+    assert.ok(300+state.y+80<=500);
+  }
+  const embedBounds=verticalDriftBounds(0,400,180,60);
+  assert.deepEqual(embedBounds,{min:-120,max:160});
+  const embedIdle=createGlobeIdle();embedIdle.update(0,0,100,embedBounds);
+  for(let i=0;i<400;i++){
+    const {y}=embedIdle.update(30000+i*50,.05,100,embedBounds);
+    assert.ok(180+y-60>=0&&180+y+60<=400);
+  }
+  assert.deepEqual(verticalDriftBounds(100,200,150,80),{min:0,max:0});
+});
+
+test('idle state is exposed so the intro can disappear during drift',()=>{
+  const idle=createGlobeIdle();idle.update(0,0,100,100);
+  assert.equal(idle.active,false);
+  idle.update(30000,.05,100,100);assert.equal(idle.active,true);
+  idle.activity(30050);idle.update(30050,.05,100,100);assert.equal(idle.active,false);
 });

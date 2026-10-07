@@ -9,7 +9,7 @@ import { createStationGPU } from './station-gpu.js';
 import { createMapBatch } from './map-batch.js';
 import { createRenderDiagnostics } from './render-diagnostics.js';
 import { createGlobeBackground } from './globe-background.js';
-import { createGlobeIdle } from './globe-idle.js';
+import { createGlobeIdle, verticalDriftBounds } from './globe-idle.js';
 import { createMapAccent } from './map-accent.js';
 import { createGlobeEntrance } from './globe-entrance.js';
 import { createLoadingReveal } from './loading-reveal.js';
@@ -315,7 +315,8 @@ export function createGlobe(container, onSelect) {
       if(mobileIntro){
         intro.style.top=`${introTop}px`;
       }else intro.style.removeProperty('top');
-      intro.classList.toggle('visible',visible); intro.setAttribute('aria-hidden',String(!visible));
+      const showIntro=visible&&!(mobileIntro&&idleMotion.active);
+      intro.classList.toggle('visible',showIntro); intro.setAttribute('aria-hidden',String(!showIntro));
     }
     cityLayer.hidden=altitude>.35;
     const nextLabels=new Set();
@@ -371,12 +372,19 @@ export function createGlobe(container, onSelect) {
     if(camera.near!==near||animate.lastFov!==camera.fov){camera.near=near;camera.updateProjectionMatrix();animate.lastFov=camera.fov;}
     // Shift only the projection, not the canvas or station positions.
     // Raycasting uses the matching inverse matrix, keeping touch selection aligned.
-    const target=(innerWidth<=760||document.body.dataset.embed==='true'?mobileGlobeTarget:0)*entranceScale;
+    const mobileDrift=innerWidth<=760||document.body.dataset.embed==='true';
+    const target=(mobileDrift&&!idleMotion.active?mobileGlobeTarget:0)*entranceScale;
     mobileGlobeOffset=reducedMotion?target:mobileGlobeOffset+(target-mobileGlobeOffset)*(1-Math.exp(-dt/220));
     const idleWidth=container.clientWidth,idleHeight=container.clientHeight;
     const globeRadius=idleHeight/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*Math.tan(Math.asin(1/camera.position.length()));
-    // Bounce at the unit sphere silhouette, not the rays or an extra safety margin.
-    const idleState=idleMotion.update(time,dt/1000,idleWidth/2-globeRadius,idleHeight/2-globeRadius-Math.abs(mobileGlobeOffset),
+    // Mobile and embed drift between the header bottom and the measured player top.
+    let verticalLimit=idleHeight/2-globeRadius;
+    if(mobileDrift){
+      const box=container.getBoundingClientRect();
+      const center=box.top+idleHeight/2+mobileGlobeOffset;
+      verticalLimit=verticalDriftBounds(document.querySelector('header').getBoundingClientRect().bottom,document.querySelector('.player').getBoundingClientRect().top,center,globeRadius);
+    }
+    const idleState=idleMotion.update(time,dt/1000,idleWidth/2-globeRadius,verticalLimit,
       loadingWorld||reducedMotion||globeHovered||!!down||document.body.dataset.catalogOpen==='true'||!!document.querySelector('dialog[open]'));
     camera.projectionMatrix.elements[8]=-2*idleState.x/Math.max(1,idleWidth);
     const projectionOffset=2*(mobileGlobeOffset+idleState.y)/Math.max(1,idleHeight);
