@@ -370,21 +370,21 @@ async function refresh() {
       if (s) choose(s, false); else toast('The shared station is unavailable or has no coordinates / HTTPS stream.');
     }
     // Resolve the startup identity while the loading globe is still visible.
-    // Playback remains gated by startWorld, but the tiles already use its color.
+    // The tiles already use the station color; listening waits for a user action.
     if(document.body.dataset.loading==='true'&&!selected&&!id&&document.body.dataset.embed!=='true'){
       const initial=startupStation(stations,favoriteIds);
       if(initial)choose(initial,false);
     }
     if(result.complete){
       $('#source-status').textContent='Radio-Browser · loading remaining stations…';
-      // Yield to first render/autoplay before requesting the full directory.
+      // Fill the directory from the bundled snapshot without scanning remote API pages.
       setTimeout(()=>{
         if(generation!==catalogueGeneration)return;
         result.complete().then(full=>{
           if(generation!==catalogueGeneration)return;
-          const merged=new Map(stations.map(s=>[s.id,s]));for(const station of full)merged.set(station.id,station);
+          const merged=new Map(full.map(s=>[s.id,s]));for(const station of stations)merged.set(station.id,station);
           publishCatalogue([...merged.values()].sort((a,b)=>b.clicks-a.clicks||a.id.localeCompare(b.id)));
-          $('#source-status').textContent='Radio-Browser · live directory';
+          $('#source-status').textContent='Radio-Browser · live picks + bundled directory';
         }).catch(()=>{if(generation===catalogueGeneration)$('#source-status').textContent='Partial directory · Refresh to retry';});
       },1000);
     }
@@ -521,12 +521,9 @@ async function startWorld(){
   setPlayerMessage(stations.length?'':'No stations loaded');
   document.body.dataset.loading='false';document.body.setAttribute('aria-busy','false');globe?.finishLoading();
   if(catalogueReady&&document.body.dataset.embed!=='true'){
-    if(selected){
-      // Never restart a station the user already started while the catalogue loaded.
-      if(!audio&&document.body.dataset.playerState==='ready'){createAudio(true,session);playCurrent();}
-    }else if(!new URL(location.href).searchParams.has('station')){
+    if(!selected&&!new URL(location.href).searchParams.has('station')){
       const initial=startupStation(stations,favoriteIds);
-      if(initial)choose(initial);
+      if(initial)choose(initial,false);
     }
   }
   if(!catalogueReady||!mapReady)toast(!catalogueReady?'Station directory unavailable. Open Stations and try Refresh.':'Some map layers are unavailable. You can still listen from the station list.');

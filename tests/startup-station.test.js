@@ -19,7 +19,8 @@ test('startup waits for loading, preserves explicit links and does not autoplay 
   assert.ok(startup.indexOf('await Promise.all')<startup.indexOf('startupStation(stations,favoriteIds)'));
   assert.match(startup,/dataset\.embed!=='true'/);
   assert.match(startup,/searchParams\.has\('station'\)/);
-  assert.match(startup,/if\(!audio&&document\.body\.dataset\.playerState==='ready'\)/);
+  assert.doesNotMatch(startup,/createAudio\(|playCurrent\(/);
+  assert.match(startup,/if\(initial\)choose\(initial,false\)/);
 });
 
 test('initial station theme is applied before loading ends without early playback',async()=>{

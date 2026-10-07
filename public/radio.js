@@ -74,21 +74,14 @@ export async function fetchStationCatalogue(request = apiRequest, pageSize = 500
   }
   return [...stations.values()].filter(Boolean).sort((a,b)=>b.clicks-a.clicks || a.id.localeCompare(b.id));
 }
-export async function loadStations() {
-  try {
-    const stations = await fetchStationCatalogue();
-    if (!stations.length) throw new Error('Empty catalogue');
-    return { stations, cached: false };
-  } catch {
-    const response = await fetch('./assets/stations.json');
-    if (!response.ok) throw new Error('Directory unavailable. Try Refresh.');
-    const allowHLS=supportsHLS();
-    return { stations: (await response.json()).map(s=>normalizeStation(s,false,allowHLS)).filter(Boolean), cached: true };
-  }
+export async function loadStations(allowHLS=supportsHLS(),fetchSnapshot=fetch) {
+  const response = await fetchSnapshot('./assets/stations.json');
+  if (!response.ok) throw new Error('Directory unavailable. Try Refresh.');
+  return { stations: (await response.json()).map(s=>normalizeStation(s,false,allowHLS)).filter(Boolean), cached: true };
 }
 
-// Publish a small usable catalogue first; expand only once after pagination completes.
-export async function loadInitialStations(priorityIds=[],request=apiRequest,allowHLS=supportsHLS()){
+// Publish live picks first; expand from the bundled directory without API pagination.
+export async function loadInitialStations(priorityIds=[],request=apiRequest,allowHLS=supportsHLS(),loadSnapshot=loadStations){
   const priorities=[...new Set(priorityIds)].filter(id=>/^[a-zA-Z0-9-]{1,64}$/.test(id));
   const paths=['stations/search?hidebroken=true&order=clickcount&reverse=true&limit=500',
     'stations/search?hidebroken=true&tag=lofi&limit=100'];
@@ -99,8 +92,8 @@ export async function loadInitialStations(priorityIds=[],request=apiRequest,allo
     if(response.status!=='fulfilled'||!Array.isArray(response.value))continue;
     for(const raw of response.value){const station=normalizeStation(raw,false,allowHLS);if(station)initial.set(station.id,station);}
   }
-  if(!initial.size)return loadStations();
+  if(!initial.size)return loadSnapshot(allowHLS);
   let completion;
   return {stations:[...initial.values()],cached:false,
-    complete(){return completion??=fetchStationCatalogue(request,5000,allowHLS);}};
+    complete(){return completion??=loadSnapshot(allowHLS).then(result=>result.stations);}};
 }
