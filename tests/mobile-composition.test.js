@@ -66,7 +66,7 @@ test('mobile intro stays visible at overview and mobile zoom out has a larger ra
   assert.match(globe,/const introTop=mobileIntro\?Math\.max\(18,\(playerTop-box\.top-2\*radius-rect\.height\)\/3\):18/);
   assert.match(globe,/const textBottom=box\.top\+introTop\+rect\.height/);
   assert.match(globe,/intro\.style\.top=`\$\{introTop\}px`/);
-  assert.match(globe,/const showIntro=visible&&\!\(mobileIntro&&idleMotion\.active\)/);
+  assert.match(globe,/const showIntro=visible&&\!idleMotion\.active/);
 });
 
 test('mobile genres fit whole labels and panels end at the measured player top',async()=>{

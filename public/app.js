@@ -78,7 +78,6 @@ function measurePlayer(){
 const playerHeightObserver=new ResizeObserver(measurePlayer);
 playerHeightObserver.observe($('.player'));
 window.addEventListener('resize',measurePlayer);
-measurePlayer();
 let nowPlaying='',playerMessage='';
 $('#globe').addEventListener('themeaccent',event=>{
   const color=event.detail.color,hex=color.slice(1);
@@ -252,11 +251,13 @@ function updatePlayerState(state) {
 const audioReactivity=new AudioReactivity();
 const hlsPlayback=createHLSPlayback();
 let audioPreparation=Promise.resolve(true);
+let audioNeedsPreparation=false;
 window.addEventListener('pagehide',()=>resetAudio());
 function resetAudio() {
   clearTimeout(loadingTimer);
   hlsPlayback.destroy();
   audioPreparation=Promise.resolve(false);
+  audioNeedsPreparation=false;
   if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); audio = null; }
   if (audioContext) { audioContext.close().catch(() => {}); audioContext = null; }
   analyser = null; bins = null;
@@ -286,6 +287,7 @@ function createAudio(useCors, token) {
   element.preload = 'none'; element.volume = Number($('#volume').value);
   if (useCors) element.crossOrigin = 'anonymous';
   const useHLS=selected.hls&&!supportsNativeHLS();
+  audioNeedsPreparation=useHLS;
   if(!useHLS)element.src = selected.url;
   prepareAudioAnalysis();
   element.addEventListener('playing', () => { if (token !== session || audio !== element) return; clearTimeout(loadingTimer); updatePlayerState('playing'); });
@@ -318,8 +320,16 @@ async function playCurrent(token = session) {
   updatePlayerState('loading');
   try {
     prepareAudioAnalysis();
-    if(audioGestureReceived&&audioContext?.state==='suspended')await audioContext.resume();
-    if(!await audioPreparation||token!==session||audio!==element)return;
+    if(audioGestureReceived&&audioContext?.state==='suspended')audioContext.resume().catch(()=>{});
+    // Ordinary streams must call play() during the click, before an await can
+    // consume the browser's transient user activation. HLS needs its media attached first.
+    if(audioNeedsPreparation){
+      if(!await audioPreparation||token!==session||audio!==element)return;
+      if(navigator.userActivation&&!navigator.userActivation.isActive){
+        clearTimeout(loadingTimer);updatePlayerState('ready');toast('Press ▶ to allow playback.');return;
+      }
+    }
+    if(token!==session||audio!==element)return;
     await element.play();
   } catch (e) {
     if (token !== session || audio !== element || e.name === 'AbortError') return;

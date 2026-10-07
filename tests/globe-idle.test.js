@@ -65,3 +65,10 @@ test('idle state is exposed so the intro can disappear during drift',()=>{
   idle.update(30000,.05,100,100);assert.equal(idle.active,true);
   idle.activity(30050);idle.update(30050,.05,100,100);assert.equal(idle.active,false);
 });
+
+test('intro hides during idle strafe on desktop as well as mobile',async()=>{
+  const source=await readFile(new URL('../public/globe.js',import.meta.url),'utf8');
+  const overlay=source.slice(source.indexOf('function updateOverlay()'),source.indexOf('cityLayer.hidden=altitude>.35'));
+  assert.match(overlay,/const showIntro=visible&&!idleMotion\.active;/);
+  assert.match(overlay,/intro\.classList\.toggle\('visible',showIntro\)/);
+});

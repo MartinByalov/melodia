@@ -315,7 +315,7 @@ export function createGlobe(container, onSelect) {
       if(mobileIntro){
         intro.style.top=`${introTop}px`;
       }else intro.style.removeProperty('top');
-      const showIntro=visible&&!(mobileIntro&&idleMotion.active);
+      const showIntro=visible&&!idleMotion.active;
       intro.classList.toggle('visible',showIntro); intro.setAttribute('aria-hidden',String(!showIntro));
     }
     cityLayer.hidden=altitude>.35;
