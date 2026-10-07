@@ -69,7 +69,8 @@ footer{justify-content:center;text-align:center;pointer-events:none}
 .share-button{display:flex;align-items:center;justify-content:center;min-width:40px}
 .share-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
 .share-links button{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;padding:10px}
-.coffee-button{color:#ffce54}
+.coffee-button{color:#a4a9bb}
+.header-right #help:hover,.header-right #help:focus-visible{background:#299bd0;color:#fff}
 @media(max-width:760px){.globe-controls{right:12px;bottom:120px!important}.globe-controls .icon-button{width:30px;height:30px}}
 .header-right{gap:10px;letter-spacing:0}.header-right button{display:inline-flex;align-items:center;justify-content:center;height:38px;min-width:36px;padding:5px!important;font-size:23px!important}.header-right #favorites{gap:3px}#fav-count{margin:0;font-size:11px;letter-spacing:0}
 .discover-panel{position:fixed;top:88px;right:22px;bottom:104px;max-height:calc(100dvh - 192px);margin:0;display:flex;flex-direction:column}.station-list{flex:1;min-height:0;overflow-y:auto}.source-note{flex-shrink:0}.station-art{width:38px;height:38px;flex-shrink:0;border-radius:50%;background:hsla(var(--hue),65%,55%,.12);border:1px solid hsla(var(--hue),70%,70%,.35);color:hsl(var(--hue),80%,80%);box-shadow:none;font-size:16px;font-weight:800}.station-row.active .station-art{border-color:var(--accent);color:var(--accent)}body[data-mode=day] .station-art{color:hsl(var(--hue),50%,32%);background:hsla(var(--hue),60%,40%,.1)}
@@ -168,12 +169,12 @@ body[data-mode=day] .player #play{color:#fff}
 body[data-mode=day] .header-right #catalog-toggle,body[data-mode=day] .header-right #catalog-toggle:hover,body[data-mode=day] .header-right #catalog-toggle:focus-visible{background:#e2e8f0;color:#2563eb}
 body[data-mode=day] .header-right #favorites:hover span[aria-hidden=true],body[data-mode=day] .header-right #favorites:focus-visible span[aria-hidden=true]{color:#dc3545}
 body[data-mode=day] .header-right #mode-toggle:hover,body[data-mode=day] .header-right #mode-toggle:focus-visible{color:#080b14;background:#14192418}
-body[data-mode=day] .header-right #help:hover,body[data-mode=day] .header-right #help:focus-visible{background:#ffce54;color:#141924}
+body[data-mode=day] .header-right #help:hover,body[data-mode=day] .header-right #help:focus-visible{background:#299bd0;color:#fff}
 body[data-mode=night] .header-right #catalog-toggle,body[data-mode=night] .header-right #catalog-toggle:hover,body[data-mode=night] .header-right #catalog-toggle:focus-visible{background:#151924;color:#2563eb}
 body[data-mode=night] .header-right #favorites,body[data-mode=night] .header-right #favorites:hover,body[data-mode=night] .header-right #favorites:focus-visible{background:#151924}
 body[data-mode=night] .header-right #favorites:hover span[aria-hidden=true],body[data-mode=night] .header-right #favorites:focus-visible span[aria-hidden=true]{color:#dc3545}
 body[data-mode=night] .header-right #mode-toggle:hover,body[data-mode=night] .header-right #mode-toggle:focus-visible{color:#080b14;background:#e2e8f0}
-body[data-mode=night] .header-right #help:hover,body[data-mode=night] .header-right #help:focus-visible{background:#ffce54;color:#141924}
+body[data-mode=night] .header-right #help:hover,body[data-mode=night] .header-right #help:focus-visible{background:#299bd0;color:#fff}
 .player #favorite[aria-pressed=true],body[data-mode=day] .player #favorite[aria-pressed=true]{color:var(--accent)}
 .player #previous:hover,.player #next:hover,.player #rotate:hover,.player #share:hover,.player #previous:focus-visible,.player #next:focus-visible,.player #rotate:focus-visible,.player #share:focus-visible,body[data-mode=day] .player #previous:hover,body[data-mode=day] .player #next:hover,body[data-mode=day] .player #rotate:hover,body[data-mode=day] .player #share:hover,body[data-mode=day] .player #previous:focus-visible,body[data-mode=day] .player #next:focus-visible,body[data-mode=day] .player #rotate:focus-visible,body[data-mode=day] .player #share:focus-visible{color:var(--accent)}
 .player #favorite:hover,.player #favorite:focus-visible,body[data-mode=day] .player #favorite:hover,body[data-mode=day] .player #favorite:focus-visible{color:#dc3545}
@@ -217,6 +218,7 @@ body[data-mode=night] .header-right{--header-control-color:#e6ebf1}
 body[data-mode=day] .header-right #catalog-toggle[aria-expanded=true],body[data-mode=day] .header-right #favorites[aria-expanded=true]{--control-ink:#e6ebf1}
 body[data-mode=night] .header-right #catalog-toggle[aria-expanded=true],body[data-mode=night] .header-right #favorites[aria-expanded=true]{--control-ink:#151924}
 body[data-mode] .header-right #catalog-toggle,body[data-mode] .header-right #catalog-toggle:hover,body[data-mode] .header-right #catalog-toggle:focus-visible,body[data-mode] .header-right #catalog-toggle[aria-expanded=true],body[data-mode] .header-right #favorites,body[data-mode] .header-right #favorites:hover,body[data-mode] .header-right #favorites:focus-visible,body[data-mode] .header-right #help,body[data-mode] .header-right #help:hover,body[data-mode] .header-right #help:focus-visible{color:var(--control-ink)}
+body[data-mode=day] .header-right #help:hover,body[data-mode=day] .header-right #help:focus-visible,body[data-mode=night] .header-right #help:hover,body[data-mode=night] .header-right #help:focus-visible{color:#fff}
 body[data-mode] .header-right #favorites span[aria-hidden=true],body[data-mode] .header-right #favorites:hover span[aria-hidden=true],body[data-mode] .header-right #favorites:focus-visible span[aria-hidden=true],body[data-mode] .header-right #favorites[aria-expanded=true] span[aria-hidden=true],body[data-mode] .header-right #favorites #fav-count{color:inherit}
 body[data-mode=day] #catalog-close:hover,body[data-mode=day] #catalog-close:focus-visible{background:#cbd5e1;color:#151924}
 body[data-mode=day] #share-dialog .share-links button,body[data-mode=day] #share-dialog .share-links button:hover,body[data-mode=day] #share-dialog .share-links button:focus-visible,body[data-mode=day] #share-dialog #copy-link,body[data-mode=day] #share-dialog #copy-link:hover,body[data-mode=day] #share-dialog #copy-link:focus-visible{color:#151924}
@@ -369,9 +371,7 @@ body[data-embed=true] .volume:hover #volume,body[data-embed=true] .volume:focus-
 body[data-embed=true] .player #globe-status,body[data-embed=true] .player .track-label{display:none!important}
 body[data-embed=true] .player #previous,body[data-embed=true] .player #next{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;flex:0 0 44px}
 body[data-embed=true] #embed-toggle,body[data-embed=true] #embed-options{display:none!important}
-#share-coffee{display:none;width:min(100%,245px);margin:16px auto 0;padding:0;border-radius:12px;overflow:hidden}
-#share-coffee img{display:block;width:100%;height:auto}
-#share-coffee:hover{filter:brightness(.94)}
+#share-coffee{display:none;width:max-content;margin:16px auto 0}
 @media(max-width:760px){
   body:not([data-embed=true]) .header-right #help{display:none!important}
   .mobile-header-row{display:flex;align-items:center;gap:8px;width:100%;min-width:0;height:48px}
@@ -416,7 +416,6 @@ body[data-embed=true] #embed-toggle,body[data-embed=true] #embed-options{display
   body[data-mobile-player=true] .discover-panel{bottom:calc(var(--embed-player-height,120px) + var(--directory-gap));max-height:none}
   #share-dialog #copy-link,#share-dialog #embed-toggle,#share-dialog #share-coffee{width:100%;height:44px;min-height:44px;box-sizing:border-box;border-radius:8px;margin:8px 0 0;padding:8px 12px}
   #share-dialog #share-coffee{display:none}
-  #share-dialog #share-coffee img{width:auto;max-width:100%;height:100%;object-fit:contain}
   #share-dialog .dialog-close:hover,#share-dialog .dialog-close:focus-visible{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
   body[data-mode=day] #share-dialog .dialog-close:hover,body[data-mode=day] #share-dialog .dialog-close:focus-visible{color:#151924;background:#cbd5e1;border-color:#334155}
   .intro .eyebrow{flex-direction:column;gap:14px}
@@ -443,8 +442,6 @@ body[data-mode=day] #share-dialog .dialog-close:hover,body[data-mode=day] #share
 #share-dialog #embed-toggle:hover,#share-dialog #embed-toggle:focus-visible,#share-dialog #embed-toggle[aria-expanded=true]{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
 #share-dialog #share-coffee:hover,#share-dialog #share-coffee:focus-visible{filter:brightness(.94)}
 #share-dialog #share-coffee:active{transform:scale(.98)}
-#share-dialog #share-coffee{border:1px solid #334155}
-#share-dialog #share-coffee:hover,#share-dialog #share-coffee:focus-visible{border-color:#151924}
 #share-dialog .share-links button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:10px}
 #share-dialog .share-links svg{display:block;width:22px;height:22px;flex-shrink:0}
 @media(max-width:760px){
@@ -500,7 +497,7 @@ footer{align-items:center;padding:var(--player-half-height,40px) 16px 0}
 /* Information keeps readable white text in both palettes. */
 #info-dialog,body[data-mode=day] #info-dialog{background:#101722;color:#fff;border-color:#354051;padding:48px 32px 32px}
 #info-dialog .info-tabs{margin:16px 0;justify-content:center}
-#info-dialog .info-tabs button{padding:10px 12px;font-size:14px;min-height:40px}
+#info-dialog .info-tabs button{padding:12px 16px;font-size:15px;min-height:44px}
 #info-dialog #info-content,#info-dialog #info-content p,body[data-mode=day] #info-dialog p{color:#fff}
 /* A subtle, stationary star field behind vertically centered information. */
 #info-dialog,body[data-mode=day] #info-dialog{background-color:#080e1b;background-image:radial-gradient(1px 1px at 18px 23px,#ffffff7a 98%,transparent),radial-gradient(1px 1px at 89px 72px,#afc8ed70 98%,transparent),radial-gradient(1.5px 1.5px at 141px 39px,#ffffff4d 98%,transparent),radial-gradient(ellipse at 50% 40%,#1d2d4b99,transparent 75%);background-size:193px 137px,229px 171px,277px 211px,100% 100%;background-repeat:repeat,repeat,repeat,no-repeat}
@@ -510,15 +507,18 @@ footer{align-items:center;padding:var(--player-half-height,40px) 16px 0}
 #info-dialog #info-content{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;justify-content:safe center;line-height:1.65}
 #info-dialog .dialog-close{width:34px;height:34px;min-width:34px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--panel-edge,#475569);border-radius:8px;font-size:22px;color:#fff}
 #info-dialog .dialog-close:hover,#info-dialog .dialog-close:focus-visible{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
-#info-dialog #about-coffee{align-self:center;width:min(100%,170px);flex-shrink:0;margin:0;padding:0;border:1px solid #334155;border-radius:12px;overflow:hidden;background:#ffdd00}
+#info-dialog #about-coffee{align-self:center;flex-shrink:0;margin:0}
 #info-dialog .about-project{margin-bottom:0;flex-shrink:0}
 #info-dialog .about-support-divider{align-self:center;width:36px;height:1px;flex-shrink:0;margin:20px 0;background:#fff}
 #info-dialog #info-content[data-section=about]{text-align:center;justify-content:flex-start;padding-top:16px}
+#info-dialog #info-content[data-section=credits]{text-align:center;justify-content:flex-start;padding-top:16px}
+#info-dialog .credit-entry{flex-shrink:0;margin:0 0 18px}
+#info-dialog .credit-entry:last-child{margin-bottom:0}
+#info-dialog .credit-name{display:block;font-weight:700}
+#info-dialog .credit-entry p{margin:4px 0 0}
 #info-dialog #info-content[data-section=about] p{flex-shrink:0}
 #info-dialog #info-content[data-section=about] .about-support-divider{margin:20px 0 0}
 #info-dialog .about-support{flex:1 0 88px;display:flex;align-items:center;justify-content:center}
-#info-dialog #about-coffee img{display:block;width:100%;height:auto}
-#info-dialog #about-coffee:hover,#info-dialog #about-coffee:focus-visible{filter:brightness(.94);border-color:#151924}
 #info-dialog .info-copyright{flex-shrink:0;margin:0;text-align:center;font-size:11px;line-height:1.6}
 @media(max-width:760px){#info-dialog,body[data-mode=day] #info-dialog{padding:calc(88px + env(safe-area-inset-top,0px)) 20px 24px}#info-dialog .dialog-close{top:calc(16px + env(safe-area-inset-top,0px));right:20px;width:var(--mobile-square-size,44px);height:var(--mobile-square-size,44px);min-width:var(--mobile-square-size,44px)}}
 
@@ -531,6 +531,13 @@ footer{align-items:center;padding:var(--player-half-height,40px) 16px 0}
 
 /* Keep the desktop prompt together without changing mobile or embedded wrapping. */
 @media(min-width:761px){body:not([data-embed=true]) .intro-question{white-space:nowrap}}
+
+/* Support button artwork is drawn in CSS so it stays sharp at every size. */
+.coffee-link,#info-dialog #about-coffee,#share-dialog #share-coffee{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:7px 12px;border:1px solid #2184b0;border-radius:7px;background:#299bd0;color:#fff;font-size:14px;font-weight:800;line-height:1.2;white-space:nowrap;box-shadow:0 2px 4px #0003}
+.coffee-cup{position:relative;display:inline-flex;align-items:center;justify-content:center;width:17px;height:14px;margin-right:3px;border:1px solid #234759;border-radius:2px 2px 4px 4px;background:#fff;color:#e13947;font-size:11px;line-height:1}
+.coffee-cup:after{content:'';position:absolute;left:100%;top:2px;width:4px;height:6px;border:2px solid #fff;border-left:0;border-radius:0 4px 4px 0}
+#info-dialog #about-coffee:hover,#info-dialog #about-coffee:focus-visible,#share-dialog #share-coffee:hover,#share-dialog #share-coffee:focus-visible{background:#2188bb;color:#fff;border-color:#176d9c;filter:none}
+#share-dialog #share-coffee{display:none}
 
 /* Directory headings share the close button's vertical center at every size. */
 .discover-panel .panel-top{display:flex;align-items:center;justify-content:space-between}

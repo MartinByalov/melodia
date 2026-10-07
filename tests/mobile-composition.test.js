@@ -95,7 +95,7 @@ test('mobile genres lose underline and Share hides its coffee button',async()=>{
   const [css,html]=await Promise.all([readFile(new URL('../public/styles.css',import.meta.url),'utf8'),readFile(new URL('../public/index.html',import.meta.url),'utf8')]);
   assert.match(css,/\.header-genres button:after\{display:none!important\}/);
   assert.match(html,/id="share-coffee"/);
-  assert.match(html,/src="assets\/buy-me-a-coffee.png"/);
+  assert.match(html,/id="share-coffee" class="coffee-link"[^>]*><span class="coffee-cup" aria-hidden="true">♥<\/span>Buy me a coffee!<\/button>/);
   assert.ok(html.indexOf('id="share-coffee"')>html.indexOf('id="embed-options"'));
   assert.match(css,/#share-coffee\{display:none;/);
   assert.match(css,/#share-dialog #share-coffee\{display:none\}/);

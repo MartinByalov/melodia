@@ -58,6 +58,19 @@ test('removed feedback and artwork credits do not remain in site information',as
   for(const credit of ['Radio Browser','OpenStreetMap contributors','Natural Earth','Three.js','HLS.js'])assert.ok(source.includes(credit));
 });
 
+test('Sources & Credits centers unbulleted entries with names above descriptions',async()=>{
+  const [source,css]=await Promise.all(['site-info.js','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
+  const credits=source.match(/credits:\{title:'Sources & Credits',html:'([^']*)'\}/)?.[1];
+  assert.ok(credits);
+  assert.doesNotMatch(credits,/<ul>|<li>/);
+  assert.equal((credits.match(/class="credit-entry"/g)||[]).length,5);
+  assert.match(credits,/class="credit-name"[^>]*>Radio Browser<\/a><p>Community-maintained station directory/);
+  assert.match(credits,/class="credit-name"[^>]*>© OpenStreetMap contributors<\/a><p>Local administrative boundaries/);
+  for(const url of ['https://www.radio-browser.info/','https://www.openstreetmap.org/copyright','https://www.naturalearthdata.com/about/terms-of-use/','vendor/LICENSE','vendor/hls-LICENSE.txt'])assert.ok(credits.includes(url));
+  assert.match(css,/#info-dialog #info-content\[data-section=credits\]\{text-align:center;justify-content:flex-start;padding-top:16px\}/);
+  assert.match(css,/#info-dialog \.credit-name\{display:block;font-weight:700\}/);
+});
+
 test('information dialog has a star field and scroll-safe vertically centered content',async()=>{
   const css=await readFile(new URL('../public/styles.css',import.meta.url),'utf8');
   assert.match(css,/#info-dialog,body\[data-mode=day\] #info-dialog\{background-color:#080e1b;background-image:radial-gradient/);
@@ -78,9 +91,8 @@ test('information prose uses full sentences rather than semicolons',async()=>{
 
 test('About places support after its prose and copyright in a separate bottom row',async()=>{
   const [source,css]=await Promise.all(['site-info.js','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
-  assert.match(source,/their respective owners\.<\/p><span class="about-support-divider" aria-hidden="true"><\/span><button id="about-coffee"[^>]*aria-label="Buy me a coffee"><img src="assets\/buy-me-a-coffee\.png" alt="Buy me a coffee" width="545" height="153"><\/button>/);
-  assert.ok((await readFile(new URL('../public/assets/buy-me-a-coffee.png',import.meta.url))).length>0);
-  assert.match(css,/#info-dialog #about-coffee\{[^}]*width:min\(100%,170px\)/);
+  assert.match(source,/their respective owners\.<\/p><span class="about-support-divider" aria-hidden="true"><\/span><button id="about-coffee" class="coffee-link" type="button"><span class="coffee-cup" aria-hidden="true">♥<\/span>Buy me a coffee!<\/button>/);
+  assert.match(css,/#info-dialog #about-coffee\{align-self:center;flex-shrink:0;margin:0\}/);
   assert.match(source,/content\.dataset\.section=opener\.dataset\.info/);
   assert.match(source,/support\.append\(content\.querySelector\('#about-coffee'\)\);content\.append\(support\)/);
   assert.match(css,/#info-dialog #info-content\[data-section=about\]\{text-align:center/);
@@ -90,8 +102,9 @@ test('About places support after its prose and copyright in a separate bottom ro
   assert.match(source,/<p class="about-project">Melodia is an independent creative project\.<br>Its original concept[^<]*<br>Radio broadcasts/);
   assert.match(css,/#info-dialog \.about-support-divider\{align-self:center;width:36px;height:1px;flex-shrink:0;margin:20px 0;background:#fff\}/);
   assert.match(css,/#info-dialog \.about-project\{margin-bottom:0;flex-shrink:0\}/);
-  assert.match(css,/#info-dialog #about-coffee\{[^}]*margin:0;padding:0/);
-  assert.match(css,/#info-dialog #about-coffee img\{display:block;width:100%;height:auto\}/);
+  assert.match(css,/\.coffee-link,#info-dialog #about-coffee,#share-dialog #share-coffee\{[^}]*background:#299bd0;color:#fff/);
+  assert.match(css,/\.coffee-cup\{[^}]*background:#fff;color:#e13947/);
+  assert.match(css,/\.coffee-cup:after\{[^}]*border:2px solid #fff/);
   assert.match(source,/copyright\.className='info-copyright'/);
   assert.match(source,/dialog\.append\(copyright\)/);
   assert.doesNotMatch(source,/content\.append\(copyright\)/);
@@ -106,7 +119,7 @@ test('wordmark, dialog and favorites stay centered and readable in both modes',a
   const [css,app]=await Promise.all(['styles.css','app.js'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
   assert.match(css,/\.brand-icon\{line-height:1;display:inline-flex;align-items:center/);
   assert.match(css,/\.brand-word\{line-height:1;display:inline-flex;align-items:center\}/);
-  assert.match(css,/#info-dialog \.info-tabs button\{padding:10px 12px;font-size:14px;min-height:40px\}/);
+  assert.match(css,/#info-dialog \.info-tabs button\{padding:12px 16px;font-size:15px;min-height:44px\}/);
   assert.match(css,/#info-dialog \.info-tabs\{margin:16px 0;justify-content:center\}/);
   assert.match(css,/#info-dialog,body\[data-mode=day\] #info-dialog\{[^}]*color:#fff/);
   assert.doesNotMatch(css,/body\[data-favorites-only=true\]/);
