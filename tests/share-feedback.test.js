@@ -28,7 +28,7 @@ test('coffee haptic feedback is optional and does not prevent the existing actio
   assert.match(app,/navigator\.vibrate\?\.\(12\)/);
   assert.match(app,/catch\{\/\* Optional feedback must not block the button\. \*\/\}/);
   assert.match(app,/\$\('#help'\)\.click\(\)/);
-  assert.match(app,/\$\('#help'\)\.addEventListener\('click', \(\) => \{ window\.open\('https:\/\/ko-fi\.com\/martinbyalov','_blank','noopener,noreferrer'\); \}\)/);
+  assert.match(app,/\$\('#help'\)\.addEventListener\('click', \(\) => \{ window\.open\('https:\/\/ko-fi\.com\/eon','_blank','noopener,noreferrer'\); \}\)/);
   assert.doesNotMatch(app,/Support link is not configured yet/);
 });
 

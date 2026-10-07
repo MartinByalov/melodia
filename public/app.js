@@ -453,7 +453,7 @@ $('#mute').addEventListener('click',()=>{
 });
 $('#refresh').addEventListener('click', refresh);
 $('#rotate').addEventListener('click', () => { globe?.resetAxis(); });
-$('#help').addEventListener('click', () => { window.open('https://ko-fi.com/martinbyalov','_blank','noopener,noreferrer'); });
+$('#help').addEventListener('click', () => { window.open('https://ko-fi.com/eon','_blank','noopener,noreferrer'); });
 $('#share-coffee').addEventListener('click',()=>{
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
     try{navigator.vibrate?.(12);}catch{/* Optional feedback must not block the button. */}
