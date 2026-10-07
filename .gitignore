@@ -1,0 +1,25 @@
+# Local dependencies, editor settings and operating-system files
+node_modules/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets: never publish these in either the repository or the site
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Browser profiles, caches, diagnostics and screenshots
+**/*browser-profile*/
+*.log
+/browser-dom.html
+/preview*.png
+/reports/
+/coverage/
+/dist/
+/tmp/
+*.tmp
+*.bak
