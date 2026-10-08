@@ -24,6 +24,8 @@ jobs:
         with:
           node-version: '24'
       - run: npm run check
+      - run: npm run test:catalogue
+      - run: npm run prune:stations
       - run: npm run test:pages
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4

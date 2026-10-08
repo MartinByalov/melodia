@@ -81,14 +81,33 @@ test('mobile genres fit whole labels and panels end at the measured player top',
 test('mobile share actions share dimensions, close has hover, and both player modes have a divider',async()=>{
   const css=await readFile(new URL('../public/styles.css',import.meta.url),'utf8');
   assert.match(css,/body\[data-mobile-player=true\] \.mobile-player-bottom\{border-top:1px solid/);
+  assert.match(css,/@media\(max-width:760px\)\{[^]*?#share-dialog \.eyebrow\{min-height:30px\}/);
   assert.match(css,/#share-dialog #copy-link,#share-dialog #embed-toggle,#share-dialog #share-coffee\{width:100%;height:44px;min-height:44px/);
   assert.match(css,/#share-dialog \.dialog-close:hover,#share-dialog \.dialog-close:focus-visible\{color:var\(--accent\);background:rgba/);
 });
 
-test('mobile player is edge-to-edge and hides moving text, waves and footer attribution',async()=>{
+test('mobile mode, Share and Info buttons keep their active colors independently of hover and focus',async()=>{
+  const [css,app,info,html]=await Promise.all(['styles.css','app.js','site-info.js','index.html'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
+  assert.match(app,/modeToggle\.setAttribute\('aria-pressed',String\(displayMode==='day'\)\)/);
+  assert.match(app,/#share'\)\.setAttribute\('aria-expanded','false'\)/);
+  assert.match(app,/openSiteDialog\(\$\('#share-dialog'\)\);\$\('#share'\)\.setAttribute\('aria-expanded',String\(\$\('#share-dialog'\)\.open\)\)/);
+  assert.match(app,/#share-dialog'\)\.addEventListener\('close',\(\)=>\{[^}]*#share'\)\.setAttribute\('aria-expanded',String\(\$\('#share-dialog'\)\.open\)\)/);
+  assert.match(html,/id="mobile-info"[^>]*aria-controls="info-dialog" aria-expanded="false"/);
+  assert.match(info,/dialog\.addEventListener\('close',\(\)=>mobileInfo\.setAttribute\('aria-expanded',String\(dialog\.open\)\)\)/);
+  assert.match(info,/openSiteDialog\(dialog\);\s*mobileInfo\.setAttribute\('aria-expanded',String\(dialog\.open\)\)/);
+  for(const selector of ['#mode-toggle[aria-pressed=true]','#share[aria-expanded=true]','#mobile-info[aria-expanded=true]']){
+    assert.ok(css.includes(`.mobile-player-bottom ${selector}`));
+  }
+  assert.match(css,/body\[data-mobile-player=true\]\[data-mode=night\] \.player \.mobile-player-bottom #mode-toggle\{color:var\(--accent\);background:rgba\(var\(--accent-rgb\),\.15\);border-color:var\(--accent\)\}/);
+});
+
+test('mobile player is edge-to-edge, shows available moving text and hides waves and footer attribution',async()=>{
   const css=await readFile(new URL('../public/styles.css',import.meta.url),'utf8');
   assert.match(css,/left:0;right:0;bottom:0;width:100%;max-width:none;transform:none;border-radius:0/);
-  assert.match(css,/body\[data-mobile-player=true\] \.player #globe-status,body\[data-mobile-player=true\] \.player \.visualizer\{display:none!important\}/);
+  assert.match(css,/body\[data-mobile-player=true\] \.player\{[^}]*padding:12px 12px env\(safe-area-inset-bottom,0px\)/);
+  assert.match(css,/body\[data-mobile-player=true\] \.player \.visualizer\{display:none!important\}/);
+  assert.match(css,/body\[data-mobile-player=true\] \.player #globe-status:not\(\[hidden\]\)\{display:block;width:100%;max-width:none;flex:none;font-size:11px;line-height:16px\}/);
+  assert.doesNotMatch(css,/body\[data-mobile-player=true\] \.player #globe-status(?:,|\{display:none!important)/);
   assert.match(css,/body\[data-mobile-player=true\] footer>span\{display:none\}/);
 });
 

@@ -1,0 +1,38 @@
+name: Prepare station catalogue update
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: station-catalogue-update
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run check
+      - run: npm run test:catalogue
+      - run: npm run update:stations
+      - run: npm run test:pages
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: station-catalogue-candidate
+          path: |
+            public/assets/stations.json
+            reports/stations-update.json
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: station-catalogue-failure
+          path: reports/stations-update.json
+          if-no-files-found: ignore

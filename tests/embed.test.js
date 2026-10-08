@@ -62,11 +62,11 @@ test('embed does not show the removed explanatory note',async()=>{
   assert.doesNotMatch(html,/Paste this HTML|Playback starts only after pressing Play|Use a public HTTPS address, not localhost/);
 });
 
-test('empty genre results use the player moving line instead of a toast',async()=>{
+test('header genre filters do not select stations or request playback',async()=>{
   const app=await readFile(new URL('../public/app.js',import.meta.url),'utf8');
-  assert.match(app,/else setPlayerMessage\(stations.length\?'No stations available in this style\.'/);
-  assert.doesNotMatch(app,/else toast\(stations.length\?'No stations available in this style\.'/);
-  assert.match(app,/dataset.loading==='true'\?'The station directory is still loading\. Please try again\.':'No stations loaded'/);
+  const handler=app.slice(app.indexOf("$('.header-genres').addEventListener"),app.indexOf("$('#explore').addEventListener"));
+  assert.ok(handler.includes('renderList()'));
+  assert.doesNotMatch(handler,/choose\(|playCurrent\(/);
 });
 
 test('embed uses two control rows, vertical accessible volume and prevents recursive embeds',async()=>{

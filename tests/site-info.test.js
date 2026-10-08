@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {openSiteDialog} from '../public/site-info.js';
 
-test('footer information stays in dialogs with credits and copyright',async()=>{
+test('header information stays in dialogs with credits and copyright',async()=>{
   const html=await readFile(new URL('../public/index.html',import.meta.url),'utf8');
   const source=await readFile(new URL('../public/site-info.js',import.meta.url),'utf8');
   assert.doesNotMatch(html,/POWERED BY RADIO-BROWSER/);
@@ -24,7 +24,7 @@ test('footer information stays in dialogs with credits and copyright',async()=>{
   assert.ok(dialog.indexOf('<nav class="info-tabs"')<dialog.indexOf('<div id="info-content"'));
   assert.doesNotMatch(dialog,/<h2/);
   assert.doesNotMatch(dialog,/data-reduce-effects/);
-  assert.match(html,/<footer>[\s\S]*?data-reduce-effects/);
+  assert.match(html,/<header>[\s\S]*?data-reduce-effects[\s\S]*?<\/header>/);
 });
 
 test('Share and Info switch both ways without blocking mobile player controls',()=>{

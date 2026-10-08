@@ -15,8 +15,9 @@ const result=await command('Runtime.evaluate',{awaitPromise:true,returnByValue:t
   const {createGlobe}=await import('./globe.js');
   const host=document.createElement('div');host.style.cssText='position:fixed;inset:72px 0 120px;z-index:4';document.body.append(host);
   const data=await(await fetch('./assets/stations.json')).json();
-  const {normalizeStation}=await import('./radio.js');
-  const globe=createGlobe(host,()=>{});globe.setStations(data.map(normalizeStation).filter(Boolean));globe.setPlaying(true);
+  const {normalizeStation,supportsHLS}=await import('./radio.js');
+  const allowHLS=supportsHLS();
+  const globe=createGlobe(host,()=>{});globe.setStations(data.map(station=>normalizeStation(station,false,allowHLS)).filter(Boolean));globe.setPlaying(true);
   await new Promise(r=>setTimeout(r,4000));
   const intervals=[];let previous=performance.now();const until=previous+4000;
   await new Promise(resolve=>{function sample(now){intervals.push(now-previous);previous=now;if(now<until)requestAnimationFrame(sample);else resolve();}requestAnimationFrame(sample);});

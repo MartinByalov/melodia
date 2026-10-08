@@ -1,4 +1,6 @@
+import {safeHomepage} from './station-details.js';
 import {matchesStyle} from './visual-styles.js';
+import {stationExcluded} from './station-exclusions.js';
 export const SERVERS = ['https://de1.api.radio-browser.info', 'https://nl1.api.radio-browser.info', 'https://at1.api.radio-browser.info'];
 export const GENRE_COLORS = { electronic: '#62efc5', jazz: '#ffcc70', rock: '#ff7499', chill: '#78b7ff', pop: '#d296ff', classical: '#eee0a5' };
 // Station identity spans the full spectrum, independently of the six UI themes.
@@ -27,6 +29,8 @@ export function supportsHLS(){
   return Boolean(MediaSource?.isTypeSupported?.('audio/mp4; codecs="mp4a.40.2"'));
 }
 export function normalizeStation(s, requireGeo = true, allowHLS = false) {
+  if (stationExcluded(s)) return null;
+  if (s.lastcheckok !== undefined && Number(s.lastcheckok) !== 1) return null;
   const lat = s.geo_lat, lon = s.geo_long;
   const hasGeo = lat !== null && lon !== null && lat !== undefined && lon !== undefined && lat !== '' && lon !== '' && Number.isFinite(Number(lat)) && Number.isFinite(Number(lon)) && Math.abs(Number(lat)) <= 90 && Math.abs(Number(lon)) <= 180;
   if (requireGeo && !hasGeo) return null;
@@ -37,7 +41,7 @@ export function normalizeStation(s, requireGeo = true, allowHLS = false) {
   if (!url || !s.stationuuid || !s.name || !s.name.trim()) return null;
   const hls=Number(s.hls)===1||/\.m3u8(?:$|[?#])/i.test(url.href);
   if(hls&&!allowHLS)return null;
-  return { id: s.stationuuid, name: s.name.trim(), country: s.country || 'Unknown', code: s.countrycode || '', state: s.state || '', tags: (s.tags || '').toLowerCase(), lat: hasGeo ? Number(lat) : null, lon: hasGeo ? Number(lon) : null, url: url.href, hls, clicks: Number(s.clickcount) || 0, bitrate: Number(s.bitrate) || 0, codec: s.codec || '' };
+  return { homepage: safeHomepage(s.homepage), id: s.stationuuid, name: s.name.trim(), country: s.country || 'Unknown', code: s.countrycode || '', state: s.state || '', tags: (s.tags || '').toLowerCase(), lat: hasGeo ? Number(lat) : null, lon: hasGeo ? Number(lon) : null, url: url.href, hls, clicks: Number(s.clickcount) || 0, bitrate: Number(s.bitrate) || 0, codec: s.codec || '' };
 }
 export function genreOf(tags) {
   if (/jazz|swing|blues/.test(tags)) return 'jazz';

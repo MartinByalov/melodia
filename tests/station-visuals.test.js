@@ -89,7 +89,7 @@ test('share without a station uses the player message and clears on station sele
   const source=await readFile(new URL('../public/app.js',import.meta.url),'utf8');
   assert.match(source,/if \(!selected\) return setPlayerMessage\('Choose a station to share\.'\)/);
   assert.doesNotMatch(source,/toast\('Choose a station to share\.'\)/);
-  assert.match(source,/if\(\$\('#player-message'\)\.textContent==='Choose a station to share\.'\)setPlayerMessage/);
+  assert.match(source,/if\(playerMessage==='Choose a station to share\.'\)setPlayerMessage/);
 });
 
 test('shooting stars are depth-tested far-plane geometry and disabled for reduced motion',async()=>{

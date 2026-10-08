@@ -4,6 +4,10 @@
   "scripts": {
     "start": "node server.js",
     "check": "node scripts/check.js",
+    "prune:stations": "node scripts/prune-stations.js",
+    "update:stations": "node scripts/update-stations.js",
+    "compact:stations": "node scripts/compact-stations.js",
+    "test:catalogue": "node --test tests/update-stations.test.js tests/radio.test.js tests/progressive-catalogue.test.js tests/station-exclusions.test.js",
     "test": "node --test tests/*.test.js",
     "test:pages": "node --test tests/pages.test.js"
   }

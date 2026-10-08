@@ -12,6 +12,8 @@ import { createHLSPlayback } from './hls-playback.js';
 import { startupStation } from './startup-station.js';
 import {visualProfile} from './visual-styles.js';
 import {setupSiteInfo,openSiteDialog} from './site-info.js';
+import {stationExcluded} from './station-exclusions.js';
+import {stationUrl,continuePlayback} from './station-details.js';
 
 const $ = selector => document.querySelector(selector);
 const themeFavicon=createThemeFavicon($('#theme-favicon'));
@@ -89,9 +91,8 @@ $('#globe').addEventListener('themeaccent',event=>{
 });
 function setPlayerMessage(text){
   playerMessage=text;
-  const label=playerMessage||nowPlaying;
-  $('#player-message').textContent=label;
-  $('#globe-status').hidden=!label;
+  $('#world-message').textContent=text;
+  $('#world-status').hidden=!text;
 }
 const countryMenu=createCountryMenu($('#country-filter'),$('#catalog'));
 const stationRhythm = new StationRhythm();
@@ -175,7 +176,7 @@ function applyMode(){
 }
 modeToggle.addEventListener('click',()=>{displayMode=displayMode==='day'?'night':'day';applyMode();});
 applyMode();
-// All notifications share the player line; never show floating labels above it.
+// Status messages are separate from the station website ticker.
 function toast(text) { setPlayerMessage(text); }
 function setTheme(s) {
   // Filters must not overwrite the identity of the currently selected station.
@@ -240,7 +241,7 @@ function renderList(limit = 100) {
 }
 function updatePlayerState(state) {
   const playing = state === 'playing';
-  if(playing&&document.body.dataset.loading!=='true')setPlayerMessage('');
+  if(document.body.dataset.loading!=='true'){if(state==='loading')setPlayerMessage('Connecting to station...');else if(['playing','paused','ready'].includes(state))setPlayerMessage('');}
   $('#play').title=playing?'Pause':'Play';
   globe?.setPlaying(playing);
   document.body.dataset.playing=String(playing);
@@ -338,21 +339,26 @@ async function playCurrent(token = session) {
     else { updatePlayerState('error'); }
   }
 }
-function choose(s, autoplay = true) {
+function choose(s, autoplay = continuePlayback(document.body.dataset.playerState)) {
+  if (stationExcluded(s)) return;
   nowPlaying='';
-  if($('#player-message').textContent==='Choose a station to share.')setPlayerMessage(document.body.dataset.loading==='true'?'Loading World Vibe':'');
+  if(playerMessage==='Choose a station to share.')setPlayerMessage(document.body.dataset.loading==='true'?'Loading World Vibe':'');
   else if(document.body.dataset.loading!=='true')setPlayerMessage('');
   session++; selected = s; fallback = false; resetAudio();
   $('#track-name').textContent = s.name; $('#track-location').textContent = `${s.state ? `${s.state}, ` : ''}${s.country}${s.codec ? ` · ${s.codec}` : ''}`;
+  const homepage=$('#station-homepage');homepage.textContent=s.homepage||'Station website unavailable';
+  if(s.homepage)homepage.href=s.homepage;else homepage.removeAttribute('href');
+  $('#globe-status').hidden=false;
+  $('#station-info').disabled=false;
   setTheme(s); updateFavorites(); renderList(); globe?.select(s);
-  const url = new URL(location.href); url.searchParams.set('station', s.id); history.replaceState(null, '', url);
+  history.replaceState(null, '', stationUrl(location.href,s));
   updatePlayerState('ready');
   if (autoplay) { createAudio(true, session); playCurrent(); apiRequest(`url/${encodeURIComponent(s.id)}`).catch(() => {}); }
 }
 let catalogueGeneration=0;
 function publishCatalogue(next){
-  stations=next;
-  if(selected&&!stations.some(s=>s.id===selected.id))stations.unshift(selected);
+  stations=next.filter(s=>!stationExcluded(s));
+  if(selected&&!stationExcluded(selected)&&!stations.some(s=>s.id===selected.id))stations.unshift(selected);
   const countrySelect=$('#country-filter'),previous=countrySelect.value;
   countrySelect.replaceChildren(new Option('All countries',''),...[...new Set(stations.map(s=>s.country).filter(Boolean))].sort().map(country=>new Option(country,country)));
   countrySelect.value=previous;countryMenu.sync();
@@ -364,19 +370,19 @@ async function refresh() {
   $('#refresh').disabled = true; $('#source-status').textContent = 'Loading station directory…';
   try {
     const sharedId=new URL(location.href).searchParams.get('station');
-    const result = await loadInitialStations([...favoriteIds,...(sharedId?[sharedId]:[])]); stations = result.stations;
+    const result = await loadInitialStations([...favoriteIds].filter(id=>!stationExcluded({id})).concat(sharedId&&!stationExcluded({id:sharedId})?[sharedId]:[])); stations = result.stations.filter(s=>!stationExcluded(s));
     const countrySelect=$('#country-filter'), previousCountry=countrySelect.value;
     countrySelect.replaceChildren(new Option('All countries',''),... [...new Set(stations.map(s=>s.country).filter(Boolean))].sort().map(country=>new Option(country,country)));
     countrySelect.value=previousCountry;
-    if (selected && !stations.some(s => s.id === selected.id)) stations.unshift(selected);
+    if (selected && !stationExcluded(selected) && !stations.some(s => s.id === selected.id)) stations.unshift(selected);
     for (const id of result.complete?[]:favoriteIds) {
-      if (!stations.some(s => s.id === id)) { try { const result = await apiRequest(`stations/byuuid/${encodeURIComponent(id)}`); const s = normalizeStation(result[0] || {},false,supportsHLS()); if (s) stations.push(s); } catch { /* Retain local favorite for the next successful refresh. */ } }
+      if (!stationExcluded({id}) && !stations.some(s => s.id === id)) { try { const result = await apiRequest(`stations/byuuid/${encodeURIComponent(id)}`); const s = normalizeStation(result[0] || {},false,supportsHLS()); if (s) stations.push(s); } catch { /* Retain local favorite for the next successful refresh. */ } }
     }
     updateHeaderStyles();renderList(); $('#source-status').textContent = result.cached ? 'Cached directory · API unavailable' : 'Radio-Browser · live directory';
     const id = new URL(location.href).searchParams.get('station');
     if (id && !selected) {
       let s = stations.find(s => s.id === id);
-      if (!s && /^[a-zA-Z0-9-]{1,64}$/.test(id)) { try { const result = await apiRequest(`stations/byuuid/${encodeURIComponent(id)}`); s = normalizeStation(result[0] || {},false,supportsHLS()); if (s) stations.unshift(s); } catch { /* Report unavailable below. */ } }
+      if (!s && !stationExcluded({id}) && /^[a-zA-Z0-9-]{1,64}$/.test(id)) { try { const result = await apiRequest(`stations/byuuid/${encodeURIComponent(id)}`); s = normalizeStation(result[0] || {},false,supportsHLS()); if (s) stations.unshift(s); } catch { /* Report unavailable below. */ } }
       if (s) choose(s, false); else toast('The shared station is unavailable or has no coordinates / HTTPS stream.');
     }
     // Resolve the startup identity while the loading globe is still visible.
@@ -425,13 +431,7 @@ $('.header-genres').addEventListener('click', event => {
   document.querySelectorAll('header [data-genre]').forEach(b => b.classList.toggle('selected', b === button));
   const themeTags={synthwave:'synthwave',lofi:'lo-fi',techno:'techno',jazz:'jazz',rock:'rock',all:'electronic'};
   setTheme({tags:themeTags[genre]||genre}); renderList();
-  if (genre === 'all') return;
-  // Header shortcuts choose from the entire genre, independent of directory filters.
-  const candidates=stations.filter(s=>matchesStation(s,'',genre,favoritesOnly)&&(!favoritesOnly||favoriteIds.has(s.id)));
-  const alternatives=candidates.filter(s=>s.id!==selected?.id);
-  const pool=alternatives.length?alternatives:candidates;
-  if(pool.length)choose(pool[Math.floor(Math.random()*pool.length)]);
-  else setPlayerMessage(stations.length?'No stations available in this style.':document.body.dataset.loading==='true'?'The station directory is still loading. Please try again.':'No stations loaded');
+
 });
 $('#explore').addEventListener('click', () => { showDirectory(false);openCatalog(); });
 $('#clear-filters').addEventListener('click',()=>{
@@ -449,7 +449,7 @@ $('#favorite').addEventListener('click', () => {
   saveFavorites();updateFavorites(); if (favoritesOnly) renderList();
 });
 $('#play').addEventListener('click', () => {
-  if (!selected) { const s = filtered[0]; if (s) choose(s); else setPlayerMessage(document.body.dataset.loading==='true'?'Loading World Vibe':'No stations loaded'); return; }
+  if (!selected) { const s = filtered[0]; if (s) choose(s,true); else setPlayerMessage(document.body.dataset.loading==='true'?'Loading World Vibe':'No stations loaded'); return; }
   if (!audio || audio.error) { fallback = false; session++; createAudio(true, session); playCurrent(); }
   else if (audio.paused) playCurrent(); else audio.pause();
 });
@@ -472,8 +472,23 @@ $('#share-coffee').addEventListener('click',()=>{
 });
 document.querySelectorAll('.dialog-close').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
 document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) { const r = d.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close(); } }));
-function shareUrl() { const url = new URL(location.href);url.searchParams.delete('embed');url.searchParams.delete('perf'); url.searchParams.set('station', selected.id); return url.href; }
-$('#share').addEventListener('click', () => { if (!selected) return setPlayerMessage('Choose a station to share.'); $('#share-description').textContent = `${selected.name} · ${selected.country}`; $('#native-share').hidden = !navigator.share; $('#embed-options').hidden=true;$('#embed-toggle').setAttribute('aria-expanded','false');$('#embed-code').value=embedCode(location.href,selected);openSiteDialog($('#share-dialog')); });
+function shareUrl() { const url = stationUrl(location.href,selected);url.searchParams.delete('embed');url.searchParams.delete('perf'); return url.href; }
+$('#station-info').addEventListener('click',()=>{
+  if(!selected)return;
+  $('#station-title').textContent=selected.name;
+  $('#copy-stream').textContent='Copy stream address';
+  const facts=[['Location',[selected.state,selected.country].filter(Boolean).join(', ')],['Styles',selected.tags||'Not supplied'],['Website',selected.homepage||'Not supplied'],['Codec / bitrate (directory)',[selected.codec,selected.bitrate?`${selected.bitrate} kbps`:''].filter(Boolean).join(' / ')||'Not supplied'],['Stream',selected.url],['Source','Radio Browser'],['Station UUID',selected.id]];
+  $('#station-facts').replaceChildren(...facts.map(([label,value])=>{const p=document.createElement('p'),strong=document.createElement('strong');strong.textContent=`${label}: `;p.append(strong,document.createTextNode(value));return p;}));
+  $('#report-selected').href=`mailto:evangelion.conquest@gmail.com?subject=${encodeURIComponent(`Station report: ${selected.name}`)}&body=${encodeURIComponent(`Station: ${selected.name}\nUUID: ${selected.id}\nLink: ${shareUrl()}\n\nReason for report:\n`)}`;
+  openSiteDialog($('#station-dialog'));
+});
+$('#copy-stream').addEventListener('click',async()=>{
+  if(!selected)return;
+  try{await navigator.clipboard.writeText(selected.url);$('#copy-stream').textContent='Copied!';}
+  catch{$('#copy-stream').textContent='Copy the stream address shown above';}
+});
+$('#share').setAttribute('aria-controls','share-dialog');$('#share').setAttribute('aria-expanded','false');
+$('#share').addEventListener('click', () => { if (!selected) return setPlayerMessage('Choose a station to share.'); $('#share-description').textContent = `${selected.name} · ${selected.country}`; $('#native-share').hidden = !navigator.share; $('#embed-options').hidden=true;$('#embed-toggle').setAttribute('aria-expanded','false');$('#embed-code').value=embedCode(location.href,selected);openSiteDialog($('#share-dialog'));$('#share').setAttribute('aria-expanded',String($('#share-dialog').open)); });
 $('#embed-toggle').addEventListener('click',()=>{
   if(document.body.dataset.embed==='true')return;
   const options=$('#embed-options');options.hidden=!options.hidden;
@@ -482,7 +497,7 @@ $('#embed-toggle').addEventListener('click',()=>{
   else $('#embed-preview').removeAttribute('src');
   if(!options.hidden){$('#embed-code').focus();$('#embed-code').select();}
 });
-$('#share-dialog').addEventListener('close',()=>$('#embed-preview').removeAttribute('src'));
+$('#share-dialog').addEventListener('close',()=>{$('#embed-preview').removeAttribute('src');$('#share').setAttribute('aria-expanded',String($('#share-dialog').open));});
 $('#copy-embed').addEventListener('click',async()=>{
   const field=$('#embed-code');field.value=embedCode(location.href,selected);
   try{await navigator.clipboard.writeText(field.value);toast('Embed code copied!');}
