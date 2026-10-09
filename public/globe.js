@@ -41,6 +41,7 @@ export function createGlobe(container, onSelect) {
   controls.zoomSpeed = .65;
   controls.enableZoom = false;
   function zoom(factor) {
+    if(discoMode)return;
     const distance=camera.position.length();
     const next=THREE.MathUtils.clamp(1+(distance-1)*factor,controls.minDistance,innerWidth<=760?9.5:controls.maxDistance);
     camera.position.setLength(next);controls.update();
@@ -105,8 +106,8 @@ export function createGlobe(container, onSelect) {
   })); scene.add(atmosphere);
   const background=createGlobeBackground(scene);
   const globeEntrance=createGlobeEntrance();
-  let loadingWorld=true;
-  const loadingReveal=createLoadingReveal(container);
+  let loadingWorld=true,discoReveal=false;
+  let loadingReveal=createLoadingReveal(container);
   let styleProfile={pulse:1,ray:1,colors:1};
   container.dataset.background='gpu-stars-radiant';
   const ringMaterial = new THREE.MeshBasicMaterial({ color: 0x00dac5, side: THREE.DoubleSide, transparent: true, depthTest:false, depthWrite: false });
@@ -114,7 +115,7 @@ export function createGlobe(container, onSelect) {
   ring.renderOrder=11;
   ring.rotation.x = -Math.PI / 2; ring.position.y = .004;
   let reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let markers=[], active=null, selected=null, amplitude=0, frame=0, stationAmplitudes=new Map(), playing=false, globeHovered=false, rotationPaused=false;
+  let markers=[], active=null, selected=null, amplitude=0, frame=0, stationAmplitudes=new Map(), playing=false, globeHovered=false, rotationPaused=false, discoMode=false;
   let stationGPU=null,audioReaction={available:false,signal:0};const markerById=new Map(),gpuLevels=new Map();
   const view=new THREE.Vector3(), projected=new THREE.Vector3(), axis=new THREE.Vector3();
   const defaultProfile=rhythmProfile('electronic','globe');
@@ -162,15 +163,15 @@ export function createGlobe(container, onSelect) {
     return best;
   }
   renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};});
-  renderer.domElement.addEventListener('pointerup',e=>{if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<6){const s=hit(e);if(s)onSelect(s);}down=null;});
+  renderer.domElement.addEventListener('pointerup',e=>{if(discoMode)return;if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<6){const s=hit(e);if(s)onSelect(s);}down=null;});
   renderer.domElement.addEventListener('pointermove',e=>{
     idlePointer={clientX:e.clientX,clientY:e.clientY};
     pendingPointer={clientX:e.clientX,clientY:e.clientY};
-    if(hovered){tooltip.textContent=hovered.name;tooltip.style.display='block';}else tooltip.style.display='none';
+    if(hovered&&!discoMode){tooltip.textContent=hovered.name;tooltip.style.display='block';}else tooltip.style.display='none';
   });
   let pendingPointer=null,idlePointer=null;
   renderer.domElement.addEventListener('pointerleave',()=>{idlePointer=null;pendingPointer=null;hovered=null;globeHovered=false;tooltip.style.display='none';});
-  renderer.domElement.addEventListener('dblclick',event=>{hit(event);if(raycaster.ray.intersectSphere(earthSphere,surfacePoint)){camera.position.copy(surfacePoint.normalize().multiplyScalar(camera.position.length()));controls.autoRotate=false;zoom(.55);}});
+  renderer.domElement.addEventListener('dblclick',event=>{if(discoMode)return;hit(event);if(raycaster.ray.intersectSphere(earthSphere,surfacePoint)){camera.position.copy(surfacePoint.normalize().multiplyScalar(camera.position.length()));controls.autoRotate=false;zoom(.55);}});
   const resize=()=>{const w=container.clientWidth,h=container.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);controls.handleResize();};
   const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);resize();
   const intro = document.querySelector('.intro');
@@ -269,7 +270,7 @@ export function createGlobe(container, onSelect) {
   function updateMapAccent(time){
     const phase=mapAccent.update(time,Math.max(audioReaction.signal,(audioReaction.rhythm||0)*1.2),playing&&audioReaction.available&&!reducedMotion&&styleProfile.colors>0);
     const sceneFill=effectState.map===2?effectState.mix*(.12+.06*Math.sin(time*.7)):effectState.map===1?effectState.mix*.2:0;
-    const showRegions=!loadingWorld;
+    const showRegions=!loadingWorld&&!discoMode;
     const regionBeat=audioReaction.available&&!reducedMotion?(audioReaction.rhythm||0):0;
     regionColors.update(time*(styleProfile.waveSpeed??1),outlineColor,phase===null?sceneFill:Math.max(sceneFill,Math.sin(phase*Math.PI)*.32),showRegions,styleProfile.colors>0?1:.15,regionBeat);
     const waveMaterials=[borderMaterial,municipalMaterial,...mapBatches.map(batch=>batch.object.material)];
@@ -295,8 +296,8 @@ export function createGlobe(container, onSelect) {
     const distance=camera.position.length(), altitude=distance-1;
     const closeView=altitude<.5;
     earth.geometry=closeView?detailedEarthGeometry:overviewEarthGeometry;
-    if(detailedBorders)detailedBorders.visible=closeView||!overviewBorders;
-    if(overviewBorders)overviewBorders.visible=!closeView;
+    if(detailedBorders)detailedBorders.visible=!discoMode&&(closeView||!overviewBorders);
+    if(overviewBorders)overviewBorders.visible=!discoMode&&!closeView;
     container.dataset.altitude=altitude.toFixed(5);
     if (intro) {
       const rect=intro.getBoundingClientRect(), box=container.getBoundingClientRect();
@@ -318,7 +319,7 @@ export function createGlobe(container, onSelect) {
       const showIntro=visible&&!idleMotion.active;
       intro.classList.toggle('visible',showIntro); intro.setAttribute('aria-hidden',String(!showIntro));
     }
-    cityLayer.hidden=altitude>.35;
+    cityLayer.hidden=altitude>.35||discoMode;
     const nextLabels=new Set();
     if(cityLayer.hidden){for(const label of visibleCityLabels)label.hidden=true;visibleCityLabels=nextLabels;return;}
     view.copy(camera.position).normalize();
@@ -343,14 +344,14 @@ export function createGlobe(container, onSelect) {
     frame=requestAnimationFrame(animate);if(document.hidden||disposed){diagnostics?.reset();return;}
     const cpuStart=performance.now();
     const dt=Math.min(50,time-(animate.previousTime||time));animate.previousTime=time;
-    const entranceScale=globeEntrance.update(dt/1000,loadingWorld,reducedMotion);
+    const entranceScale=discoMode?1:globeEntrance.update(dt/1000,loadingWorld,reducedMotion);
     effectState=effectScenes.update(dt/1000,playing&&!loadingWorld&&!reducedMotion);
     stationGPU?.setScene(effectState.ray,effectState.mix);
     globeCorona.update(camera,time/1000,effectState.ray===6?effectState.mix:0,audioReaction.signal,outlineColor,playing&&styleProfile.style!=='talk'&&!loadingWorld&&!reducedMotion&&!globeHovered);
     entranceEarthMaterial.uniforms.color.value.copy(entranceEarthColor);
-    entranceEarthMaterial.uniforms.hatch.value=1-globeEntrance.completion;
+    entranceEarthMaterial.uniforms.hatch.value=discoMode?1:1-globeEntrance.completion;
     entranceEarthMaterial.uniforms.baseColor.value.copy(mapMode==='day'?entranceDayColor:nightEarthMaterial.color);
-    if(pendingPointer){hovered=hit(pendingPointer);globeHovered=raycaster.ray.intersectsSphere(earthSphere);renderer.domElement.style.cursor=hovered?'pointer':'grab';tooltip.style.display=hovered?'block':'none';if(hovered)tooltip.textContent=hovered.name;pendingPointer=null;}
+    if(pendingPointer&&!discoMode){hovered=hit(pendingPointer);globeHovered=raycaster.ray.intersectsSphere(earthSphere);renderer.domElement.style.cursor=hovered?'pointer':'grab';tooltip.style.display=hovered?'block':'none';if(hovered)tooltip.textContent=hovered.name;pendingPointer=null;}
     if(idlePointer&&container.dataset.idleDrifting==='true'){
       const bounds=renderer.domElement.getBoundingClientRect();
       pointer.set((idlePointer.clientX-bounds.left)/bounds.width*2-1,-(idlePointer.clientY-bounds.top)/bounds.height*2+1);
@@ -360,7 +361,7 @@ export function createGlobe(container, onSelect) {
     const rhythm=audioReaction.available?(audioReaction.rhythm||0):0;
     const cadence=playing?Math.sin(time/1000*2*Math.PI/(styleProfile.period??5))*(styleProfile.cadence??0):0;
     const motion=(styleProfile.motion==='sway'?1+Math.sin(time/1700)*.45:styleProfile.motion==='beat'?1+rhythm*.8:1)*(1+cadence);
-    if(!rotationPaused&&(controls.autoRotate||playing)&&!down&&!globeHovered&&!reducedMotion)camera.position.applyAxisAngle(axis.copy(camera.up).normalize(),-.00095*(dt/16.667)*Math.min(1,(camera.position.length()-1)/.5)*(styleProfile.rotation??1)*motion);
+    if(!rotationPaused&&(controls.autoRotate||playing)&&!down&&(!globeHovered||discoMode)&&!reducedMotion)camera.position.applyAxisAngle(axis.copy(camera.up).normalize(),-.00095*(dt/16.667)*Math.min(1,(camera.position.length()-1)/.5)*(styleProfile.rotation??1)*motion);
     controls.update();
     updateMapAccent(time/1000);
     const pulseTarget=playing&&!globeHovered&&!reducedMotion?(audioReaction.available?rhythm:syntheticLevel(active?.profile||defaultProfile,time/1000))*9.5:0;
@@ -385,7 +386,7 @@ export function createGlobe(container, onSelect) {
       verticalLimit=verticalDriftBounds(document.querySelector('header').getBoundingClientRect().bottom,document.querySelector('.player').getBoundingClientRect().top,center,globeRadius);
     }
     const idleState=idleMotion.update(time,dt/1000,idleWidth/2-globeRadius,verticalLimit,
-      loadingWorld||reducedMotion||globeHovered||!!down||document.body.dataset.catalogOpen==='true'||!!document.querySelector('dialog[open]'));
+      loadingWorld||reducedMotion||discoMode||globeHovered||!!down||document.body.dataset.catalogOpen==='true'||!!document.querySelector('dialog[open]'));
     camera.projectionMatrix.elements[8]=-2*idleState.x/Math.max(1,idleWidth);
     const projectionOffset=2*(mobileGlobeOffset+idleState.y)/Math.max(1,idleHeight);
     container.dataset.idleDrifting=String(idleState.active);
@@ -422,12 +423,12 @@ export function createGlobe(container, onSelect) {
     background.update(time/1000,container.clientWidth,container.clientHeight,reducedMotion,playing?audioReaction.signal:0);
     for(const batch of mapBatches)batch.update(camera,mapFrustum,container.clientHeight);
     controls.rotateSpeed=Math.max(.002,Math.min(1,(camera.position.length()-1)*.6));
-    if(camera.position.length()<1.5)controls.autoRotate=false;
+    if(!discoMode&&camera.position.length()<1.5)controls.autoRotate=false;
     const renderStart=performance.now();
     const diagnosticMode=diagnostics?.mode||'normal';
     const hidden=[];
     loadingReveal.update(time,loadingWorld,mobileGlobeOffset,reducedMotion);
-    if(loadingWorld){
+    if(loadingWorld||discoMode){
       hidden.push(detailedBorders,overviewBorders,municipalLines,ring);
       for(const batch of mapBatches)hidden.push(batch.object);
       stationGPU?.setDiagnosticHidden(true);
@@ -439,7 +440,7 @@ export function createGlobe(container, onSelect) {
     const visibility=[...new Set(hidden.filter(Boolean))].map(object=>[object,object.visible]);
     for(const [object] of visibility)object.visible=false;
     const normalEarthMaterial=earth.material;
-    if(loadingWorld||globeEntrance.completion<1)earth.material=entranceEarthMaterial;
+    if((loadingWorld||discoMode)||globeEntrance.completion<1)earth.material=entranceEarthMaterial;
     try{
       if(diagnosticMode!=='no-webgl')renderer.render(diagnosticMode==='empty'?emptyScene:scene,camera);
     }finally{
@@ -454,11 +455,12 @@ export function createGlobe(container, onSelect) {
   animate();
   return {
     setReducedEffects(value){reducedMotion=Boolean(value)||matchMedia('(prefers-reduced-motion: reduce)').matches;},
+    setDiscoMode(value){discoMode=Boolean(value);if(discoMode){rotationPaused=false;controls.autoRotate=!reducedMotion;controls.autoRotateSpeed=2.4;if(!discoReveal){discoReveal=true;loadingReveal.dispose();loadingReveal=createLoadingReveal(container,{text:'Under development',persistent:true,caution:false});}}else controls.autoRotateSpeed=.25;},
     ready,
     finishLoading(){loadingWorld=false;},
     setVisualProfile(profile){styleProfile=profile;effectScenes.reset(profile.style);stationGPU?.setVisualProfile(profile);background.setVisualProfile(profile);container.dataset.visualStyle=profile.style;},
     setStations,
-    select(s){mapAccent.reset();accentActive=false;applyMapPalette();if(active)scene.remove(active.root);selected=s.id;markActive();controls.autoRotate=false;if(Number.isFinite(s.lat)&&Number.isFinite(s.lon))camera.position.copy(direction(s.lat,s.lon).multiplyScalar(camera.position.length()));controls.update();},
+    select(s){mapAccent.reset();accentActive=false;applyMapPalette();if(active)scene.remove(active.root);selected=s.id;markActive();if(discoMode)return;controls.autoRotate=false;if(Number.isFinite(s.lat)&&Number.isFinite(s.lon))camera.position.copy(direction(s.lat,s.lon).multiplyScalar(camera.position.length()));controls.update();},
     setAmplitude(value){amplitude=value;},
     setAudioReaction(value){audioReaction={available:Boolean(value.available),signal:THREE.MathUtils.clamp(value.signal||0,0,1),rhythm:THREE.MathUtils.clamp(value.rhythm||0,0,1)};container.dataset.audioReaction=audioReaction.available?'current-stream':'genre-fallback';},
     setPlaying(value){playing=Boolean(value);if(!playing)amplitude=0;},

@@ -21,6 +21,7 @@ themeFavicon.update('#62efc5');
 window.addEventListener('pagehide',()=>themeFavicon.dispose());
 $('#genre-filter').replaceChildren(...Object.entries(STYLE_LABELS).sort(([a,labelA],[b,labelB])=>a==='all'?-1:b==='all'?1:labelA.localeCompare(labelB,'en')).map(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=value==='all'?'All styles':label;return option;}));
 document.body.dataset.embed=String(new URL(location.href).searchParams.get('embed')==='1');
+const underDevelopment=document.body.dataset.underDevelopment==='true';
 if(document.body.dataset.embed==='true'){
   const player=$('.player'),top=document.createElement('div'),bottom=document.createElement('div');
   top.className='embed-player-top';bottom.className='embed-player-bottom';
@@ -163,6 +164,7 @@ let favoriteIds;
 try { const stored = JSON.parse(localStorage.getItem('worldjam-favorites') || '[]'); favoriteIds = new Set(Array.isArray(stored) ? stored.filter(x => typeof x === 'string') : []); } catch { favoriteIds = new Set(); }
 let globe;
 try { globe = createGlobe($('#globe'), s => choose(s)); } catch (e) { console.error(e); setPlayerMessage('3D view is unavailable. Listen from the station list.'); }
+globe?.setDiscoMode?.(underDevelopment);
 let displayMode='night';
 setupSiteInfo(globe);
 const modeToggle=$('#mode-toggle');
@@ -341,6 +343,7 @@ async function playCurrent(token = session) {
 }
 function choose(s, autoplay = continuePlayback(document.body.dataset.playerState)) {
   if (stationExcluded(s)) return;
+  if(underDevelopment)autoplay=false;
   nowPlaying='';
   if(playerMessage==='Choose a station to share.')setPlayerMessage(document.body.dataset.loading==='true'?'Loading World Vibe':'');
   else if(document.body.dataset.loading!=='true')setPlayerMessage('');
@@ -449,6 +452,7 @@ $('#favorite').addEventListener('click', () => {
   saveFavorites();updateFavorites(); if (favoritesOnly) renderList();
 });
 $('#play').addEventListener('click', () => {
+  if(underDevelopment)return;
   if (!selected) { const s = filtered[0]; if (s) choose(s,true); else setPlayerMessage(document.body.dataset.loading==='true'?'Loading World Vibe':'No stations loaded'); return; }
   if (!audio || audio.error) { fallback = false; session++; createAudio(true, session); playCurrent(); }
   else if (audio.paused) playCurrent(); else audio.pause();

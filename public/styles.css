@@ -492,7 +492,7 @@ body[data-mode=day] #share-dialog .dialog-close:hover,body[data-mode=day] #share
 }
 body[data-embed=true] #mobile-info{display:none!important}
 
-footer{justify-content:space-between;gap:16px}.footer-links{flex-wrap:wrap;justify-content:flex-end}.site-copyright{white-space:nowrap}
+footer{justify-content:center;gap:16px}.footer-links{flex-wrap:wrap;justify-content:center}.site-copyright{white-space:nowrap}
 .footer-links a{color:var(--muted);font-size:10px;padding:8px 2px;text-decoration:none}.footer-links a:hover,.footer-links a:focus-visible{color:var(--accent);text-decoration:underline}
 
 /* Center the wordmark optically against its circular glyph at every header size. */
@@ -569,6 +569,11 @@ footer{align-items:center;padding:var(--player-half-height,40px) 16px 0}
 #station-info{font:inherit;color:inherit;text-align:left;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #station-dialog{max-height:85dvh;overflow:auto;overflow-wrap:anywhere}
 #report-selected{display:block;margin-top:16px;color:var(--accent)}
-header .footer-links{position:absolute;top:100%;left:50%;transform:translateX(-50%);justify-content:center;flex-wrap:nowrap;white-space:nowrap;gap:14px}
+/* Start page disco mode: the globe spins like a disco ball while the radio UI rests. */
+body[data-under-development=true] header,body[data-under-development=true] .player,body[data-under-development=true] footer{filter:blur(7px);pointer-events:none}
+body[data-under-development=true] #world-status{display:none}
+body[data-under-development=true] #globe canvas{filter:saturate(1.6) contrast(1.05);animation:disco-ball-hue 7s linear infinite}
+@keyframes disco-ball-hue{from{filter:hue-rotate(0deg) saturate(1.6) contrast(1.05)}to{filter:hue-rotate(360deg) saturate(1.6) contrast(1.05)}}
+@media(prefers-reduced-motion:reduce){body[data-under-development=true] #globe canvas{animation:none}}
 body[data-embed=true] #world-status{font-size:12px}
-@media(max-width:760px){header .footer-links{display:none}#world-status{font-size:12px;max-width:90%}}
+@media(max-width:760px){#world-status{font-size:12px;max-width:90%}}

@@ -7,7 +7,7 @@ import {readFile} from 'node:fs/promises';
 test('sphere designs are removed while loading tiles and country colors remain',async()=>{
   const globe=await readFile(new URL('../public/globe.js',import.meta.url),'utf8');
   assert.doesNotMatch(globe,/surfaceMode|loadingTiles|effectState.surface/);
-  assert.match(globe,/if\(loadingWorld\|\|globeEntrance.completion<1\)earth.material=entranceEarthMaterial/);
+  assert.match(globe,/if\(\(loadingWorld\|\|discoMode\)\|\|globeEntrance.completion<1\)earth.material=entranceEarthMaterial/);
   const regions=await readFile(new URL('../public/region-colors.js',import.meta.url),'utf8');
   assert.match(regions,/region.r\+time\*\.006/);
   assert.match(regions,/mix\(theme,palette,diversity\*\.85\)/);

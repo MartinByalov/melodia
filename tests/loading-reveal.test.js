@@ -29,3 +29,18 @@ test('loading letters resolve, respect reduced motion and disappear when ready',
     assert.ok(container.element.children[1].children.every(tile=>tile.style.opacity==='1'));
   }finally{globalThis.document=previous;}
 });
+
+test('under development notice persists in the loading style',()=>{
+  const previous=globalThis.document;
+  globalThis.document={createElement:()=>({style:{},children:[],setAttribute(){},append(child){this.children.push(child);},remove(){this.removed=true;}})};
+  try{
+    const container={append(element){this.element=element;}},reveal=createLoadingReveal(container,{text:'Under development',persistent:true,caution:false});
+    reveal.update(100,false,0,false);
+    assert.equal(container.element.hidden,false);
+    assert.equal(container.element.children[0].children.map(letter=>letter.children[0]?.textContent||' ').join(''),'Under development');
+    assert.equal(container.element.children.length,2);
+    reveal.update(3100,false,0,false);
+    assert.equal(container.element.hidden,false);
+    reveal.dispose();assert.equal(container.element.removed,true);
+  }finally{globalThis.document=previous;}
+});

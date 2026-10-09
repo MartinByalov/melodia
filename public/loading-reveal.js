@@ -1,5 +1,5 @@
-export function createLoadingReveal(container){
-  const text='Loading World Vibe',fragments=[];
+export function createLoadingReveal(container, options = {}) {
+  const text=options.text||'Loading World Vibe',persistent=Boolean(options.persistent),caution=options.caution!==false,fragments=[];
   const element=document.createElement('div');element.className='globe-loading-reveal';
   element.setAttribute('role','status');element.setAttribute('aria-label',text);
   const visual=document.createElement('span');visual.setAttribute('aria-hidden','true');element.append(visual);container.append(element);
@@ -20,17 +20,16 @@ export function createLoadingReveal(container){
     background.append(tile);fragments.push(tile);
   }
   element.append(background);
-  const caution=document.createElement('span');caution.className='loading-caution';caution.textContent='Caution\nFlashing Lights';caution.style.whiteSpace='pre-line';
-  element.append(caution);
-  element.setAttribute('aria-label',`${text}. Caution Flashing Lights`);
+  if(caution){const cautionElement=document.createElement('span');cautionElement.className='loading-caution';cautionElement.textContent='Caution\nFlashing Lights';cautionElement.style.whiteSpace='pre-line';element.append(cautionElement);}
+  element.setAttribute('aria-label',caution?`${text}. Caution Flashing Lights`:text);
   const order=Array.from({length:fragments.length},(_,i)=>i);
   for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
   const rank=[];order.forEach((index,i)=>rank[index]=i);
   let start=null,last=-1;
   return {
     update(time,loading,offset,reduced){
-      element.hidden=!loading;
-      if(!loading)return;
+      element.hidden=!(loading||persistent);
+      if(element.hidden)return;
       element.style.top=`calc(50% + ${offset}px)`;
       if(start===null)start=time;
       const tick=Math.floor((time-start)/75);
