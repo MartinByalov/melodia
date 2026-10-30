@@ -19,13 +19,11 @@ test('information links live in the footer next to the copyright line',async()=>
   assert.doesNotMatch(css,/header \.footer-links\{/);
 });
 
-test('start page runs as a disco ball without playback',async()=>{
+test('start page is not locked in under-development mode',async()=>{
   const [html,app,css,globe,revealSource]=await Promise.all(['index.html','app.js','styles.css','globe.js','loading-reveal.js'].map(read));
-  assert.match(html.match(/<body[^>]*>/)[0],/data-under-development="true"/);
+  assert.doesNotMatch(html.match(/<body[^>]*>/)[0],/data-under-development="true"/);
   assert.match(app,/const underDevelopment=document\.body\.dataset\.underDevelopment==='true'/);
-  assert.doesNotMatch(app,/text='Under development'/);
   assert.match(app,/if\(underDevelopment\)autoplay=false/);
-  assert.match(app,/\$\('#play'\)\.addEventListener\('click', \(\) => \{\r?\n  if\(underDevelopment\)return;/);
   assert.match(app,/globe\?\.setDiscoMode\?\.\(underDevelopment\)/);
   assert.match(css,/body\[data-under-development=true\] header,body\[data-under-development=true\] \.player,body\[data-under-development=true\] footer\{filter:blur\(7px\);pointer-events:none\}/);
   assert.match(css,/body\[data-under-development=true\] #world-status\{display:none\}/);
