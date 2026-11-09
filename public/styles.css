@@ -585,8 +585,8 @@ body[data-embed=true] #world-status{font-size:12px}
 @media(min-width:761px){.discover-panel{padding:19px}}
 @media(min-width:761px) and (max-width:1100px){.discover-panel{padding:14px}}
 /* The day/night button sits exactly above the directory panel's X button (panel gap + border + padding). */
-@media(min-width:1101px){header{padding-right:36px}}
-@media(min-width:1025px) and (max-width:1100px){header{padding-right:31px}}
+@media(min-width:1101px){body[data-mode] header{padding-right:36px}}
+@media(min-width:1025px) and (max-width:1100px){body[data-mode] header{padding-right:31px}}
 /* Artist information: title row like "Your rhythm", with the same square X as the directory panel. */
 #station-dialog .dialog-head,#favorites-dialog .dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px;margin:0 0 14px}
 #station-dialog .dialog-head h2,
