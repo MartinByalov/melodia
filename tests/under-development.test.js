@@ -11,7 +11,7 @@ test('information links live in the footer next to the copyright line',async()=>
   assert.ok(header,'header present');
   assert.ok(footer,'footer present');
   assert.ok(!header.includes('footer-links')&&!header.includes('data-reduce-effects'),'links moved out of the header');
-  for(const marker of ['data-info="about"','data-info="credits"','data-info="privacy"','href="broadcasters.html"','data-reduce-effects','copyright-year'])
+  for(const marker of ['data-info="about"','data-info="credits"','data-info="privacy"','data-info="requests"','data-reduce-effects','copyright-year'])
     assert.ok(footer.includes(marker),`footer holds ${marker}`);
   assert.ok(footer.indexOf('data-info="about"')<footer.indexOf('All rights reserved.'),'links sit on the copyright row');
   const css=await read('styles.css');

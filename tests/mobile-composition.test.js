@@ -51,7 +51,7 @@ test('mobile composition reuses controls in two rows and restores desktop on res
   assert.match(app,/row\.append\(genres,actions\)/);
   assert.match(app,/row\.prepend\(\$\('\.brand'\)\)/);
   assert.match(app,/actions\.append\(\$\('#catalog-toggle'\)\)/);
-  assert.match(app,/bottom\.append\(left,\$\('#favorite'\),\$\('#mode-toggle'\),\$\('#share'\),\$\('#mobile-info'\)\)/);
+  assert.match(app,/tools\.append\(\$\('#mode-toggle'\),\$\('#reduce-effects'\),\$\('#mobile-info'\),\$\('#share'\)\);bottom\.append\(left,\$\('#favorite'\),tools\)/);
   assert.match(app,/\$\('footer'\)\.after\(\$\('#mobile-info'\)\)/);
   assert.match(app,/searchRow\.prepend\(\$\('#favorites'\)\)/);
   assert.match(app,/headerRight\.prepend\(\$\('#catalog-toggle'\),\$\('#favorites'\),\$\('#mode-toggle'\)\)/);

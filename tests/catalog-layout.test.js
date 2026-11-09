@@ -36,8 +36,9 @@ test('favorite without selection is silent and day directory actions have hover 
     readFile(new URL('../public/styles.css',import.meta.url),'utf8')
   ]);
   assert.doesNotMatch(app,/Choose a station first/);
-  const handler=app.match(/\$\('#favorite'\)\.addEventListener\('click', \(\) => \{([\s\S]*?)\n\}\);/)[1];
-  vm.runInNewContext(`(()=>{${handler}})()`,{selected:null});
+  const handler=app.match(/\$\('#favorite'\)\.addEventListener\('click', async \(\) => \{([\s\S]*?)\n\}\);/)[1];
+  // Without a selected artist the handler returns before touching anything.
+  await vm.runInNewContext(`(async()=>{${handler}})()`,{selected:null});
   for(const id of ['clear-filters','random'])for(const state of ['hover','focus-visible']){
     assert.ok(css.includes(`body[data-mode=day] .discover-panel #${id}:${state}`));
   }
@@ -88,7 +89,7 @@ test('day selected menus and moon button use the dark background',async()=>{
   assert.match(styles,/body\[data-mode=day\] \.header-right #mode-toggle:focus-visible\{background:#151924;color:#fff/);
 });
 
-test('clear precedes surprise in filters and favorite edit occupies the All stations row',async()=>{
+test('clear precedes surprise in filters and favorite edit occupies the All artists row',async()=>{
   const source=await readFile(new URL('../public/index.html',import.meta.url),'utf8');
   const filters=source.match(/<div class="station-filters">([\s\S]*?)<\/div>/)[1];
   assert.match(filters,/id="clear-filters"/);
@@ -96,7 +97,7 @@ test('clear precedes surprise in filters and favorite edit occupies the All stat
   assert.ok(filters.indexOf('id="random"')>filters.indexOf('id="genre-filter"'));
   assert.ok(filters.indexOf('id="clear-filters"')>filters.indexOf('id="genre-filter"'));
   assert.ok(filters.indexOf('id="clear-filters"')<filters.indexOf('id="random"'));
-  assert.match(source,/<div class="catalog-actions"><button id="explore">All stations<\/button><button[^>]*id="favorite-edit"[^>]*hidden/);
+  assert.match(source,/<div class="catalog-actions"><button id="explore">All artists<\/button><button[^>]*id="favorites-share"[^>]*hidden[^>]*>[\s\S]*?<\/button><button[^>]*id="favorite-edit"[^>]*hidden/);
   assert.equal((source.match(/id="clear-filters"/g)||[]).length,1);
 });
 

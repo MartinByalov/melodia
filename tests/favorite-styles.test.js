@@ -9,8 +9,8 @@ test('header defaults return when favorites are empty or unavailable',()=>{
 
 test('favorite styles rank by station frequency, keep specific styles and ignore nonfavorites',()=>{
   const stations=[{id:'a',tags:'jazz'},{id:'b',tags:'jazz'},{id:'c',tags:'synthwave electronic'},{id:'d',tags:'classical'},{id:'e',tags:'techno'}];
-  assert.deepEqual(favoriteStyles(stations,new Set(['a','b','c','d'])),['jazz','classical','electronic','synthwave','lofi']);
-  assert.deepEqual(favoriteStyles(stations,new Set(['e'])),['techno','synthwave','lofi','jazz','rock']);
+  assert.deepEqual(favoriteStyles(stations,new Set(['a','b','c','d'])),['jazz','classical','electronic','synthwave','rock']);
+  assert.deepEqual(favoriteStyles(stations,new Set(['e'])),['techno','electronic','rock','hiphop','pop']);
   assert.deepEqual(favoriteStyles(stations,new Set()),DEFAULT_STYLES);
 });
 
@@ -24,7 +24,7 @@ test('header limits preferred styles to five and does not double-count duplicate
 });
 
 test('one preferred style fills the first slot and retains four defaults',()=>{
-  assert.deepEqual(favoriteStyles([{id:'a',tags:'classical'}],new Set(['a'])),['classical','synthwave','lofi','techno','jazz']);
+  assert.deepEqual(favoriteStyles([{id:'a',tags:'classical'}],new Set(['a'])),['classical','electronic','rock','hiphop','pop']);
 });
 
 test('favorite stations contribute secondary Pop and chart aliases to header styles',()=>{

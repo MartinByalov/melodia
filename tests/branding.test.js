@@ -12,5 +12,8 @@ test('melodia branding places the theme dot on i and preserves saved preferences
   assert.doesNotMatch(css,/\.brand-i-dot\{[^}]*translateX/);
   assert.doesNotMatch(html,/<span class="brand-light">jam/);
   assert.doesNotMatch(app+embed,/World Jam/);
-  assert.match(app,/worldjam-favorites/);
+  // Favorites are stored in this browser under the Melodia key, and nothing is left under the old name.
+  const favorites=await readFile(new URL('../public/favorites.js',import.meta.url),'utf8');
+  assert.match(favorites,/FAVORITES_KEY = 'melodia-favorites'/);
+  assert.doesNotMatch(app+favorites,/worldjam/);
 });

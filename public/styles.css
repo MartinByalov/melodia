@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-:root{--accent:#62efc5;--accent-rgb:98,239,197;--secondary:#9474ee;--bg:#080b14;--muted:#777e92;--border:rgba(181,197,220,.12)}
+:root{--accent:#62efc5;--accent-rgb:98,239,197;--secondary:#9474ee;--bg:#080b14;--muted:#aab4c6;--border:rgba(181,197,220,.12)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#eff1f8;font-family:Manrope,system-ui,sans-serif;overflow:hidden;font-size:13px}button,input,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:4px}button{border:0;background:none}a{color:inherit;text-decoration:none}.ambient{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 45% 55%,rgba(var(--accent-rgb),.075),transparent 44%),radial-gradient(ellipse at 35% 100%,#38215835,transparent 50%);transition:background 1.5s}header{height:90px;margin:0 42px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:relative;z-index:5}.brand{display:flex;gap:10px;align-items:center;font-size:26px;font-weight:800;letter-spacing:-1.4px}.brand-icon{font-size:43px;color:var(--accent);font-weight:400}.brand-light{font-weight:400}.brand i{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin:0 0 4px 4px}nav{display:flex;gap:32px;height:100%;align-items:center}.nav-item{height:100%;font-size:12px;color:var(--muted);position:relative}.nav-item.active{color:var(--accent)}.nav-item.active:after{content:'';position:absolute;bottom:-1px;height:2px;background:var(--accent);left:0;right:0}#fav-count{font-size:10px;background:#ffffff0c;padding:2px 6px;border-radius:4px;margin-left:5px}.header-right{display:flex;gap:9px;align-items:center;font-size:9px;letter-spacing:1.7px;color:#a7aabc}.live-dot{display:inline-block;width:5px;height:5px;flex-shrink:0;border-radius:50%;background:var(--accent);box-shadow:0 0 9px rgba(var(--accent-rgb),.4)}.icon-button{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;color:#a4a9bb;border-radius:8px;font-size:18px}.icon-button:hover{background:#ffffff0b;color:var(--accent)}.header-right .icon-button{font-size:12px;border:1px solid var(--border);border-radius:50%;width:25px;height:25px;margin-left:13px}main{height:calc(100dvh - 238px);position:relative;min-height:400px}.intro{position:absolute;z-index:2;top:54px;left:44px;pointer-events:none}.eyebrow{font-size:9px;letter-spacing:2px;color:var(--muted);font-weight:700}.intro .eyebrow{display:flex;align-items:center;gap:8px}.eyebrow>span{height:1px;width:19px;background:var(--accent)}h1{font-size:clamp(29px,3.1vw,49px);line-height:1.2;letter-spacing:-2px;margin:20px 0 16px;font-weight:500}h1 em{color:var(--accent);font-style:normal}p{color:var(--muted);line-height:1.8}.intro p{font-size:12px}.intro-stat{display:flex;gap:13px;align-items:center;margin-top:30px}.intro-stat strong{font-size:31px;font-weight:500;letter-spacing:-1px}.intro-stat>span{font-size:10px;line-height:1.7;color:#b8bdcb}.intro-stat small{color:var(--muted);font-size:9px}#globe{position:absolute;inset:0 320px 0 120px}#globe canvas{display:block;touch-action:none;width:100%;height:100%}#globe-status{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--accent);text-align:center;max-width:300px}#tooltip{position:absolute;background:#101621eb;border:1px solid rgba(var(--accent-rgb),.3);padding:10px 13px;pointer-events:none;border-radius:8px;display:none;font-size:11px;z-index:4;max-width:240px;box-shadow:0 8px 30px #0008}.globe-caption{position:absolute;bottom:18px;left:43%;transform:translateX(-50%);font-size:8px;color:var(--muted);letter-spacing:1.6px;white-space:nowrap}.tiny-cross{color:var(--accent);margin-right:12px}.divider{margin:0 10px;color:#42485d}.globe-controls{position:absolute;left:44px;bottom:24px;display:flex;border:1px solid var(--border);padding:4px;border-radius:9px;background:#0d111acc;gap:3px}.globe-controls .icon-button{width:29px;height:29px}.discover-panel{position:absolute;right:42px;top:35px;bottom:36px;width:298px;border:1px solid var(--border);border-radius:15px;background:linear-gradient(135deg,#151a25db,#0c101be8);padding:22px 19px 12px;backdrop-filter:blur(18px);display:flex;flex-direction:column;z-index:3;box-shadow:0 15px 60px #0002}.panel-top{display:flex;justify-content:space-between;align-items:center}.panel-top .eyebrow{font-size:7px;letter-spacing:1.5px}h2{font-size:17px;font-weight:600;letter-spacing:-.4px;margin:9px 0 19px}.live-badge{font-size:8px;color:var(--accent);background:rgba(var(--accent-rgb),.08);border:1px solid rgba(var(--accent-rgb),.2);border-radius:4px;padding:4px 6px;letter-spacing:1px;margin-top:-12px}.search-box{display:flex;align-items:center;gap:8px;border:1px solid var(--border);padding:9px 11px;background:#060b1566;border-radius:7px}.search-box>span{font-size:22px;color:var(--muted);line-height:1}.search-box input{width:100%;min-width:0;background:none;border:0;color:#e8ebf5;font:10px Manrope,system-ui;outline:none}.search-box input::placeholder{color:#686f81}.search-box kbd{font-size:10px;border:1px solid var(--border);padding:0 4px;color:#696f80;border-radius:3px}.filters{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 19px}.filters button{font-size:9px;color:#949bae;padding:6px 9px;border:1px solid var(--border);border-radius:5px;transition:.2s}.filters button:hover,.filters button.selected{color:var(--accent);background:rgba(var(--accent-rgb),.09);border-color:rgba(var(--accent-rgb),.35)}.list-heading{display:flex;justify-content:space-between;color:#72798d;font-size:8px;letter-spacing:.5px;margin-bottom:10px}.list-heading button{font-size:9px;color:#a8adbd;padding:0}.station-list{overflow:auto;flex:1;min-height:60px;scrollbar-width:thin;scrollbar-color:#30374b transparent}.station-row{width:100%;display:flex;align-items:center;text-align:left;gap:10px;padding:11px 6px;border-bottom:1px solid #ffffff05;border-radius:7px}.station-row:hover{background:#ffffff05}.station-row.active{background:rgba(var(--accent-rgb),.065)}.station-art{width:34px;height:34px;flex-shrink:0;border:1px solid #ffffff12;background:linear-gradient(140deg,hsl(var(--hue) 35% 28%),hsl(var(--hue) 30% 12%));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;color:hsl(var(--hue) 65% 75%)}.station-text{flex:1;min-width:0}.station-text strong{font-size:10px;font-weight:600;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.station-text small{font-size:8px;color:var(--muted);display:block;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.station-signal{color:var(--accent);font-size:15px}.source-note{font-size:8px;color:#757d90;border-top:1px solid var(--border);padding-top:12px;margin-top:9px;display:flex;align-items:center;gap:7px}.source-note .live-dot{width:4px;height:4px}.source-note button{margin-left:auto;font-size:16px}.world-label{position:absolute;bottom:28px;right:44px;font-size:8px;letter-spacing:1px;color:#a1a8bb;display:flex;gap:8px;align-items:center}.muted{color:var(--muted)}.player{position:relative;z-index:5;margin:10px auto 0;width:min(950px,calc(100% - 84px));height:88px;border:1px solid #ffffff15;background:linear-gradient(120deg,#1b202ccb,#10141fea);border-radius:16px;display:flex;align-items:center;padding:14px 18px;gap:18px;box-shadow:0 16px 55px #0004;backdrop-filter:blur(15px)}.album{position:relative;overflow:hidden;width:55px;height:55px;border-radius:9px;background:linear-gradient(145deg,#305b64,#162736 50%,#826294);border:1px solid #ffffff20;display:flex;align-items:center;justify-content:center;font-size:27px;color:#c9f5e7;flex-shrink:0}.album-lines{position:absolute;bottom:0;width:100%;height:20px;background:repeating-linear-gradient(0deg,transparent 0 3px,#88d9c922 3px 4px)}.track-info{width:235px;min-width:0}.track-label{display:flex;gap:6px;align-items:center;font-size:7px;letter-spacing:1px;color:var(--accent)}h3{font-size:12px;font-weight:600;margin:6px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track-info p{font-size:9px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.heart{font-size:23px;flex-shrink:0}.play-controls{display:flex;gap:12px;align-items:center}.play-controls .icon-button{font-size:16px}.play-button{width:44px;height:44px;background:var(--accent);color:#09231c;border-radius:50%;font-size:17px;box-shadow:0 0 24px rgba(var(--accent-rgb),.12);flex-shrink:0}.play-button:hover{filter:brightness(1.15)}.visualizer{height:28px;display:flex;gap:3px;align-items:center;flex:1;justify-content:center;min-width:42px}.visualizer i{display:block;width:2px;height:3px;border-radius:2px;background:var(--accent);opacity:.65;transition:height .08s}.volume{display:flex;align-items:center;gap:10px;font-size:12px;color:#929aac}.volume input{width:66px;height:3px;accent-color:var(--accent);cursor:pointer}.share-button{display:flex;align-items:center;gap:7px;font-size:10px;border-left:1px solid var(--border);padding:12px 0 12px 18px;color:#b0b7c8;white-space:nowrap}footer{height:48px;padding:0 43px;display:flex;align-items:center;justify-content:space-between;position:relative;font-size:8px;color:#5d6579;letter-spacing:.6px}footer>span:first-child{letter-spacing:0}.footer-dot{color:var(--accent);margin-left:8px;font-size:6px}#toast{position:fixed;bottom:158px;left:50%;transform:translateX(-50%);background:#19222df2;color:#e1f6ef;border:1px solid rgba(var(--accent-rgb),.3);border-radius:9px;padding:12px 20px;max-width:90vw;z-index:20;display:none;text-align:center;font-size:12px}dialog{color:#eef3f8;background:#101722;border:1px solid #354051;border-radius:18px;padding:32px;width:min(440px,90vw);box-shadow:0 30px 100px #000a}dialog::backdrop{background:#030711bb;backdrop-filter:blur(6px)}dialog h2{font-size:24px;margin:12px 0}dialog p{font-size:12px}dialog small{display:block;color:var(--muted);font-size:10px;line-height:1.8;margin-top:15px}.dialog-close{position:absolute;top:10px;right:12px;font-size:25px;color:var(--muted)}.share-links{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.share-links button,.copy-button{background:#ffffff08;border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:11px}.copy-button{width:100%;color:var(--accent);border-color:rgba(var(--accent-rgb),.3)}.empty{color:var(--muted);font-size:12px;padding:20px 5px;line-height:1.8}
 @media(min-width:1600px){.discover-panel{width:330px;right:60px;top:65px;bottom:75px}.intro{left:60px;top:80px}#globe{right:350px;left:150px}.player{margin-top:10px}header{margin:0 60px}}
 @media(max-width:1100px){header{margin:0 24px}.intro{left:24px;top:35px}h1{font-size:32px}.intro .eyebrow{font-size:7px;letter-spacing:1px}.discover-panel{right:24px;width:265px;padding:18px 14px}.intro p{font-size:10px}.intro-stat{margin-top:20px}#globe{left:30px;right:250px}.globe-controls{left:24px}.player{width:calc(100% - 48px);gap:12px}.track-info{width:210px}.visualizer{display:none}.world-label{right:26px}footer{padding:0 24px}footer>span:nth-child(2){display:none}}
@@ -29,8 +29,8 @@ footer{position:fixed;bottom:0;left:0;right:0;height:28px;pointer-events:none}
 @media(max-width:1000px){header{margin:0 18px;gap:12px}.header-genres{gap:12px}.header-right .nav-item{font-size:10px;padding:8px}.header-right #help{display:none}.brand-icon{display:none}.brand{font-size:20px}.player{gap:10px}.volume{width:95px}}
 @media(max-width:760px){body{overflow:hidden}header{height:106px;flex-wrap:wrap;align-content:center;gap:8px 12px;margin:0 16px}.brand{order:0}.header-right{order:1;margin-left:auto;display:flex}.header-genres{order:2;width:100%;height:38px;justify-content:space-between;gap:14px}.header-genres button{font-size:11px;padding:8px 0}main{height:calc(100dvh - 106px);padding:0;min-height:0}#globe{inset:0 0 110px;height:auto}.globe-caption{top:15px;left:16px;font-size:7px}.globe-controls{top:auto;left:auto;right:14px;bottom:155px}.globe-controls .icon-button{width:30px;height:30px}.world-label{display:flex;left:16px;bottom:116px;font-size:8px;max-width:260px}.discover-panel{position:absolute;top:14px;bottom:115px;right:12px;width:calc(100% - 24px);margin:0;max-height:none;padding:18px}.station-list{max-height:none;min-height:0}.player{bottom:16px;left:12px;transform:none;width:calc(100% - 24px);height:84px;padding:12px}.track-info{min-width:0}.track-info h3{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.volume{display:none}footer{display:none}}
 #mode-toggle{border:1px solid var(--border);border-radius:9px;padding:9px 10px;white-space:nowrap}
-body[data-mode=day]{background:#080b14;color:#eff1f8;--muted:#8e9ab0;--border:rgba(150,170,200,.18)}
-body[data-mode=day] header{background:#f8faff;color:#202a3b;border-radius:0 0 16px 16px;padding:0 18px;--muted:#59677b;--border:rgba(30,50,80,.18)}
+body[data-mode=day]{background:#080b14;color:#eff1f8;--muted:#aab4c6;--border:rgba(150,170,200,.18)}
+body[data-mode=day] header{background:#f8faff;color:#202a3b;border-radius:0 0 16px 16px;padding:0 18px;--muted:#475569;--border:rgba(30,50,80,.18)}
 body[data-mode=day] .player,body[data-mode=day] .discover-panel,body[data-mode=day] dialog{background:#f8fafff5;color:#202a3b;border-color:var(--border)}
 body[data-mode=day] .city-label{background:#f8faffdd;text-shadow:none;color:#243449}
 body[data-mode=day] .header-genres button,body[data-mode=day] .icon-button,body[data-mode=day] .header-right,body[data-mode=day] #station-rhythm{color:#526078}
@@ -84,7 +84,7 @@ body[data-playing=true] .ambient:after{opacity:var(--beat,.5);animation:disco-gl
 @media(prefers-reduced-motion:reduce){.pixel-dancer,.pixel-dancer path,.ambient:after{animation:none!important}}
 :root{--panel-surface:#151924;--panel-edge:#ffffff18}body[data-mode=day]{--panel-surface:#e6ebf1;--panel-edge:#bcc7d6}
 .player,header,.discover-panel,.globe-controls,body[data-mode=day] .player,body[data-mode=day] header,body[data-mode=day] .discover-panel,body[data-mode=day] .globe-controls{background:var(--panel-surface);border-color:var(--panel-edge)}
-.header-right button,.header-right #favorites{width:40px!important;min-width:40px!important;height:40px!important;flex:0 0 40px;border:1px solid var(--panel-edge);border-radius:9px;background:#ffffff05;font-size:21px!important;padding:0!important;position:relative}
+.header-right button,.header-right #favorites{width:34px!important;min-width:34px!important;height:34px!important;flex:0 0 34px;border:1px solid var(--panel-edge);border-radius:8px;background:#ffffff05;font-size:21px!important;padding:0!important;position:relative}
 .header-right #favorites{gap:0}#fav-count{position:absolute;right:3px;bottom:2px;font-size:9px;background:none;padding:0}
 .header-right button:hover{background:#ffffff12;color:var(--accent)}
 .globe-controls{flex-direction:column}body[data-catalog-open=true] .globe-controls{flex-direction:row}
@@ -143,8 +143,7 @@ body[data-mode=day] .player #favorite:hover,body[data-mode=day] .player #rotate:
 @keyframes star-twinkle{0%,100%{opacity:.24}28%{opacity:.78}48%{opacity:.38}72%{opacity:.95}}
 @media(prefers-reduced-motion:reduce){.star-layer{animation:none;opacity:.55;will-change:auto}}
 @media(max-width:760px){.player .play-controls{gap:3px}.player #previous,.player #next{display:inline-flex;width:24px;height:28px;flex-basis:24px}.player #favorite,.player #rotate{width:24px;flex-basis:24px}.player-left .track-info p{display:none}}
-/* Static decorative background: no full-screen animated compositor surfaces.
-   Keep the star positions and palette; spend the frame budget on the globe. */
+/* Static decorative background: no full-screen animated compositor surfaces, so the frame budget goes to the globe. */
 .ambient{transition:none}
 .ambient:after,body[data-playing=true] .ambient:after{animation:none;transition:none;transform:none;filter:none;will-change:auto;inset:0;background-size:100% 100%;opacity:0}
 body[data-playing=true] .ambient:after{opacity:.7}
@@ -162,6 +161,7 @@ body[data-mode=day] #share-dialog .share-links button,body[data-mode=day] #share
 body[data-mode=day] .dialog-close:hover,body[data-mode=day] .dialog-close:focus-visible{color:#21695d;background:#21695d20}
 .player #globe-status{position:static;inset:auto;transform:none;background:none;color:var(--icon-color);font-size:11px;font-weight:600;letter-spacing:.3px;text-align:left;width:100%;max-width:280px;min-width:0;flex:1;overflow:hidden;pointer-events:none;text-shadow:none}
 .player-moving-line span{display:inline-block;padding-left:100%;white-space:nowrap;animation:player-message-scroll 12s linear infinite}
+.player-moving-line [hidden]{display:none}#player-notice{color:var(--accent)}
 @keyframes player-message-scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @media(max-width:760px){.player #globe-status{font-size:9px;max-width:150px}.player-right .share-button{flex-shrink:0}}
 @media(prefers-reduced-motion:reduce){.player-moving-line span{animation:none;padding-left:0}.player #globe-status{white-space:normal;overflow-wrap:anywhere}.player-moving-line span{white-space:normal}}
@@ -567,7 +567,8 @@ footer{align-items:center;padding:var(--player-half-height,40px) 16px 0}
 #station-homepage{color:inherit;text-decoration:none}
 .player-moving-line:focus-within span,.player-moving-line:hover span{animation-play-state:paused}
 #station-info{font:inherit;color:inherit;text-align:left;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#station-dialog{max-height:85dvh;overflow:auto;overflow-wrap:anywhere}
+#station-dialog,
+#favorites-dialog{max-height:85dvh;overflow:auto;overflow-wrap:anywhere}
 #report-selected{display:block;margin-top:16px;color:var(--accent)}
 /* Start page disco mode: the globe spins like a disco ball while the radio UI rests. */
 body[data-under-development=true] header,body[data-under-development=true] .player,body[data-under-development=true] footer{filter:blur(7px);pointer-events:none}
@@ -577,3 +578,163 @@ body[data-under-development=true] #globe canvas{filter:saturate(1.6) contrast(1.
 @media(prefers-reduced-motion:reduce){body[data-under-development=true] #globe canvas{animation:none}}
 body[data-embed=true] #world-status{font-size:12px}
 @media(max-width:760px){#world-status{font-size:12px;max-width:90%}}
+/* Header actions share one size and icon size; the directory panel has equal padding on every side. */
+/* Same square as the X button of the directory panel (34px). */
+.header-right #catalog-toggle,.header-right #favorites,.header-right #mode-toggle{width:34px;height:34px;min-width:34px;flex:0 0 34px;border-radius:8px}
+.header-right #catalog-toggle svg,.header-right #favorites svg,.header-right #mode-toggle svg{width:20px;height:20px;display:block}
+@media(min-width:761px){.discover-panel{padding:19px}}
+@media(min-width:761px) and (max-width:1100px){.discover-panel{padding:14px}}
+/* The day/night button sits exactly above the directory panel's X button (panel gap + border + padding). */
+@media(min-width:1101px){header{padding-right:36px}}
+@media(min-width:1025px) and (max-width:1100px){header{padding-right:31px}}
+/* Artist information: title row like "Your rhythm", with the same square X as the directory panel. */
+#station-dialog .dialog-head,#favorites-dialog .dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px;margin:0 0 14px}
+#station-dialog .dialog-head h2,
+#favorites-dialog .dialog-head h2{margin:0;font-size:22px;line-height:1.25}
+#station-dialog .dialog-close,
+#favorites-dialog .dialog-close{position:static;width:34px;height:34px;min-width:34px;flex:0 0 34px;display:inline-flex;align-items:center;justify-content:center;padding:0;margin:0;border-radius:8px;font-size:22px;border:1px solid var(--panel-edge);color:#a4a9bb}
+#station-dialog .dialog-close:hover,#station-dialog .dialog-close:focus-visible,
+#favorites-dialog .dialog-close:hover,#favorites-dialog .dialog-close:focus-visible{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
+body[data-mode=day] #station-dialog .dialog-close,
+body[data-mode=day] #favorites-dialog .dialog-close{border-color:#64748b}
+body[data-mode=day] #station-dialog .dialog-close:hover,body[data-mode=day] #station-dialog .dialog-close:focus-visible,
+body[data-mode=day] #favorites-dialog .dialog-close:hover,body[data-mode=day] #favorites-dialog .dialog-close:focus-visible{color:#151924;background:#cbd5e1;border-color:#334155}
+#station-dialog #station-title,
+#favorites-dialog #station-title{margin:0 0 12px;font-size:20px;line-height:1.25}
+#station-dialog #station-facts p,
+#favorites-dialog #station-facts p{margin:0 0 9px;line-height:1.5}
+#station-dialog #station-facts a,
+#favorites-dialog #station-facts a{color:var(--accent);text-decoration:underline;word-break:break-all}
+body[data-mode=day] #station-dialog .dialog-head h2,body[data-mode=day] #station-dialog #station-title,
+body[data-mode=day] #favorites-dialog .dialog-head h2,body[data-mode=day] #favorites-dialog #station-title{color:#151924}
+@media(max-width:760px){#station-dialog .dialog-close,#favorites-dialog .dialog-close{width:44px;height:44px;min-width:44px;flex-basis:44px}}
+/* The info icon sits on the same line as the artist name. */
+#station-info{display:inline-flex;align-items:center;gap:5px}
+#station-info #track-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#station-info .info-icon{flex:0 0 auto;width:14px;height:14px;opacity:.85}
+/* The white status chip never wraps, so it cannot make the player taller. */
+#play-status{white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.track-label{min-width:0}
+/* Links styled as text inside the information dialog. */
+.text-link{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer}
+#info-content ul{margin:0 0 12px;padding-left:20px}#info-content li{margin-bottom:6px;color:#fff}
+/* Phones in portrait: no moving line (it only appears for a notice). */
+body[data-mobile-player=true] #station-homepage{display:none}
+body[data-mobile-player=true] #globe-status:not(:has(#player-notice:not([hidden]))){display:none}
+/* Phones held sideways: no footer, and the info button follows Share. */
+body[data-landscape-phone=true] footer .footer-links,body[data-landscape-phone=true] footer .site-copyright{display:none}
+body[data-landscape-phone=true] .player-right #mobile-info{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;flex:0 0 34px;padding:0;border:1px solid var(--panel-edge);border-radius:8px;font-size:20px;color:var(--icon-color)}
+body[data-landscape-phone=true] .player-right #mobile-info[aria-expanded=true]{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
+/* Phones held sideways: no live feed line, no intro text, a boxed Share, and a globe centred between header and player. */
+body[data-landscape-phone=true]{--player-bottom:10px}
+body[data-landscape-phone=true] #station-homepage{display:none}
+body[data-landscape-phone=true] #globe-status:not(:has(#player-notice:not([hidden]))){display:none}
+body[data-landscape-phone=true] .intro{left:16px;top:6px}
+body[data-landscape-phone=true] .intro h1{font-size:20px;line-height:1.12;margin-top:8px;letter-spacing:-.3px;word-spacing:.12em}
+body[data-landscape-phone=true] .intro .eyebrow{font-size:6px;letter-spacing:1px}
+/* The player is as wide as the header content, so the right edges of its last button and the day/night button line up. */
+body[data-landscape-phone=true] .player{width:calc(100% - 16px);margin:0;padding-left:7px;padding-right:7px}
+body[data-landscape-phone=true] #globe{inset:0 0 calc(var(--player-bottom) + var(--embed-player-height,88px));height:auto}
+body[data-landscape-phone=true] .player-right #share{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;flex:0 0 34px;padding:0;border:1px solid var(--panel-edge);border-radius:8px;color:var(--icon-color)}
+body[data-landscape-phone=true] .player-right #share[aria-expanded=true]{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
+/* Artist information is a full sheet above the player on phones, tablets and in embeds, like Share and Info. */
+@media(max-width:760px),(max-width:1024px),(max-width:1366px) and (pointer:coarse){
+  #station-dialog[open],
+  #favorites-dialog[open]{position:fixed;inset:0 0 var(--menu-player-offset,var(--embed-player-height,120px));margin:0;width:100%;max-width:none;height:calc(100dvh - var(--menu-player-offset,var(--embed-player-height,120px)));max-height:calc(100dvh - var(--menu-player-offset,var(--embed-player-height,120px)));min-height:0;border:0;border-radius:0;box-shadow:none;overflow-y:auto;z-index:10;padding:env(safe-area-inset-top,0px) 13px 24px 18px}
+  #station-dialog::backdrop,
+  #favorites-dialog::backdrop{inset:0 0 var(--menu-player-offset,var(--embed-player-height,120px));background:#030711bb;backdrop-filter:none;-webkit-backdrop-filter:none}
+  #station-dialog .dialog-head,
+  #favorites-dialog .dialog-head{min-height:58px;margin:0 0 4px}
+  #station-dialog .dialog-close,
+  #favorites-dialog .dialog-close{width:var(--mobile-square-size,40px);height:var(--mobile-square-size,40px);min-width:var(--mobile-square-size,40px);flex-basis:var(--mobile-square-size,40px)}
+}
+body[data-embed=true] #station-dialog[open],
+body[data-embed=true] #favorites-dialog[open]{position:fixed;inset:0 0 var(--menu-player-offset,var(--embed-player-height,120px));margin:0;width:100%;max-width:none;height:calc(100dvh - var(--menu-player-offset,var(--embed-player-height,120px)));max-height:calc(100dvh - var(--menu-player-offset,var(--embed-player-height,120px)));min-height:0;border:0;border-radius:0;box-shadow:none;overflow-y:auto;z-index:10;padding:env(safe-area-inset-top,0px) 13px 24px 18px}
+body[data-embed=true] #station-dialog::backdrop,
+body[data-embed=true] #favorites-dialog::backdrop{inset:0 0 var(--menu-player-offset,var(--embed-player-height,120px));background:#030711bb;backdrop-filter:none;-webkit-backdrop-filter:none}
+body[data-embed=true] #station-dialog .dialog-head,
+body[data-embed=true] #favorites-dialog .dialog-head{min-height:58px;margin:0 0 4px}
+body[data-embed=true] #station-dialog .dialog-close,
+body[data-embed=true] #favorites-dialog .dialog-close{width:var(--mobile-square-size,40px);height:var(--mobile-square-size,40px);min-width:var(--mobile-square-size,40px);flex-basis:var(--mobile-square-size,40px)}
+body[data-landscape-phone=true] .player-right{gap:10px}
+/* In portrait the search button is the same square as the buttons in the player. */
+@media(max-width:760px){.header-right #catalog-toggle{width:40px!important;height:40px!important;min-width:40px!important;max-height:40px}}
+/* Phones: header and player use the same side inset, so Share lines up with the search button at every width. */
+@media(max-width:760px){header{padding-left:12px;padding-right:12px}}
+/* Phones held sideways: intro centred between header and player, volume centred between Reset globe and Info, no footer line. */
+body[data-landscape-phone=true] .intro{top:0;bottom:calc(var(--player-bottom) + var(--embed-player-height,88px));display:flex;flex-direction:column;justify-content:center}
+body[data-landscape-phone=true] .player-right{margin-left:-16px;display:flex;align-items:center;gap:0}
+body[data-landscape-phone=true] .player-right .volume{margin:0 auto}
+body[data-landscape-phone=true] .player-right #share{margin-left:10px}
+body[data-landscape-phone=true] footer{border-top:0;box-shadow:none}
+/* Phones held sideways: the information tabs share the row of the X button, and the directory scrolls. */
+body[data-landscape-phone=true] #info-dialog[open]{padding:0 66px 12px}
+body[data-landscape-phone=true] #info-dialog .info-tabs{margin:16px 0 0;height:40px;flex-wrap:nowrap;justify-content:center;align-items:center;gap:6px}
+body[data-landscape-phone=true] #info-dialog .info-tabs button{padding:6px 10px;font-size:13px;min-height:36px;white-space:nowrap}
+body[data-landscape-phone=true] #info-content{padding-top:12px}
+body[data-landscape-phone=true] .discover-panel{overflow-y:auto}
+body[data-landscape-phone=true] .discover-panel .station-list{flex:0 0 auto;min-height:220px;overflow:visible}
+/* Reduce effects is a player button on phones, placed just before Info. */
+#reduce-effects{display:none}
+body[data-mobile-player=true] #reduce-effects,body[data-landscape-phone=true] #reduce-effects{display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--panel-edge);border-radius:8px;color:var(--icon-color)}
+#reduce-effects[aria-pressed=true]{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
+body[data-landscape-phone=true] .player-right #reduce-effects{width:34px;height:34px;min-width:34px;flex:0 0 34px}
+body[data-landscape-phone=true] .player-right #mobile-info{margin-left:10px}
+/* Phones in portrait: Favorites sits under Play, and the other four tools share the right half at one size. */
+:root{--tool-size:clamp(28px,calc((50vw - 50px) / 4),40px)}
+@media(max-width:760px){
+  body[data-mobile-player=true] .mobile-player-bottom{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:8px}
+  body[data-mobile-player=true] .mobile-player-bottom #favorite{grid-column:2}
+  body[data-mobile-player=true] .mobile-tools{grid-column:3;justify-self:end;display:flex;align-items:center;gap:6px}
+  body[data-mobile-player=true] .mobile-player-bottom #favorite,body[data-mobile-player=true] .mobile-tools button,.header-right #catalog-toggle{width:var(--tool-size)!important;height:var(--tool-size)!important;min-width:var(--tool-size)!important;max-width:var(--tool-size)!important;min-height:var(--tool-size)!important;max-height:var(--tool-size)!important;flex:0 0 var(--tool-size)}
+  body[data-mobile-player=true] .mobile-tools button{display:inline-flex;align-items:center;justify-content:center;padding:0}
+  body[data-mobile-player=true] .mobile-tools svg{width:calc(var(--tool-size) * .55);height:calc(var(--tool-size) * .55)}
+}
+/* Full-screen sections: the X button sits exactly where the header's last button is (search in portrait, day/night sideways). */
+@media(max-width:760px){
+  body[data-mobile-player=true] .discover-panel{border-width:0}
+  body[data-mobile-player=true] #catalog-close,body[data-mobile-player=true] #info-dialog .dialog-close,body[data-mobile-player=true] #share-dialog .dialog-close,body[data-mobile-player=true] #station-dialog .dialog-close,body[data-mobile-player=true] #favorites-dialog .dialog-close{width:var(--tool-size)!important;height:var(--tool-size)!important;min-width:var(--tool-size)!important;flex-basis:var(--tool-size)!important}
+  body[data-mobile-player=true] #info-dialog .dialog-close,body[data-mobile-player=true] #share-dialog .dialog-close{top:calc((58px - var(--tool-size)) / 2 + env(safe-area-inset-top,0px));right:12px}
+  body[data-mobile-player=true] #station-dialog[open],
+  body[data-mobile-player=true] #favorites-dialog[open]{padding-right:12px}
+}
+body[data-landscape-phone=true] .discover-panel{border-width:0;padding:0 16px 12px}
+body[data-landscape-phone=true] .discover-panel .panel-top{height:72px;min-height:72px;flex:0 0 72px}
+body[data-landscape-phone=true] #catalog-close,body[data-landscape-phone=true] #info-dialog .dialog-close,body[data-landscape-phone=true] #share-dialog .dialog-close,body[data-landscape-phone=true] #station-dialog .dialog-close,body[data-landscape-phone=true] #favorites-dialog .dialog-close{width:34px;height:34px;min-width:34px;flex:0 0 34px}
+body[data-landscape-phone=true] #info-dialog .dialog-close,body[data-landscape-phone=true] #share-dialog .dialog-close{top:19px;right:16px}
+body[data-landscape-phone=true] #station-dialog[open],
+body[data-landscape-phone=true] #favorites-dialog[open]{padding:0 16px 24px}
+body[data-landscape-phone=true] #station-dialog .dialog-head,
+body[data-landscape-phone=true] #favorites-dialog .dialog-head{min-height:72px;margin:0}
+body[data-landscape-phone=true] .volume #mute{padding:0}
+/* The copyright line stays visible at the bottom of the information dialog while its text scrolls. */
+#info-dialog .info-copyright{position:sticky;bottom:0;padding:6px 0 2px;background:linear-gradient(to top,#080e1b 65%,transparent)}
+/* The volume group is as wide as its contents, so centring it centres what is visible. */
+body[data-landscape-phone=true] .player-right .volume{width:auto;flex:0 0 auto}
+/* Directory X in portrait and sideways matches the other full-screen X buttons. */
+@media(max-width:760px){body[data-mobile-player=true] #catalog-close{min-height:var(--tool-size)!important;max-height:var(--tool-size)!important}}
+body:not([data-embed=true])[data-landscape-phone=true][data-catalog-open=true] .discover-panel{padding:0 16px 12px}
+/* Save your favorites: share button in the directory and the dialog contents. */
+.discover-panel #favorites-share{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;border:1px solid var(--panel-edge);border-radius:8px;margin-left:auto;position:relative}
+.discover-panel #favorites-share[hidden]{display:none}
+.discover-panel #favorites-share:hover,.discover-panel #favorites-share:focus-visible{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
+.discover-panel #favorites-share + #favorite-edit{margin-left:8px}
+@media(max-width:760px){.discover-panel #favorites-share{width:44px;height:44px;flex-basis:44px}}
+#favorites-dialog .fav-actions{display:grid;gap:10px;margin:14px 0}
+#favorites-dialog .copy-button{width:100%;min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center}
+#favorites-dialog .copy-button:disabled{opacity:.4;cursor:default}
+#favorites-dialog .file-button{cursor:pointer}
+.fav-link{width:100%;margin:0 0 12px;padding:9px 10px;border:1px solid var(--panel-edge);border-radius:8px;background:#0b111c;color:#fff;font-size:12px}
+.qr-box{width:min(260px,100%);margin:12px auto;padding:10px;border-radius:12px;background:#fff;line-height:0}
+.qr-box svg{display:block;width:100%;height:auto}
+.fav-note{margin:8px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}
+/* Readable text: grey text is brighter, and accent-colored text is mixed toward white (night) or black (day). */
+:root{--accent-text:color-mix(in srgb,var(--accent) 50%,#fff)}
+body[data-mode=day]{--accent-text:color-mix(in srgb,var(--accent) 65%,#000)}
+body[data-mode=day] dialog{--muted:#475569}
+.copy-button,#station-facts a,.text-link,#player-notice,#info-content a{color:var(--accent-text)}
+#favorites-dialog .copy-button,#station-dialog .copy-button{color:#fff;border-color:rgba(var(--accent-rgb),.55)}
+body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-dialog .copy-button{color:#151924}
+/* On desktop the X of these dialogs sits in the corner, exactly like Share and Info. */
+#station-dialog .dialog-head h2,#favorites-dialog .dialog-head h2{padding-right:48px}
+@media(min-width:1025px){body:not([data-embed=true]) #station-dialog .dialog-close,body:not([data-embed=true]) #favorites-dialog .dialog-close{position:absolute;top:10px;right:12px}}

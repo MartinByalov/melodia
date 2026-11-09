@@ -7,10 +7,11 @@ const stations=[{id:'lofi',tags:'lo-fi,chill'},{id:'jazz',tags:'jazz'},{id:'pop'
 test('startup selects the first available favorite in saved order',()=>{
   assert.equal(startupStation(stations,new Set(['missing','pop','jazz'])),stations[2]);
 });
-test('startup falls back to Lo-Fi when favorites are empty or unavailable',()=>{
+test('startup falls back to Lo-Fi, then to the top-ranked artist, when favorites are empty or unavailable',()=>{
   assert.equal(startupStation(stations,new Set()),stations[0]);
   assert.equal(startupStation(stations,new Set(['missing'])),stations[0]);
-  assert.equal(startupStation([{id:'rock',tags:'rock'}],new Set()),null);
+  const rock={id:'rock',tags:'rock'};
+  assert.equal(startupStation([rock,{id:'other',tags:'pop'}],new Set()),rock);
   assert.equal(startupStation([],new Set()),null);
 });
 test('startup waits for loading, preserves explicit links and does not autoplay embed',async()=>{
@@ -18,7 +19,7 @@ test('startup waits for loading, preserves explicit links and does not autoplay 
   const startup=source.slice(source.indexOf('async function startWorld()'));
   assert.ok(startup.indexOf('await Promise.all')<startup.indexOf('startupStation(stations,favoriteIds)'));
   assert.match(startup,/dataset\.embed!=='true'/);
-  assert.match(startup,/searchParams\.has\('station'\)/);
+  assert.match(startup,/searchParams\.has\('id'\)/);
   assert.doesNotMatch(startup,/createAudio\(|playCurrent\(/);
   assert.match(startup,/if\(initial\)choose\(initial,false\)/);
 });

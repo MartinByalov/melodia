@@ -59,7 +59,7 @@ test('server serves the site but never exposes repository files or tools by defa
         if(match){clearTimeout(timer);resolve(`http://127.0.0.1:${match[1]}`);}
       });
     });
-    for(const resource of ['/','/app.js','/map-worker.js','/vendor/hls.mjs','/assets/favicon.svg']){
+    for(const resource of ['/','/app.js','/map-worker.js','/music.js','/assets/favicon.svg']){
       const response=await fetch(base+resource);assert.equal(response.status,200,resource);
       await response.arrayBuffer();
     }

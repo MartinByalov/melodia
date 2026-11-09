@@ -1,5 +1,4 @@
-// Reviewed removals. Add the station UUID here before publishing a takedown.
-// Block hosts only when ALL streams on that host must be excluded.
+// Reviewed removals: add the artist ID here before publishing a takedown, and block hosts only when ALL streams on that host must go.
 export const excludedStationIds = new Set([]);
 export const excludedStreamHosts = new Set([]);
 

@@ -46,9 +46,7 @@ export function buildMapBatch(chunks, maxTextureSize=4096) {
   return {ranges,nodes,root,textureData,width,height,segmentCount,maxRadius};
 }
 
-// Necessary (not sufficient) condition for visibility above an opaque unit sphere.
-// Expanding the endpoint radius by the line-cap margin deliberately retains
-// uncertain horizon segments; only definitely hidden BVH nodes are removed.
+// Necessary (not sufficient) visibility test above an opaque unit sphere: the line-cap margin keeps uncertain horizon segments and only hidden BVH nodes are removed.
 export function mapHorizonConstant(distance, radius) {
   return -(1-Math.sqrt(Math.max(0,(distance*distance-1)*(radius*radius-1))));
 }

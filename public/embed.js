@@ -1,7 +1,7 @@
 export function embedUrl(pageUrl,station){
   const url=new URL(pageUrl);
   if(!['https:','http:'].includes(url.protocol))throw new Error('Unsupported embed URL');
-  url.search='';url.hash='';url.searchParams.set('station',station.id);
+  url.search='';url.hash='';url.searchParams.set('id',station.id);
   url.searchParams.set('embed','1');
   return url.href;
 }

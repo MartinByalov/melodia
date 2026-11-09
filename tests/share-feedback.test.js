@@ -27,16 +27,14 @@ test('coffee haptic feedback is optional and does not prevent the existing actio
   const app=await readFile(new URL('../public/app.js',import.meta.url),'utf8');
   assert.match(app,/navigator\.vibrate\?\.\(12\)/);
   assert.match(app,/catch\{\/\* Optional feedback must not block the button\. \*\/\}/);
-  assert.match(app,/\$\('#help'\)\.click\(\)/);
-  assert.match(app,/\$\('#help'\)\.addEventListener\('click', \(\) => \{ window\.open\('https:\/\/ko-fi\.com\/eon','_blank','noopener,noreferrer'\); \}\)/);
+  assert.match(app,/\$\('#share-coffee'\)\.addEventListener\('click',\(\)=>\{[\s\S]*?window\.open\('https:\/\/ko-fi\.com\/eon','_blank','noopener,noreferrer'\);\s*\}\);/);
+  assert.doesNotMatch(app,/\$\('#help'\)/);
   assert.doesNotMatch(app,/Support link is not configured yet/);
 });
 
-test('header coffee keeps its icon and square shape with blue hover in both themes',async()=>{
-  const [html,css]=await Promise.all(['index.html','styles.css'].map(file=>readFile(new URL('../public/'+file,import.meta.url),'utf8')));
-  assert.match(html,/<button class="icon-button coffee-button" id="help"[^>]*aria-label="Buy me a Coffee"[^>]*><svg[^>]*>[\s\S]*?<\/svg><\/button>/);
-  assert.match(css,/\.header-right #help\{box-sizing:border-box;width:40px!important;height:40px!important;min-width:40px!important;flex:0 0 40px/);
-  assert.match(css,/\.header-right #help:hover,\.header-right #help:focus-visible\{background:#299bd0;color:#fff\}/);
-  for(const mode of ['day','night'])assert.match(css,new RegExp(`body\\[data-mode=${mode}\\] \\.header-right #help:hover,body\\[data-mode=${mode}\\] \\.header-right #help:focus-visible\\{background:#299bd0;color:#fff\\}`));
-  assert.doesNotMatch(css,/#help[^\n]*background:#ffce54/);
+test('the header has no coffee button; support stays in About and Share',async()=>{
+  const [html,info]=await Promise.all(['index.html','site-info.js'].map(file=>readFile(new URL('../public/'+file,import.meta.url),'utf8')));
+  assert.doesNotMatch(html,/id="help"|coffee-button/);
+  assert.match(html,/id="share-coffee"/);
+  assert.match(info,/id="about-coffee"/);
 });

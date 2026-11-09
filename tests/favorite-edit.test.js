@@ -21,6 +21,6 @@ test('removal uses a sibling button, persists favorites and leaves playback unto
   assert.match(app,/if\(favoritesOnly&&favoriteRemovalMode\)/);
   assert.match(app,/item\.append\(row,remove\)/);
   const removal=app.match(/remove\.addEventListener\('click',\(\)=>\{([\s\S]*?)\n      \}\);/)[1];
-  assert.match(removal,/favoriteIds\.delete\(s\.id\);saveFavorites\(\);updateFavorites\(\);renderList\(limit\)/);
+  assert.match(removal,/favorites=removeFavorite\(favorites,f\.t\);saveFavorites\(\);updateFavorites\(\);renderList\(limit\)/);
   assert.doesNotMatch(removal,/choose\(|resetAudio|pause\(/);
 });

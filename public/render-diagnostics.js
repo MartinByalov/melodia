@@ -12,11 +12,11 @@ export function createRenderDiagnostics(container, renderer) {
   wrapper.append(panel);document.body.append(wrapper);
   const controls=document.createElement('div'),select=document.createElement('select'),button=document.createElement('button'),results=document.createElement('pre');
   controls.style.cssText='display:flex;gap:8px;margin-top:8px';
-  const modes=[['normal','Всичко'],['no-css','Без CSS ефекти'],['no-atmosphere','Без атмосфера'],['no-stations','Без точки/rays'],['no-borders','Без граници'],['empty','Само WebGL clear'],['no-webgl','Без WebGL']];
+  const modes=[['normal','Everything'],['no-css','No CSS effects'],['no-atmosphere','No atmosphere'],['no-stations','No points or rays'],['no-borders','No borders'],['empty','WebGL clear only'],['no-webgl','No WebGL']];
   for(const [value,label] of modes){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);}
   controls.style.flexWrap='wrap';
   select.style.cssText='background:#141924;color:white;pointer-events:auto';
-  button.id='render-autotest';button.type='button';button.textContent='▶ Автотест ~50 s';
+  button.id='render-autotest';button.type='button';button.textContent='▶ Autotest ~50 s';
   button.style.cssText='background:#234538;color:white;padding:8px 12px;border:1px solid #62efc5;border-radius:6px;cursor:pointer;pointer-events:auto;min-height:36px';
   controls.append(select,button);wrapper.append(controls,results);
   const isolationStyle=document.createElement('style');document.head.append(isolationStyle);
@@ -55,7 +55,7 @@ export function createRenderDiagnostics(container, renderer) {
       samples.sort((a,b)=>a-b);
       const mean=samples.reduce((sum,n)=>sum+n,0)/samples.length;
       const p95=samples[Math.floor(samples.length*.95)],max=samples.at(-1);
-      panel.textContent=`Рендер: BVH batch + horizon / native RAF\nРежим: ${mode} | ${mode==='no-webgl'?'RAF':'Render'} FPS: ${(1000/mean).toFixed(1)} | p95: ${p95.toFixed(1)} ms | max: ${max.toFixed(1)} ms\nDraw calls: ${renderer.info.render.calls} | triangles: ${renderer.info.render.triangles}\nCPU update: ${container.dataset.updateMs||'—'} ms | submit: ${container.dataset.renderMs||'—'} ms\nCanvas: ${gl.drawingBufferWidth} × ${gl.drawingBufferHeight} | DPR: ${devicePixelRatio}\nPlaying: ${container.dataset.playing} | rays: ${container.dataset.rays}\nGPU: ${gpu}`;
+      panel.textContent=`Render: BVH batch + horizon / native RAF\nMode: ${mode} | ${mode==='no-webgl'?'RAF':'Render'} FPS: ${(1000/mean).toFixed(1)} | p95: ${p95.toFixed(1)} ms | max: ${max.toFixed(1)} ms\nDraw calls: ${renderer.info.render.calls} | triangles: ${renderer.info.render.triangles}\nCPU update: ${container.dataset.updateMs||'—'} ms | submit: ${container.dataset.renderMs||'—'} ms\nCanvas: ${gl.drawingBufferWidth} × ${gl.drawingBufferHeight} | DPR: ${devicePixelRatio}\nPlaying: ${container.dataset.playing} | rays: ${container.dataset.rays}\nGPU: ${gpu}`;
       samples.length=0;windowStart=now;
     },
     reset(){previous=0;samples.length=0;windowStart=performance.now();},

@@ -23,8 +23,14 @@ test('footer information stays in dialogs with credits and copyright',async()=>{
   assert.ok(dialog);
   assert.ok(dialog.indexOf('<nav class="info-tabs"')<dialog.indexOf('<div id="info-content"'));
   assert.doesNotMatch(dialog,/<h2/);
-  assert.doesNotMatch(dialog,/data-reduce-effects/);
+  // Reduce effects is a text button in the footer and an icon button in the player on phones, never in the dialog.
   assert.match(html,/<footer>[\s\S]*?data-reduce-effects[\s\S]*?<\/footer>/);
+  assert.doesNotMatch(dialog,/data-reduce-effects/);
+  assert.match(html,/<button id="reduce-effects" class="icon-button" type="button" data-reduce-effects data-icon-only/);
+  const css=await readFile(new URL('../public/styles.css',import.meta.url),'utf8');
+  assert.match(css,/#reduce-effects\{display:none\}/);
+  assert.match(css,/body\[data-mobile-player=true\] #reduce-effects,body\[data-landscape-phone=true\] #reduce-effects\{display:inline-flex/);
+  for(const key of ['about','credits','privacy','requests'])assert.ok(dialog.includes(`data-info="${key}"`));
 });
 
 test('Share and Info switch both ways without blocking mobile player controls',()=>{
@@ -52,10 +58,12 @@ test('Share and Info switch both ways without blocking mobile player controls',(
 test('removed feedback and artwork credits do not remain in site information',async()=>{
   const [html,source,css]=await Promise.all(['index.html','site-info.js','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
   assert.doesNotMatch(html,/data-info="feedback"|>Feedback</);
-  assert.doesNotMatch(source,/feedback|mailto:|byalov\.v\.martin@gmail\.com/i);
+  assert.doesNotMatch(source,/feedback|byalov\.v\.martin@gmail\.com/i);
+  assert.doesNotMatch(source,/mailto:(?!contact@melodia\.lol)/);
+  assert.doesNotMatch(source,/gmail\.com/);
   assert.doesNotMatch(source,/Simple Icons|support button artwork|Brand marks/);
   assert.doesNotMatch(css,/#feedback-text|#email-feedback|#copy-feedback/);
-  for(const credit of ['Radio Browser','OpenStreetMap contributors','Natural Earth','Three.js','HLS.js'])assert.ok(source.includes(credit));
+  for(const credit of ['Jamendo','GeoNames','OpenStreetMap contributors','Natural Earth','Three.js','qrcode-generator'])assert.ok(source.includes(credit));
 });
 
 test('Sources & Credits centers unbulleted entries with names above descriptions',async()=>{
@@ -63,10 +71,10 @@ test('Sources & Credits centers unbulleted entries with names above descriptions
   const credits=source.match(/credits:\{title:'Sources & Credits',html:'([^']*)'\}/)?.[1];
   assert.ok(credits);
   assert.doesNotMatch(credits,/<ul>|<li>/);
-  assert.equal((credits.match(/class="credit-entry"/g)||[]).length,5);
-  assert.match(credits,/class="credit-name"[^>]*>Radio Browser<\/a><p>Community-maintained station directory/);
+  assert.equal((credits.match(/class="credit-entry"/g)||[]).length,6);
+  assert.match(credits,/class="credit-name"[^>]*>Jamendo<\/a><p>Independent artists, their locations and music/);
   assert.match(credits,/class="credit-name"[^>]*>© OpenStreetMap contributors<\/a><p>Local administrative boundaries/);
-  for(const url of ['https://www.radio-browser.info/','https://www.openstreetmap.org/copyright','https://www.naturalearthdata.com/about/terms-of-use/','vendor/LICENSE','vendor/hls-LICENSE.txt'])assert.ok(credits.includes(url));
+  for(const url of ['https://www.jamendo.com/','https://www.geonames.org/','https://www.openstreetmap.org/copyright','https://www.naturalearthdata.com/about/terms-of-use/','vendor/LICENSE','vendor/qrcode-LICENSE.txt'])assert.ok(credits.includes(url));
   assert.match(css,/#info-dialog #info-content\[data-section=credits\]\{text-align:center;justify-content:flex-start;padding-top:16px\}/);
   assert.match(css,/#info-dialog \.credit-name\{display:block;font-weight:700\}/);
 });
@@ -83,23 +91,23 @@ test('information dialog has a star field and scroll-safe vertically centered co
 
 test('information prose uses full sentences rather than semicolons',async()=>{
   const source=await readFile(new URL('../public/site-info.js',import.meta.url),'utf8');
-  const sections=[...source.matchAll(/(?:about|credits|privacy):\{title:'[^']+',html:'([^']*)'\}/g)];
-  assert.equal(sections.length,3);
+  const sections=[...source.matchAll(/(?:about|credits|privacy|requests):\{title:'[^']+',html:'([^']*)'\}/g)];
+  assert.equal(sections.length,4);
   for(const [,html] of sections)assert.doesNotMatch(html.replace(/<[^>]+>/g,''),/;/);
   for(const [,message] of source.matchAll(/status\.textContent='([^']*)'/g))assert.doesNotMatch(message,/;/);
 });
 
 test('About places support after its prose and copyright in a separate bottom row',async()=>{
   const [source,css]=await Promise.all(['site-info.js','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
-  assert.match(source,/their respective owners\.<\/p><span class="about-support-divider" aria-hidden="true"><\/span><button id="about-coffee" class="coffee-link" type="button"><span class="coffee-cup" aria-hidden="true">♥<\/span>Buy me a coffee!<\/button>/);
+  assert.match(source,/shown with each track\.<\/p><span class="about-support-divider" aria-hidden="true"><\/span><button id="about-coffee" class="coffee-link" type="button"><span class="coffee-cup" aria-hidden="true">♥<\/span>Buy me a coffee!<\/button>/);
   assert.match(css,/#info-dialog #about-coffee\{align-self:center;flex-shrink:0;margin:0\}/);
   assert.match(source,/content\.dataset\.section=opener\.dataset\.info/);
   assert.match(source,/support\.append\(content\.querySelector\('#about-coffee'\)\);content\.append\(support\)/);
   assert.match(css,/#info-dialog #info-content\[data-section=about\]\{text-align:center/);
   assert.match(css,/#info-dialog \.about-support\{flex:1 0 88px;display:flex;align-items:center;justify-content:center\}/);
   assert.match(css,/#info-dialog \.info-copyright\{flex-shrink:0;margin:0;/);
-  assert.match(source,/<p>One planet\.<br>Infinite vibes\.<br>Discover live radio/);
-  assert.match(source,/<p class="about-project">Melodia is an independent creative project\.<br>Its original concept[^<]*<br>Radio broadcasts/);
+  assert.match(source,/<p>One planet\.<br>Infinite vibes\.<br>Discover independent music/);
+  assert.match(source,/<p class="about-project">Melodia is an independent creative project\.<br>Its original concept[^<]*<br>The music belongs/);
   assert.match(css,/#info-dialog \.about-support-divider\{align-self:center;width:36px;height:1px;flex-shrink:0;margin:20px 0;background:#fff\}/);
   assert.match(css,/#info-dialog \.about-project\{margin-bottom:0;flex-shrink:0\}/);
   assert.match(css,/\.coffee-link,#info-dialog #about-coffee,#share-dialog #share-coffee\{[^}]*background:#299bd0;color:#fff/);
@@ -109,7 +117,7 @@ test('About places support after its prose and copyright in a separate bottom ro
   assert.match(source,/dialog\.append\(copyright\)/);
   assert.doesNotMatch(source,/content\.append\(copyright\)/);
   assert.match(source,/copyright\.hidden=opener\.dataset\.info!=='about'/);
-  assert.match(source,/closest\('#about-coffee'\)\)document\.querySelector\('#help'\)\.click\(\)/);
+  assert.match(source,/closest\('#about-coffee'\)\)window\.open\('https:\/\/ko-fi\.com\/eon'/);
   assert.match(css,/#info-dialog \.info-copyright\{flex-shrink:0;[^}]*text-align:center/);
   assert.match(css,/#info-dialog \.dialog-close\{[^}]*border:1px solid var\(--panel-edge,#475569\);border-radius:8px/);
   assert.match(css,/#info-dialog \.dialog-close,#share-dialog \.dialog-close\{top:calc\(env\(safe-area-inset-top,0px\) \+ 1px \+ \(58px - var\(--mobile-square-size,40px\)\)\/2\);right:13px;[^}]*width:var\(--mobile-square-size,40px\)/);
@@ -133,10 +141,11 @@ test('selected information button keeps its accent color until another section i
   assert.match(css,/#info-dialog \.info-tabs button\[aria-pressed=true\]\{color:var\(--accent\);border-color:var\(--accent\);background:rgba\(var\(--accent-rgb\),\.15\)\}/);
 });
 
-test('mobile information opens from the player after Share instead of floating over the header',async()=>{
+test('mobile information opens from the player, just before Share, instead of floating over the header',async()=>{
   const [html,css,app]=await Promise.all(['index.html','styles.css','app.js'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
   assert.match(html,/<button id="mobile-info"[^>]*data-info="about"/);
-  assert.match(app,/bottom\.append\(left,\$\('#favorite'\),\$\('#mode-toggle'\),\$\('#share'\),\$\('#mobile-info'\)\)/);
+  assert.match(app,/tools\.append\(\$\('#mode-toggle'\),\$\('#reduce-effects'\),\$\('#mobile-info'\),\$\('#share'\)\);bottom\.append\(left,\$\('#favorite'\),tools\)/);
+  assert.match(app,/right\.append\(\$\('#globe-status'\),\$\('\.volume'\),\$\('#reduce-effects'\),\$\('#mobile-info'\),\$\('#share'\)\)/);
   assert.match(css,/body\[data-mobile-player=true\] \.mobile-player-bottom #mobile-info\{display:inline-flex/);
   assert.doesNotMatch(css,/#mobile-info\{display:flex;position:fixed/);
   assert.doesNotMatch(css,/body\[data-catalog-open=true\] #mobile-info\{display:none\}/);

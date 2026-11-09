@@ -1,6 +1,6 @@
 import {styleScores} from './visual-styles.js';
 
-export const DEFAULT_STYLES = ['synthwave', 'lofi', 'techno', 'jazz', 'rock'];
+export const DEFAULT_STYLES = ['electronic', 'rock', 'hiphop', 'pop', 'ambient'];
 export const STYLE_LABELS = { all: 'All', synthwave: 'Synthwave', lofi: 'Lo-Fi', techno: 'Techno', electronic: 'Electronic', jazz: 'Jazz', rock: 'Rock', pop: 'Pop', classical: 'Classical', chill: 'Chill',ambient:'Ambient',blues:'Blues',metal:'Metal',house:'House',trance:'Trance',drumandbass:'Drum & Bass',hiphop:'Hip-Hop',reggae:'Reggae',soul:'Soul / Funk / R&B',latin:'Latin',country:'Country',folk:'Folk',talk:'Talk / News' };
 
 export function favoriteStyles(stations, favoriteIds) {

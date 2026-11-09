@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { stationColorHSL } from '../public/radio.js';
+import { stationColorHSL } from '../public/music.js';
 import { rayLevel, rhythmProfile } from '../public/rhythm.js';
 import { readFile } from 'node:fs/promises';
 
@@ -64,7 +64,7 @@ test('animated background uses small instanced geometry without CSS blur or text
   assert.match(source,/geometry\(420\)/);
   assert.match(source,/geometry\(7\)/);
   assert.match(source,/geometry\(4\)/);
-  assert.match(source,/reduced\?0:time/);
+  assert.match(source,/reduced \? 0 : time/);
   assert.doesNotMatch(source,/Texture|backdrop-filter|requestAnimationFrame/);
 });
 
@@ -87,31 +87,35 @@ test('ray color waves stay per-instance and honor reduced motion without changin
 
 test('share without a station uses the player message and clears on station selection',async()=>{
   const source=await readFile(new URL('../public/app.js',import.meta.url),'utf8');
-  assert.match(source,/if \(!selected\) return setPlayerMessage\('Choose a station to share\.'\)/);
-  assert.doesNotMatch(source,/toast\('Choose a station to share\.'\)/);
-  assert.match(source,/if\(playerMessage==='Choose a station to share\.'\)setPlayerMessage/);
+  assert.match(source,/if \(!selected\) return setPlayerMessage\('Choose an artist to share\.'\)/);
+  assert.doesNotMatch(source,/toast\('Choose an artist to share\.'\)/);
+  assert.match(source,/if\(playerMessage==='Choose an artist to share\.'\)setPlayerMessage/);
 });
 
 test('shooting stars are depth-tested far-plane geometry and disabled for reduced motion',async()=>{
   const source=await readFile(new URL('../public/globe-background.js',import.meta.url),'utf8');
-  assert.match(source,/meteorMaterial=new THREE.ShaderMaterial\(\{uniforms,transparent:true,depthTest:true,depthWrite:false/);
+  assert.match(source,/meteorMaterial = new THREE\.ShaderMaterial\(\{\s*uniforms, transparent: true, depthTest: true, depthWrite: false/);
   assert.match(source,/gl_Position=vec4\(head\+pixels\*2\.0\/resolution,1\.0,1\.0\)/);
-  assert.match(source,/uniforms\.motion\.value=reduced\?0:1/);
+  assert.match(source,/uniforms\.motion\.value = reduced \? 0 : 1/);
   assert.match(source,/meteorId\*24\.0/);
   assert.match(source,/duration=7\.0\+randomValue\(seed\+2\.0\)\*3\.0/);
-  assert.match(source,/side\*position\.y\*halfWidth/);
+  assert.match(source,/side\*position\.y\*\.8/);
   assert.match(source,/cycle\*17\.0\+meteorId\*71\.0/);
   assert.match(source,/vec2 origin=vec2\(randomValue/);
 });
 
-test('meteors use a rounded bright head, tapered fading trail and aspect-correct movement',async()=>{
+test('meteors are a simple tapered, fading streak with aspect-correct movement',async()=>{
   const source=await readFile(new URL('../public/globe-background.js',import.meta.url),'utf8');
-  assert.match(source,/headRadius=length\(vec2\(x,y\)\)/);
-  assert.match(source,/halo=exp\(-headRadius\*headRadius/);
-  assert.match(source,/trail=edge\*pow\(along,2\.2\)/);
-  assert.match(source,/direction\*progress\*travel\*2\.0\/resolution/);
-  assert.match(source,/tailLength=28\.0\+randomValue/);
-  assert.match(source,/step\(0\.0,age\)/);
+  // Width grows from the tail to the head and brightness fades out along the trail.
+  assert.match(source,/float width=mix\(\.12,\.7,along\)/);
+  assert.match(source,/float alpha=visibility\*edge\*pow\(along,1\.8\)/);
+  // Pixel-sized streak, converted to clip space with the canvas resolution so it is not stretched.
+  assert.match(source,/direction\*\(position\.x-1\.0\)\*28\.0/);
+  assert.match(source,/pixels\*2\.0\/resolution/);
+  // Visible only inside its flight window, and fades in and out.
+  assert.match(source,/step\(age,duration\)/);
+  assert.match(source,/smoothstep\(0\.0,\.12,progress\)/);
+  assert.doesNotMatch(source,/headRadius|halo=/);
 });
 
 test('background creates three bounded instanced draws and releases scene resources',async()=>{

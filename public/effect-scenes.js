@@ -1,7 +1,6 @@
 const quiet=['classical','ambient','talk'];
 const mellow=['jazz','blues','lofi','chill','folk','country','soul'];
-// Numeric modes are shared with shaders: rays straight/worms/arc/helix,
-// Surface remains normal (0); map normal/wave/breath.
+// Numeric modes are shared with shaders: rays straight/worms/arc/helix, surface stays normal (0), map normal/wave/breath.
 export function scenesForStyle(style){
   if(quiet.includes(style))return [[2,0,2],[0,0,2],[7,0,2],[12,0,2]];
   if(mellow.includes(style))return [[1,0,2],[2,0,1],[4,0,2],[7,0,1],[8,0,2],[12,0,2],[11,0,1],[5,0,2]];

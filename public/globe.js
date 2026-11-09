@@ -3,7 +3,8 @@ import { TrackballControls } from './vendor/TrackballControls.js';
 import { LineSegments2 } from './vendor/LineSegments2.js';
 import { LineSegmentsGeometry } from './vendor/LineSegmentsGeometry.js';
 import { LineMaterial } from './vendor/LineMaterial.js';
-import { stationColorHSL } from './radio.js';
+import { stationColorHSL } from './music.js';
+import { installDragRotation } from './globe-drag.js';
 import { rhythmProfile, syntheticLevel } from './rhythm.js';
 import { createStationGPU } from './station-gpu.js';
 import { createMapBatch } from './map-batch.js';
@@ -40,6 +41,7 @@ export function createGlobe(container, onSelect) {
   controls.minDistance = 1.0008; controls.maxDistance = 6.5; controls.autoRotateSpeed = .25;
   controls.zoomSpeed = .65;
   controls.enableZoom = false;
+  installDragRotation({ THREE, camera, controls, canvas: renderer.domElement });
   function zoom(factor) {
     if(discoMode)return;
     const distance=camera.position.length();
@@ -211,7 +213,8 @@ export function createGlobe(container, onSelect) {
   let mapsFailed=false;
   function settleMap(kind,failed=false){
     mapsFailed ||= failed;pendingMaps.delete(kind);
-    if(!pendingMaps.size)resolveReady(!mapsFailed);
+    // Only the overview borders gate the first screen: detailed borders (13 MB) and districts load in the background.
+    if(kind==='overview')resolveReady(!failed);
   }
   mapWorker.onmessage=({data:{kind,chunks,batch,features,error}})=>{
     if(disposed)return;
@@ -304,8 +307,7 @@ export function createGlobe(container, onSelect) {
       const radius=box.height/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*Math.tan(Math.asin(1/distance));
       const mobileIntro=innerWidth<=760||document.body.dataset.embed==='true';
       const playerTop=player.getBoundingClientRect().top;
-      // On mobile and in embeds the sphere sits between the intro and player.
-      // Solve for the intro's center halfway between the canvas top and sphere top.
+      // On mobile and in embeds the sphere sits between intro and player, so center the intro between the canvas top and the sphere top.
       const introTop=mobileIntro?Math.max(18,(playerTop-box.top-2*radius-rect.height)/3):18;
       const textBottom=box.top+introTop+rect.height;
       const mobileSpace=playerTop-textBottom;
@@ -330,8 +332,7 @@ export function createGlobe(container, onSelect) {
       const p=projected.copy(city.position).multiplyScalar(1.00006).project(camera);
       if(Math.abs(p.x)>.93||Math.abs(p.y)>.88||p.z>1)continue;
       const x=(p.x+1)*width/2,y=(1-p.y)*height/2;
-      // A label belongs to one geographic location, never a recycled screen slot.
-      // Geographic spacing is stable while dragging; screen-space collision sorting is not.
+      // A label belongs to one geographic location, because geographic spacing is stable while dragging and screen-space sorting is not.
       let label=cityLabels.get(city);
       if(!label){label=document.createElement('span');label.className='city-label';label.textContent=city.name;cityLabels.set(city,label);cityLayer.append(label);}
       label.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%)`;if(label.hidden)label.hidden=false;nextLabels.add(label);
@@ -371,8 +372,7 @@ export function createGlobe(container, onSelect) {
     camera.fov=40-pulse;
     const near=Math.max(.00001,Math.min(.1,(camera.position.length()-1)*.1));
     if(camera.near!==near||animate.lastFov!==camera.fov){camera.near=near;camera.updateProjectionMatrix();animate.lastFov=camera.fov;}
-    // Shift only the projection, not the canvas or station positions.
-    // Raycasting uses the matching inverse matrix, keeping touch selection aligned.
+    // Shift only the projection (not the canvas or positions); raycasting uses the inverse matrix so touch selection stays aligned.
     const mobileDrift=innerWidth<=760||document.body.dataset.embed==='true';
     const target=(mobileDrift&&!idleMotion.active?mobileGlobeTarget:0)*entranceScale;
     mobileGlobeOffset=reducedMotion?target:mobileGlobeOffset+(target-mobileGlobeOffset)*(1-Math.exp(-dt/220));

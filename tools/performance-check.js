@@ -1,4 +1,4 @@
-// Sample animation frame intervals in the same browser used by browser-check.js.
+// Sample animation frame intervals in a Chrome with remote debugging on port 9223.
 const tabs=await(await fetch('http://localhost:9223/json/list')).json();
 const tab=tabs.find(t=>t.type==='page'&&t.url.includes('localhost:3000'));
 if(!tab)throw new Error('Browser tab not found');
@@ -14,10 +14,8 @@ await new Promise(resolve=>setTimeout(resolve,9000));
 const result=await command('Runtime.evaluate',{awaitPromise:true,returnByValue:true,expression:`(async()=>{
   const {createGlobe}=await import('./globe.js');
   const host=document.createElement('div');host.style.cssText='position:fixed;inset:72px 0 120px;z-index:4';document.body.append(host);
-  const data=await(await fetch('./assets/stations.json')).json();
-  const {normalizeStation,supportsHLS}=await import('./radio.js');
-  const allowHLS=supportsHLS();
-  const globe=createGlobe(host,()=>{});globe.setStations(data.map(station=>normalizeStation(station,false,allowHLS)).filter(Boolean));globe.setPlaying(true);
+  const {loadStations}=await import('./music.js');
+  const globe=createGlobe(host,()=>{});globe.setStations((await loadStations()).stations);globe.setPlaying(true);
   await new Promise(r=>setTimeout(r,4000));
   const intervals=[];let previous=performance.now();const until=previous+4000;
   await new Promise(resolve=>{function sample(now){intervals.push(now-previous);previous=now;if(now<until)requestAnimationFrame(sample);else resolve();}requestAnimationFrame(sample);});

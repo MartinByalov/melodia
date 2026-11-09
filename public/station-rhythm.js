@@ -19,7 +19,7 @@ export class StationRhythm {
     const wanted = new Set(stations.slice(0, 6).map(s => s.id));
     for (const id of this.entries.keys()) if (!wanted.has(id)) this.remove(id);
     for (const station of stations.slice(0, 6)) {
-      if(station.hls)continue; // Only the selected HLS stream is decoded; avoid background decoders.
+      if(!station.url||station.hls)continue; // Only the selected artist has a playable address; avoid background decoders.
       if (this.entries.has(station.id) || this.failed.has(station.id)) continue;
       const audio = new Audio(); audio.crossOrigin = 'anonymous'; audio.preload = 'none'; audio.src = station.url;
       const source = this.context.createMediaElementSource(audio), analyser = this.context.createAnalyser(), gain = this.context.createGain();

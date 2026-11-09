@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Color, SRGBColorSpace } from '../public/vendor/three.module.js';
-import { stationColorHSL } from '../public/radio.js';
+import { stationColorHSL } from '../public/music.js';
 import { stationTheme } from '../public/station-theme.js';
 import { readFile } from 'node:fs/promises';
 

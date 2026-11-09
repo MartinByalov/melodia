@@ -10,7 +10,8 @@ test('Embed shows intro with mobile-style spacing and zoom fade at every frame w
   assert.match(globe,/const mobileIntro=innerWidth<=760\|\|document.body.dataset.embed==='true'/);
   assert.match(globe,/const target=\(mobileDrift&&!idleMotion\.active\?mobileGlobeTarget:0\)\*entranceScale/);
   assert.match(globe,/const introTop=mobileIntro\?Math\.max\(18,\(playerTop-box\.top-2\*radius-rect\.height\)\/3\):18/);
-  assert.match(globe,/const showIntro=visible&&\!\(mobileIntro&&idleMotion\.active\)/);
+  // The intro hides while the globe idles on every screen size, not only on mobile.
+  assert.match(globe,/const showIntro=visible&&!idleMotion\.active;/);
 });
 
 test('intro asks What\'s yours in the main and embedded views',async()=>{
@@ -25,9 +26,9 @@ test('desktop question stays on one line without forcing mobile or embedded wrap
 });
 
 test('embed targets the selected station and strips diagnostics and fragments',()=>{
-  const code=embedCode('https://example.com/radio/?perf=1&station=old#test',{id:'new',name:'Jazz FM'});
-  assert.ok(code.includes('src="https://example.com/radio/?station=new&amp;embed=1"'));
-  assert.equal(embedUrl('https://example.com/radio/?perf=1',{id:'new'}),'https://example.com/radio/?station=new&embed=1');
+  const code=embedCode('https://example.com/radio/?perf=1&id=old#test',{id:'new',name:'Jazz FM'});
+  assert.ok(code.includes('src="https://example.com/radio/?id=new&amp;embed=1"'));
+  assert.equal(embedUrl('https://example.com/radio/?perf=1',{id:'new'}),'https://example.com/radio/?id=new&embed=1');
   assert.ok(code.includes('title="melodia · Jazz FM"'));
   assert.ok(code.includes('width="100%" height="600"'));
   assert.ok(code.includes('loading="lazy"'));
@@ -47,7 +48,7 @@ test('embed UI provides icon copy, fixed code field and an on-demand preview wit
   assert.match(css,/body\[data-embed=true\] header,body\[data-embed=true\] footer/);
   assert.match(css,/body\[data-embed=true\] \.player #favorite\{display:none!important\}/);
   assert.match(app,/#embed-preview'\)\.src=embedUrl/);
-  assert.match(app,/addEventListener\('close',\(\)=>\$\('#embed-preview'\)\.removeAttribute\('src'\)\)/);
+  assert.match(app,/addEventListener\('close',\(\)=>\{\$\('#embed-preview'\)\.removeAttribute\('src'\)/);
 });
 
 test('embed escapes station names and rejects script URLs',()=>{
@@ -62,11 +63,16 @@ test('embed does not show the removed explanatory note',async()=>{
   assert.doesNotMatch(html,/Paste this HTML|Playback starts only after pressing Play|Use a public HTTPS address, not localhost/);
 });
 
-test('header genre filters do not select stations or request playback',async()=>{
+test('header style buttons filter the directory and play a random artist of that style',async()=>{
   const app=await readFile(new URL('../public/app.js',import.meta.url),'utf8');
   const handler=app.slice(app.indexOf("$('.header-genres').addEventListener"),app.indexOf("$('#explore').addEventListener"));
   assert.ok(handler.includes('renderList()'));
-  assert.doesNotMatch(handler,/choose\(|playCurrent\(/);
+  assert.match(handler,/genre!=='all'/);
+  assert.match(handler,/Math\.random\(\)/);
+  assert.match(handler,/choose\(pick,true\)/);
+  assert.doesNotMatch(handler,/playCurrent\(/);
+  // The "All" button only resets the filter; it never starts playback.
+  assert.match(handler,/if\(genre!=='all'\)\{/);
 });
 
 test('embed uses two control rows, vertical accessible volume and prevents recursive embeds',async()=>{

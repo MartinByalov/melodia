@@ -1,19 +1,19 @@
 export const STYLE_PATTERNS={
-  synthwave:/synthwave|synth[ -]?pop|retrowave|darksynth|synth/,lofi:/lo[ -]?fi|low[ -]?fi/,techno:/techno|hardtechno|hypertechno/,
-  classical:/classical|classic music|opera|orchestral|baroque|symphonic|chamber music/,ambient:/ambient|meditation|meditative|new[ -]?age|soundscapes/,
-  jazz:/jazz|swing|bebop|bossa nova/,blues:/blues|delta blues/,metal:/metal|heavy metal|metalcore|deathcore/,rock:/rock|punk|rockabilly|post[ -]?rock/,
-  house:/house|deep[ -]?house|techhouse|deephouse/,trance:/trance|psytrance|psy[ -]?trance/,drumandbass:/drum[ -]?(?:and|&|n)[ -]?bass|drumandbass|dnb|d&b|jungle/,
-  hiphop:/hip[ -]?hop|rap/,reggae:/reggae|dub|ska|dancehall/,soul:/soul|funk|r\s*&\s*b|rnb|rhythm and blues/,
-  latin:/latin|latino|salsa|bachata|reggaeton|reggaetón|reguet[oó]n|merengue/,country:/country|bluegrass|americana/,folk:/folk|folklore|traditional/,
+  synthwave:/synthwave|synth[ -]?pop|retrowave|darksynth|synth/,lofi:/lo[ -]?fi|low[ -]?fi/,techno:/techno|hardtechno|hypertechno|[a-z]+techno/,
+  classical:/classical|classic music|opera|orchestral|baroque|symphonic|chamber music|film[ -]?score|soundtrack|cinematic|trailer|orchestra|neoclassical|piano|strings/,ambient:/ambient|meditation|meditative|new[ -]?age|soundscapes|darkambient|drone|atmospheric|peaceful/,
+  jazz:/jazz|swing|bebop|bossa nova|[a-z]+jazz|fusion/,blues:/blues|delta blues/,metal:/metal|heavy metal|metalcore|deathcore|[a-z]+metal|thrash|doom|grindcore/,rock:/rock|punk|rockabilly|post[ -]?rock|[a-z]+rock|[a-z]+punk|indie|alternative|grunge|shoegaze|emo|hardcore/,
+  house:/house|deep[ -]?house|techhouse|deephouse|[a-z]+house/,trance:/trance|psytrance|psy[ -]?trance|[a-z]+trance|goa/,drumandbass:/drum[ -]?(?:and|&|n)[ -]?bass|drumandbass|dnb|d&b|jungle/,
+  hiphop:/hip[ -]?hop|rap/,reggae:/reggae|dub|ska|dancehall/,soul:/soul|funk|r\s*&\s*b|rnb|rhythm and blues|gospel|christian|neosoul|disco|motown/,
+  latin:/latin|latino|salsa|bachata|reggaeton|reggaetón|reguet[oó]n|merengue|cumbia|tango|samba|brazilian|forro|flamenco/,country:/country|bluegrass|americana/,folk:/folk|folklore|traditional|world|african|afrobeat|afropop|indian|tribal|ethnic|singer[ -]?songwriter|acoustic|celtic|chanson|chansonfrancaise|balkan|oriental|arabic/,
   chill:/chill|lounge|relax|downtempo/,electronic:/electro|dance|edm/,pop:/pop/,
   talk:/talk|news|speech|sports|spoken word|current affairs/
 };
 // Match complete genre words, not substrings such as rap in "therapeutic".
 const boundedPatterns=Object.fromEntries(Object.entries(STYLE_PATTERNS).map(([style,pattern])=>[style,new RegExp(`(?:^|[^\\p{L}\\p{N}])(?:${pattern.source})(?=$|[^\\p{L}\\p{N}])`,'iu')]));
-boundedPatterns.electronic=/(?:^|[^\p{L}\p{N}])(?:electro|electronic|electronica|electropop|dance|edm)(?=$|[^\p{L}\p{N}])/iu;
-boundedPatterns.chill=/(?:^|[^\p{L}\p{N}])(?:chill|chillout|lounge|relax|downtempo)(?=$|[^\p{L}\p{N}])/iu;
-boundedPatterns.hiphop=/(?:^|[^\p{L}\p{N}])(?:hip[ -]?hop|rap)(?=$|[^\p{L}\p{N}])/iu;
-boundedPatterns.pop=/(?:^|[^\p{L}\p{N}])(?:pop|hits|top[ -]?40|top[ -]?100|charts|contemporary hits|chr)(?=$|[^\p{L}\p{N}])/iu;
+boundedPatterns.electronic=/(?:^|[^\p{L}\p{N}])(?:electro|electronic|electronica|electropop|dance|edm|experimental|idm|glitch|dubstep|breakbeat|chiptune|8bit|synthesizer|darkwave|industrial|ebm)(?=$|[^\p{L}\p{N}])/iu;
+boundedPatterns.chill=/(?:^|[^\p{L}\p{N}])(?:chill|chillout|chillhop|lounge|relax|relaxing|downtempo|easy[ -]?listening|trip[ -]?hop)(?=$|[^\p{L}\p{N}])/iu;
+boundedPatterns.hiphop=/(?:^|[^\p{L}\p{N}])(?:hip[ -]?hop|rap|trap|boom[ -]?bap)(?=$|[^\p{L}\p{N}])/iu;
+boundedPatterns.pop=/(?:^|[^\p{L}\p{N}])(?:pop|[a-z]+pop|hits|top[ -]?40|top[ -]?100|charts|contemporary hits|chr)(?=$|[^\p{L}\p{N}])/iu;
 const scoreCache=new Map();
 export function styleScores(tags=''){
   const key=String(tags).toLowerCase();

@@ -20,7 +20,7 @@ try{
   await new Promise(resolve=>setTimeout(resolve,1000));
   const result=await command('Runtime.evaluate',{awaitPromise:true,returnByValue:true,expression:`(async()=>{
     const {createGlobe}=await import('./globe.js');
-    const {normalizeStation}=await import('./radio.js');
+    const {loadStations}=await import('./music.js');
     const THREE=await import('three');
     const {createMapBatch}=await import('./map-batch.js');
     const {buildMapBatch}=await import('./map-bvh.js');
@@ -49,7 +49,7 @@ try{
     batch.dispose();reference.traverse(object=>object.geometry?.dispose());material.dispose();target.dispose();testRenderer.dispose();
     if(pixelDifference)throw new Error('Batched/reference pixel mismatch: '+pixelDifference);
     const host=document.querySelector('#globe');
-    const stations=(await(await fetch('./assets/stations.json')).json()).map(normalizeStation).filter(Boolean);
+    const stations=(await loadStations()).stations;
     const globe=createGlobe(host,()=>{});globe.setStations(stations);globe.setPlaying(true);
     globe.setAudioReaction({available:true,signal:.65});globe.setAmplitude(.65);
     const until=performance.now()+30000;

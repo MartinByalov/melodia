@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {favoriteStyles,STYLE_LABELS} from '../public/favorite-styles.js';
-import {matchesStation} from '../public/radio.js';
+import {matchesStation} from '../public/music.js';
 
 const aliases={synthwave:'darksynth',lofi:'low-fi',techno:'hardtechno',classical:'chamber music',ambient:'new-age',jazz:'bebop',blues:'delta blues',metal:'metalcore',rock:'rockabilly',house:'deephouse',trance:'psytrance',drumandbass:'d&b',hiphop:'hip hop',reggae:'dancehall',soul:'rhythm and blues',latin:'reguetón',country:'americana',folk:'folklore',chill:'chillout',electronic:'electronica',pop:'top40',talk:'spoken word'};
 test('every selectable style counts secondary favorite tags and common aliases consistently',()=>{

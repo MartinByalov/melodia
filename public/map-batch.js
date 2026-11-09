@@ -3,8 +3,7 @@ import { LineSegmentsGeometry } from './vendor/LineSegmentsGeometry.js';
 import { LineSegments2 } from './vendor/LineSegments2.js';
 import { queryMapBVH, writeVisibleSegmentIds, mapHorizonConstant } from './map-bvh.js';
 
-// One instanced fat-line draw per map layer. The original LineMaterial handles
-// line width, round caps, clipping, depth and color; only endpoint lookup changes.
+// One instanced fat-line draw per map layer: LineMaterial still handles width, caps, clipping, depth and color, only endpoint lookup changes.
 export function createMapBatch(batch, sourceMaterial) {
   const texture=new THREE.DataTexture(batch.textureData,batch.width,batch.height,THREE.RGBAFormat,THREE.FloatType);
   texture.minFilter=THREE.NearestFilter;texture.magFilter=THREE.NearestFilter;
