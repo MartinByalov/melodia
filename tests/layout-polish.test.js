@@ -21,11 +21,12 @@ test('day share borders are dark in normal, hover and keyboard focus states',asy
   }
 });
 
-test('stronger globe pulse preserves smoothing, hover protection and reduced motion',async()=>{
+test('globe pulse is gentle, follows the style speed and keeps hover protection and reduced motion',async()=>{
   const source=await readFile(new URL('../public/globe.js',import.meta.url),'utf8');
   assert.match(source,/playing&&!globeHovered&&!reducedMotion\?/);
-  assert.match(source,/\)\*9\.5:0/);
-  assert.match(source,/Math\.min\(13,animate\.smoothedPulse\*styleProfile\.pulse\)/);
-  assert.match(source,/\?35:150/);
+  assert.match(source,/pulseLevel\(active\?\.profile\|\|defaultProfile,time\/1000\)\)\*6:0/);
+  assert.match(source,/Math\.min\(8,animate\.smoothedPulse\*styleProfile\.pulse\)/);
+  assert.match(source,/styleProfile\.pulseRise\?\?140/);
+  assert.match(source,/styleProfile\.pulseFall\?\?450/);
   assert.match(source,/Math\.exp\(-dt\/pulseDuration\)/);
 });

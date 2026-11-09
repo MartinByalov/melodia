@@ -131,6 +131,7 @@ export function createStationGPU(scene, markers) {
   const smoothedAudio=new Map();
   return {
     setColor(color){uniforms.themeColor.value.set(color);},
+    setRhythm(index,profile){attributes.rhythm.setXYZ(index,profile.bpm,profile.phase,profile.soft?1:0);attributes.rhythm.needsUpdate=true;},
     setScene(mode,mix){uniforms.rayScene.value.set(mode,mix);},
     setVisualProfile(profile){raysEnabled=profile.style!=='talk';if(!raysEnabled){rays.visible=false;rayVisibility=false;}uniforms.styleEffects.value.set(profile.ray,profile.colors);uniforms.styleTravel.value.set(profile.rayTravel??0,profile.raySpeed??1);},
     setDiagnosticHidden(hidden){if(hidden){rayVisibility=rays.visible;dots.visible=false;rays.visible=false;}else{dots.visible=true;rays.visible=rayVisibility;}},

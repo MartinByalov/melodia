@@ -78,13 +78,15 @@ export function normalizeTrack(raw) {
   let url;
   try { const candidate = new URL(raw.audio); if (candidate.protocol === 'https:' && candidate.hostname.endsWith('.jamendo.com')) url = candidate.href; } catch { /* Unplayable without a valid address. */ }
   if (!url) return null;
-  return { id: String(raw.id), title: String(raw.name).trim(), url, image: safeImageUrl(raw.album_image), duration: Number(raw.duration) || 0, license: licenseLabel(raw.license_ccurl), page: `https://www.jamendo.com/track/${encodeURIComponent(raw.id)}` };
+  const info = raw.musicinfo || {}, genres = info.tags?.genres, variety = info.tags?.vartags;
+  const tags = [...(Array.isArray(genres) ? genres : []), ...(Array.isArray(variety) ? variety : [])].map(tag => String(tag).toLowerCase().trim()).filter(Boolean).join(', ');
+  return { id: String(raw.id), title: String(raw.name).trim(), tags, speed: String(info.speed || ''), url, image: safeImageUrl(raw.album_image), duration: Number(raw.duration) || 0, license: licenseLabel(raw.license_ccurl), page: `https://www.jamendo.com/track/${encodeURIComponent(raw.id)}` };
 }
 
 // Tracks are fetched when an artist is chosen and never stored; Jamendo sometimes answers with an empty list, so empty answers are retried.
 export async function fetchArtistTracks(artistId, request = fetch, clientId = JAMENDO_CLIENT_ID, { attempts = 5, pause = 400 } = {}) {
   if (!/^\d{1,9}$/.test(String(artistId))) throw new Error('Invalid artist');
-  const query = new URLSearchParams({ client_id: clientId, format: 'json', artist_id: String(artistId), order: 'popularity_total', limit: '12', audioformat: 'mp32', include: 'licenses' });
+  const query = new URLSearchParams({ client_id: clientId, format: 'json', artist_id: String(artistId), order: 'popularity_total', limit: '12', audioformat: 'mp32', include: 'licenses musicinfo' });
   for (let attempt = 1; ; attempt++) {
     const response = await request(`${JAMENDO_API}/tracks/?${query}`, { signal: AbortSignal.timeout(15000) });
     if (!response.ok) throw new Error(`Jamendo returned HTTP ${response.status}`);
@@ -102,7 +104,7 @@ export async function fetchTracksByIds(ids, request = fetch, clientId = JAMENDO_
   const wanted = [...new Set(ids.map(String))].filter(id => /^\d{1,10}$/.test(id));
   const found = new Map();
   for (let start = 0; start < wanted.length; start += 50) {
-    const query = new URLSearchParams({ client_id: clientId, format: 'json', id: wanted.slice(start, start + 50).join(' '), limit: '50', audioformat: 'mp32', include: 'licenses' });
+    const query = new URLSearchParams({ client_id: clientId, format: 'json', id: wanted.slice(start, start + 50).join(' '), limit: '50', audioformat: 'mp32', include: 'licenses musicinfo' });
     for (let attempt = 1; ; attempt++) {
       const response = await request(`${JAMENDO_API}/tracks/?${query}`, { signal: AbortSignal.timeout(15000) });
       if (!response.ok) throw new Error(`Jamendo returned HTTP ${response.status}`);

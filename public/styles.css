@@ -738,3 +738,20 @@ body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-
 /* On desktop the X of these dialogs sits in the corner, exactly like Share and Info. */
 #station-dialog .dialog-head h2,#favorites-dialog .dialog-head h2{padding-right:48px}
 @media(min-width:1025px){body:not([data-embed=true]) #station-dialog .dialog-close,body:not([data-embed=true]) #favorites-dialog .dialog-close{position:absolute;top:10px;right:12px}}
+/* Desktop: every section is its own dialog with a title row and the X, no tab bar. Tabs stay on phones and tablets. */
+.info-head{display:none}
+@media(min-width:1025px){
+  body:not([data-embed=true]) #info-dialog .info-tabs{display:none}
+  body:not([data-embed=true]) #info-dialog,body:not([data-embed=true])[data-mode=day] #info-dialog{padding:10px 32px 32px}
+  body:not([data-embed=true]) #info-dialog .info-head{display:flex;align-items:center;min-height:34px;margin:0 0 14px;flex-shrink:0}
+  body:not([data-embed=true]) #info-dialog .info-head h2{margin:0;padding-right:48px;font-size:22px;line-height:1.25;color:#fff}
+  body:not([data-embed=true]) #info-dialog .dialog-close{position:absolute;top:10px;right:12px}
+  body:not([data-embed=true]) #info-dialog #info-content[data-section]{padding-top:0}
+  body:not([data-embed=true]) #station-dialog,body:not([data-embed=true]) #favorites-dialog{padding-top:10px}
+  body:not([data-embed=true]) footer>.site-copyright{position:absolute;left:16px;bottom:0;height:var(--player-bottom);display:flex;align-items:center;white-space:nowrap;font-size:10px}
+}
+/* Save your favorites: room above the QR code, and the note sits centred between the code and the bottom border. */
+#favorites-dialog .qr-box{margin:20px auto 0}
+#favorites-dialog .fav-note{margin:16px 0 0;text-align:center}
+#favorites-dialog .fav-note:empty{display:none}
+#favorites-dialog{padding-bottom:16px}

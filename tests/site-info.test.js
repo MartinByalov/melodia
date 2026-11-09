@@ -15,14 +15,15 @@ test('footer information stays in dialogs with credits and copyright',async()=>{
   assert.match(source,/melodia\.lol\. All rights reserved\./);
   assert.match(source,/title:'About'/);
   assert.match(html,/<dialog id="info-dialog" aria-label="About">/);
-  assert.doesNotMatch(html,/id="info-title"/);
+  assert.match(html,/id="info-title"/);
+  assert.match(source,/title.textContent=section.title/);
   assert.match(source,/dialog\.setAttribute\('aria-label',section.title\)/);
   assert.match(source,/melodia-reduce-effects/);
   assert.match(source,/globe\?\.setReducedEffects\(effective\)/);
   const dialog=html.match(/<dialog id="info-dialog"[\s\S]*?<\/dialog>/)?.[0];
   assert.ok(dialog);
   assert.ok(dialog.indexOf('<nav class="info-tabs"')<dialog.indexOf('<div id="info-content"'));
-  assert.doesNotMatch(dialog,/<h2/);
+  assert.match(dialog,/<div class="dialog-head info-head"><h2 id="info-title">/);
   // Reduce effects is a text button in the footer and an icon button in the player on phones, never in the dialog.
   assert.match(html,/<footer>[\s\S]*?data-reduce-effects[\s\S]*?<\/footer>/);
   assert.doesNotMatch(dialog,/data-reduce-effects/);

@@ -1,6 +1,7 @@
 import { createGlobe } from './globe.js';
 import { createThemeFavicon } from './favicon.js';
 import { StationRhythm } from './station-rhythm.js';
+import { rhythmProfile, syntheticLevel } from './rhythm.js';
 import { wavePath } from './player-wave.js';
 import { AudioReactivity } from './audio-reactivity.js';
 import { stationTheme } from './station-theme.js';
@@ -219,9 +220,23 @@ function setTheme(s) {
   document.documentElement.style.setProperty('--accent-rgb', rgb);
   document.documentElement.style.setProperty('--bg', bg);
   globe?.setColor(color);
-  globe?.setVisualProfile(visualProfile((station||s).tags));
+  applyVisualStyle(station||s);
   $('#album').style.background = '#162736';
 }
+// The playing song's own genres drive the globe style and rhythm, falling back to the artist's tags.
+function styleTagsOf(station) {
+  const track = station === selected ? currentTrack(station) : null;
+  return track?.tags || station?.tags || '';
+}
+let appliedStyle = null;
+function applyVisualStyle(station) {
+  const profile = visualProfile(styleTagsOf(station));
+  const key = `${station?.id}:${profile.style}`;
+  if (key === appliedStyle) return;
+  appliedStyle = key;
+  globe?.setVisualProfile(profile);
+}
+function songRhythm(artist, track) { return rhythmProfile(track?.tags || artist.tags || '', String(track?.id || artist.id), track?.speed); }
 function updateFavorites() {
   updateHeaderStyles();
   $('#fav-count').textContent = favorites.length;
@@ -412,6 +427,8 @@ function showTrack(artist) {
   $('#track-name').title = nowPlaying;
   $('#track-location').textContent = `${track.title} · ${placeLabel(artist)}`;
   if (track.image) setAlbumImage(track.image);
+  applyVisualStyle(artist);
+  globe?.setTrackRhythm(artist.id, songRhythm(artist, track));
   updateFavorites();
 }
 // Tracks are requested when an artist is chosen and are never stored.
@@ -642,12 +659,15 @@ function visualize() {
     analyser.getFloatTimeDomainData(waveSamples);
   }else waveSamples?.fill(0);
   const reaction=audioReactivity.update(bins,waveSamples,audioContext?.sampleRate||48000,analyser?.fftSize||1024,delta,available);
+  // Without analysis (no CORS or no click yet) a playing track gets a stylistic wave so the graph never looks dead.
+  const styled=!available&&working&&audio&&!audio.paused&&audio.readyState>=3;
+  const styledLevel=styled?syntheticLevel(songRhythm(selected||{},currentTrack()),now/1000):0;
   const smoothing=1-Math.exp(-delta*12);
-  waveLevel+=(reaction.level-waveLevel)*smoothing;
-  waveBass+=(reaction.bass-waveBass)*smoothing;
-  if(available)wavePhase+=delta*(.7+reaction.bass*3);
+  waveLevel+=((styled?styledLevel*.7:reaction.level)-waveLevel)*smoothing;
+  waveBass+=((styled?styledLevel*.6:reaction.bass)-waveBass)*smoothing;
+  if(available)wavePhase+=delta*(.7+reaction.bass*3);else if(styled)wavePhase+=delta*(.9+styledLevel*2);
   waves.forEach((path,i)=>{const d=wavePath(waveSamples,waveLevel,waveBass,wavePhase,i===1);if(path.getAttribute('d')!==d)path.setAttribute('d',d);});
-  const analysis=available?'audio':'unavailable';
+  const analysis=available?'audio':styled?'styled':'unavailable';
   if(visualizerElement.dataset.analysis!==analysis)visualizerElement.dataset.analysis=analysis;
   globe?.setAmplitude(reaction.signal);
   globe?.setAudioReaction(reaction);

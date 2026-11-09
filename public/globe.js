@@ -5,7 +5,7 @@ import { LineSegmentsGeometry } from './vendor/LineSegmentsGeometry.js';
 import { LineMaterial } from './vendor/LineMaterial.js';
 import { stationColorHSL } from './music.js';
 import { installDragRotation } from './globe-drag.js';
-import { rhythmProfile, syntheticLevel } from './rhythm.js';
+import { rhythmProfile, pulseLevel } from './rhythm.js';
 import { createStationGPU } from './station-gpu.js';
 import { createMapBatch } from './map-batch.js';
 import { createRenderDiagnostics } from './render-diagnostics.js';
@@ -365,10 +365,10 @@ export function createGlobe(container, onSelect) {
     if(!rotationPaused&&(controls.autoRotate||playing)&&!down&&(!globeHovered||discoMode)&&!reducedMotion)camera.position.applyAxisAngle(axis.copy(camera.up).normalize(),-.00095*(dt/16.667)*Math.min(1,(camera.position.length()-1)/.5)*(styleProfile.rotation??1)*motion);
     controls.update();
     updateMapAccent(time/1000);
-    const pulseTarget=playing&&!globeHovered&&!reducedMotion?(audioReaction.available?rhythm:syntheticLevel(active?.profile||defaultProfile,time/1000))*9.5:0;
-    const pulseDuration=pulseTarget>(animate.smoothedPulse||0)?35:150;
+    const pulseTarget=playing&&!globeHovered&&!reducedMotion?(audioReaction.available?rhythm:pulseLevel(active?.profile||defaultProfile,time/1000))*6:0;
+    const pulseDuration=pulseTarget>(animate.smoothedPulse||0)?(styleProfile.pulseRise??140):(styleProfile.pulseFall??450);
     animate.smoothedPulse=(animate.smoothedPulse||0)+(pulseTarget-(animate.smoothedPulse||0))*(1-Math.exp(-dt/pulseDuration));
-    const pulse=Math.min(13,animate.smoothedPulse*styleProfile.pulse);
+    const pulse=Math.min(8,animate.smoothedPulse*styleProfile.pulse);
     camera.fov=40-pulse;
     const near=Math.max(.00001,Math.min(.1,(camera.position.length()-1)*.1));
     if(camera.near!==near||animate.lastFov!==camera.fov){camera.near=near;camera.updateProjectionMatrix();animate.lastFov=camera.fov;}
@@ -464,6 +464,7 @@ export function createGlobe(container, onSelect) {
     setAmplitude(value){amplitude=value;},
     setAudioReaction(value){audioReaction={available:Boolean(value.available),signal:THREE.MathUtils.clamp(value.signal||0,0,1),rhythm:THREE.MathUtils.clamp(value.rhythm||0,0,1)};container.dataset.audioReaction=audioReaction.available?'current-stream':'genre-fallback';},
     setPlaying(value){playing=Boolean(value);if(!playing)amplitude=0;},
+    setTrackRhythm(id,profile){const marker=markerById.get(id);if(!marker)return;marker.profile=profile;stationGPU?.setRhythm(marker.index,profile);},
     setStationAmplitudes(values){stationAmplitudes=values;},
     getVisibleStations(limit=6){view.copy(camera.position).normalize();return markers.filter(m=>m.s.id!==selected&&m.normal.dot(view)>.5).sort((a,b)=>b.s.clicks-a.s.clicks).slice(0,limit).map(m=>m.s);},
     setColor(color){outlineColor=color;entranceEarthColor.set(color);background.setColor(color);stationGPU?.setColor(color);atmosphere.material.uniforms.glow.value.set(color);applyMapPalette();container.dataset.outlineColor=color;},

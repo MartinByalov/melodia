@@ -36,3 +36,8 @@ test('Jamendo genre vocabulary maps onto the visual styles that drive the animat
   for(const [tag,style] of Object.entries(expected))assert.ok(styleOf(tag).includes(style),`${tag} should map to ${style}, got ${styleOf(tag)}`);
   for(const mood of ['happy','sad','neutral','energetic','therapeutic','bedroom'])assert.deepEqual(styleOf(mood),[],`${mood} is not a style`);
 });
+
+test('quiet styles swell and fade slower than hard styles',()=>{
+  const order=['techno','pop','jazz','ambient'].map(tags=>visualProfile(tags));
+  for(let i=1;i<order.length;i++){assert.ok(order[i].pulseRise>order[i-1].pulseRise);assert.ok(order[i].pulseFall>order[i-1].pulseFall);}
+});

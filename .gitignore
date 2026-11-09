@@ -23,3 +23,6 @@ Thumbs.db
 /tmp/
 *.tmp
 *.bak
+
+# Local notes about the working session
+/session-context.md

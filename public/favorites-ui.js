@@ -14,12 +14,11 @@ export function setupFavoritesDialog({ getFavorites, setFavorites, artistName, r
 
   function refresh() {
     const list = getFavorites(), count = list.length;
-    $('#favorites-summary').textContent = count ? `You have ${plural(count, 'favorite song')}. Save them to a file, send a link, or scan the code on another device.` : 'You have no favorite songs yet. Press the heart while a song plays, then come back here.';
     $('#favorites-download').disabled = !count;
     $('#favorites-copy').disabled = !count || count > LINK_LIMIT;
     const qr = $('#favorites-qr'), note = $('#favorites-qr-note');
     qr.hidden = true; qr.replaceChildren();
-    if (!count) { note.textContent = ''; }
+    if (!count) { note.textContent = 'You have no favorite songs yet. Press the heart while a song plays, then come back here.'; }
     else if (count > QR_LIMIT) { note.textContent = `A QR code holds up to ${QR_LIMIT} songs${count > LINK_LIMIT ? ', and a link up to ' + LINK_LIMIT : ''}. Use the file for longer lists.`; }
     else {
       try { renderQr(qr, encodeFavoritesLink(baseUrl(), list), 'QR code with your favorite songs'); qr.hidden = false; note.textContent = 'Scan with your phone camera to open your favorites on that device.'; }

@@ -1,4 +1,4 @@
-// Audio-driven deformation: no timer-based imitation when analysis is unavailable.
+// Wave path from analysed samples, or from a stylistic level and phase when analysis is unavailable.
 export function wavePath(samples, level, bass, phase, mirrored = false) {
   const sign = mirrored ? -1 : 1;
   const width = 72 + Math.min(1, bass) * 48;

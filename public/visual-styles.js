@@ -75,8 +75,8 @@ export const STYLE_VARIATIONS={
 };
 function baseProfile(tags){
   const style=stationStyle(tags);
-  if(['classical','ambient','talk'].includes(style))return {style,pulse:style==='talk'?.08:style==='ambient'?.2:.3,ray:.55,colors:0};
-  if(['jazz','blues','lofi','chill','folk','country','soul'].includes(style))return {style,pulse:.5,ray:.75,colors:0};
-  if(['techno','house','trance','drumandbass','metal','electronic'].includes(style))return {style,pulse:1.3,ray:1,colors:1};
-  return {style,pulse:.85,ray:1,colors:1};
+  if(['classical','ambient','talk'].includes(style))return {style,pulse:style==='talk'?.08:style==='ambient'?.2:.3,ray:.55,colors:0,pulseRise:280,pulseFall:800};
+  if(['jazz','blues','lofi','chill','folk','country','soul'].includes(style))return {style,pulse:.5,ray:.75,colors:0,pulseRise:200,pulseFall:600};
+  if(['techno','house','trance','drumandbass','metal','electronic'].includes(style))return {style,pulse:1.3,ray:1,colors:1,pulseRise:110,pulseFall:380};
+  return {style,pulse:.85,ray:1,colors:1,pulseRise:140,pulseFall:450};
 }

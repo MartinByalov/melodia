@@ -15,7 +15,7 @@ export function openSiteDialog(dialog){
 }
 
 export function setupSiteInfo(globe){
-  const dialog=document.querySelector('#info-dialog'),content=document.querySelector('#info-content');
+  const dialog=document.querySelector('#info-dialog'),content=document.querySelector('#info-content'),title=document.querySelector('#info-title');
   const mobileInfo=document.querySelector('#mobile-info');
   dialog.addEventListener('close',()=>mobileInfo.setAttribute('aria-expanded',String(dialog.open)));
   const copyright=document.createElement('p');copyright.className='info-copyright';copyright.hidden=true;
@@ -42,7 +42,7 @@ export function setupSiteInfo(globe){
     const opener=event.target.closest('[data-info]');
     if(opener){
       const section=sections[opener.dataset.info];if(!section)return;
-      dialog.setAttribute('aria-label',section.title);content.innerHTML=section.html;
+      dialog.setAttribute('aria-label',section.title);title.textContent=section.title;content.innerHTML=section.html;
       content.dataset.section=opener.dataset.info;
       dialog.querySelectorAll('.info-tabs button[data-info]').forEach(button=>{
         button.setAttribute('aria-pressed',String(button.dataset.info===opener.dataset.info));

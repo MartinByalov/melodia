@@ -105,3 +105,11 @@ test('song lookup ignores bad ids, retries empty answers and reports failures',a
   assert.equal((await fetchTracksByIds(['5'],async()=>answers[calls++],'k',{pause:0})).get('5').artistId,'9');assert.equal(calls,3);
   await assert.rejects(fetchTracksByIds(['5'],async()=>({ok:false,status:500}),'k',{pause:0}),/HTTP 500/);
 });
+
+test('a track keeps its own genres and speed from Jamendo musicinfo',()=>{
+  const track=normalizeTrack({id:'1',name:'Song',audio:'https://prod-1.storage.jamendo.com/?trackid=1',musicinfo:{speed:'high',tags:{genres:['Pop','IndiePop'],vartags:['acoustic']}}});
+  assert.equal(track.tags,'pop, indiepop, acoustic');
+  assert.equal(track.speed,'high');
+  const bare=normalizeTrack({id:'2',name:'Bare',audio:'https://prod-1.storage.jamendo.com/?trackid=2'});
+  assert.equal(bare.tags,'');assert.equal(bare.speed,'');
+});
