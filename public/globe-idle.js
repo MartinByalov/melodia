@@ -9,7 +9,8 @@ export function createGlobeIdle(){
   return {
     get active(){return result.active;},
     activity(time){lastActivity=time;},
-    update(time,delta,limitX,limitY,blocked=false){
+    // On phones the globe stays in the middle after the intro fades: the idle state still starts, but nothing drifts.
+    update(time,delta,limitX,limitY,blocked=false,still=false){
       if(lastActivity===null)lastActivity=time;
       if(blocked)lastActivity=time;
       result.active=!blocked&&time-lastActivity>=30000;
@@ -17,7 +18,7 @@ export function createGlobeIdle(){
       limitX=Math.max(0,limitX);
       const minY=typeof limitY==='number'?-Math.max(0,limitY):limitY.min;
       const maxY=typeof limitY==='number'?Math.max(0,limitY):limitY.max;
-      if(result.active){
+      if(result.active&&!still){
         x+=vx*dt;y+=vy*dt;
         if(x>=limitX){x=limitX;vx=-Math.abs(vx);}else if(x<=-limitX){x=-limitX;vx=Math.abs(vx);}
         if(y>=maxY){y=maxY;vy=-Math.abs(vy);}else if(y<=minY){y=minY;vy=Math.abs(vy);}

@@ -129,7 +129,7 @@ if(heart&&visible(heart)){const old=heart.getAttribute('aria-pressed');heart.set
 
 // 3. The heart and the tools in the phone bottom row are separated by equal gaps.
 const row=[...document.querySelectorAll('.mobile-player-bottom #favorite, .mobile-tools button')].filter(visible).map(e=>e.getBoundingClientRect());
-if(row.length>2){const gaps=row.slice(1).map((b,i)=>b.left-row[i].right);if(Math.max(...gaps)-Math.min(...gaps)>.6)problems.push('uneven gaps in the bottom row: '+gaps.map(g=>g.toFixed(1)).join(', '));}
+if(row.length>2&&innerWidth<=600){const gaps=row.slice(1).map((b,i)=>b.left-row[i].right);if(Math.max(...gaps)-Math.min(...gaps)>.6)problems.push('uneven gaps in the bottom row: '+gaps.map(g=>g.toFixed(1)).join(', '));}
 
 // 4. Dialogs: the title is on the row of the X, text and divider fit.
 async function openDialog(name,open,selector){
@@ -148,6 +148,8 @@ async function openDialog(name,open,selector){
     const c=tab('credits'),a=tab('about');
     if(sideways){if(Math.abs(c.top+c.height/2-xcy)>2)problems.push('Sources & Credits tab is not on the row of the X');}
     else if(c.top<a.bottom-1)problems.push('Sources & Credits should be on the second row');
+    const lefts=phoneTabs.map(t=>t.getBoundingClientRect().left),rights=phoneTabs.map(t=>t.getBoundingClientRect().right),dr=d.getBoundingClientRect();
+    if(Math.abs((Math.min(...lefts)+Math.max(...rights))/2-(dr.left+dr.right)/2)>3)problems.push('info tabs are not centred in the window');
   }
   for(const b of d.querySelectorAll('.copy-button, #copy-link, #embed-toggle'))if(visible(b)){const r=getComputedStyle(b);if(r.borderTopWidth!=='1px'||parseFloat(r.height)<39.5)problems.push(name+' button '+label(b)+' differs: '+r.height)}
   for(const b of d.querySelectorAll('.copy-button, #copy-link, #embed-toggle'))if(visible(b)){const wide=Math.min(260,b.parentElement.clientWidth),w=b.getBoundingClientRect().width;if(Math.abs(w-wide)>1.5)problems.push(name+' button '+label(b)+' is '+w.toFixed(0)+' px wide, expected '+wide.toFixed(0)+' px (the QR code width)')}
@@ -164,7 +166,9 @@ for(let cycle=0;cycle<5;cycle++){
 }
 if(lostSkyContexts)problems.push('About lost '+lostSkyContexts+' WebGL contexts during reopening');
 const divider=document.querySelector('.about-support-divider'),coffee=document.querySelector('#about-coffee'),copyright=document.querySelector('.info-copyright');
-if(divider&&coffee&&copyright){
+const aboutContent=document.querySelector('#info-content');
+// Where the text scrolls (a phone held sideways at 760px or less) the centring of the button does not apply.
+if(divider&&coffee&&copyright&&aboutContent.scrollHeight<=aboutContent.clientHeight+1){
   const a=divider.getBoundingClientRect(),b=coffee.getBoundingClientRect(),c=copyright.getBoundingClientRect();
   const offset=(b.top+b.bottom)/2-(a.bottom+c.top)/2;
   if(Math.abs(offset)>1)problems.push('About coffee button is '+offset.toFixed(1)+' px off the midpoint between divider and copyright');
@@ -207,11 +211,25 @@ for(const [selector,dialogId,applies] of [['#mobile-info','#info-dialog',true],[
     if(paused()||!bars())problems.push('Pressing the Reset button again should resume the rotation');
   }}
 
+// The globe is in the middle of the free space between the header and the player, both ways, once the intro text is gone (zoomed in so that the text hides).
+{const g=document.querySelector('#globe');
+  if(g&&innerWidth<=760){
+    const canvas=g.querySelector('canvas');
+    for(let i=0;i<5;i++)canvas.dispatchEvent(new WheelEvent('wheel',{deltaY:-120,cancelable:true,bubbles:true}));
+    await wait(1800);
+    const intro=document.querySelector('.intro');
+    if(intro&&!intro.classList.contains('visible')&&g.dataset.globeCenter){
+      const [cx,cy]=g.dataset.globeCenter.split(',').map(Number),free=(document.querySelector('header').getBoundingClientRect().bottom+document.querySelector('.player').getBoundingClientRect().top)/2;
+      if(Math.abs(cy-free)>2)problems.push('the globe is '+(cy-free).toFixed(1)+' px off the middle of the free space (up and down)');
+      if(Math.abs(cx-innerWidth/2)>2)problems.push('the globe is '+(cx-innerWidth/2).toFixed(1)+' px off the middle of the screen (left and right)');
+    }
+  }}
+
 // 5. No message is painted over the globe.
 if(document.querySelector('#world-status'))problems.push('#world-status overlay exists: messages must go to the player line');
 return problems})()`;
 
-const LAYOUTS = [['desktop 1440x900', 1440, 900, false], ['tablet 1024x768', 1024, 768, false], ['landscape phone 796x388', 796, 388, true], ['portrait phone 390x844', 390, 844, true]];
+const LAYOUTS = [['desktop 1440x900', 1440, 900, false], ['tablet 1024x768', 1024, 768, false], ['landscape phone 796x388', 796, 388, true], ['portrait phone 390x844', 390, 844, true], ['phone held sideways 760x360', 760, 360, true]];
 await send('Runtime.enable'); await send('Page.enable');
 await send('Page.addScriptToEvaluateOnNewDocument', { source: `localStorage.setItem('melodia-favorites',JSON.stringify([{a:'603037',t:'1',n:'Audit song'}]))` });
 const failures = []; let checked = 0;

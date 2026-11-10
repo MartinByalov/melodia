@@ -72,3 +72,13 @@ test('intro hides during idle strafe on desktop as well as mobile',async()=>{
   assert.match(overlay,/const showIntro=visible&&!idleMotion\.active;/);
   assert.match(overlay,/intro\.classList\.toggle\('visible',showIntro\)/);
 });
+
+test('on phones the idle state starts but the globe stays in the middle',async()=>{
+  const {createGlobeIdle}=await import('../public/globe-idle.js');
+  const idle=createGlobeIdle();let state;
+  for(let second=0;second<=40;second++)state=idle.update(second*1000,.016,200,100,false,true);
+  assert.equal(state.active,true);assert.equal(state.x,0);assert.equal(state.y,0);
+  const moving=createGlobeIdle();
+  for(let second=0;second<=40;second++)state=moving.update(second*1000,.05,200,100);
+  assert.ok(state.active&&(state.x!==0||state.y!==0),'without the flag the globe still drifts');
+});

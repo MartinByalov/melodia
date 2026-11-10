@@ -870,12 +870,28 @@ body[data-mode] #share-dialog #copy-link,body[data-mode] #share-dialog #embed-to
 body[data-mode] #station-dialog .artist-actions #copy-stream{width:min(var(--action-width),100%);margin-inline:auto}
 /* Information tabs on phones: portrait puts About, Privacy and Contact on the row of the X and Sources & Credits under them. Sideways, all four are on the row of the X and as high as it. */
 body[data-mobile-player=true] #info-dialog[open]{padding:calc((58px - var(--tool-size)) / 2 + env(safe-area-inset-top,0px)) 12px 24px}
-body[data-mobile-player=true] #info-dialog .info-tabs{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:8px;margin:0;padding-right:calc(var(--tool-size) + 8px)}
+body[data-mobile-player=true] #info-dialog .info-tabs{display:grid;grid-template-columns:repeat(3,auto);justify-content:center;gap:8px;margin:0;padding:0 calc(var(--tool-size) + 8px)}
 body[data-mobile-player=true] #info-dialog .info-tabs button{min-height:0;height:var(--tool-size);padding:0 12px;font-size:14px;white-space:nowrap}
 body[data-mobile-player=true] #info-dialog .info-tabs [data-info=about]{order:1}
 body[data-mobile-player=true] #info-dialog .info-tabs [data-info=privacy]{order:2}
 body[data-mobile-player=true] #info-dialog .info-tabs [data-info=requests]{order:3}
-body[data-mobile-player=true] #info-dialog .info-tabs [data-info=credits]{order:4;grid-column:1 / -1;justify-self:start}
+body[data-mobile-player=true] #info-dialog .info-tabs [data-info=credits]{order:4;grid-column:1 / -1;justify-self:center}
+/* A phone held sideways that is still 760px wide or less keeps the portrait layout, so its tabs go back to one centred row. */
+@media(orientation:landscape){
+  body[data-mobile-player=true] #info-dialog .info-tabs{display:flex;flex-wrap:nowrap;justify-content:center}
+  body[data-mobile-player=true] #info-dialog .info-tabs [data-info=credits]{order:2;grid-column:auto;justify-self:auto}
+  body[data-mobile-player=true] #info-dialog .info-tabs [data-info=privacy]{order:3}
+  body[data-mobile-player=true] #info-dialog .info-tabs [data-info=requests]{order:4}
+}
 body[data-landscape-phone=true] #info-dialog[open]{padding:19px 66px 12px}
 body[data-landscape-phone=true] #info-dialog .info-tabs{margin:0;height:34px;flex-wrap:nowrap;align-items:center;justify-content:center;gap:6px}
 body[data-landscape-phone=true] #info-dialog .info-tabs button{height:34px;min-height:0;padding:0 12px;font-size:13px}
+/* A phone held sideways at 760px or less uses the portrait layout, so its About text gets the same compact look as the other sideways phones. */
+@media(orientation:landscape) and (max-height:500px){
+  body[data-mobile-player=true] #info-dialog[open]{overflow:hidden;padding-bottom:12px}
+  body[data-mobile-player=true] #info-dialog #info-content[data-section=about]{padding-top:6px;font-size:12px;line-height:1.4}
+  body[data-mobile-player=true] #info-dialog #info-content[data-section=about] p{margin:0 0 6px}
+  body[data-mobile-player=true] #info-dialog #info-content[data-section=about] .about-support-divider{margin:4px 0 0}
+  body[data-mobile-player=true] #info-dialog .about-support{flex:0 0 auto;padding:6px 0 0}
+  body[data-mobile-player=true] #info-dialog #about-coffee{min-height:34px;padding:5px 12px;font-size:13px}
+}

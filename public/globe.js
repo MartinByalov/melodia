@@ -315,11 +315,13 @@ export function createGlobe(container, onSelect) {
       const visible=mobileIntro
         ? mobileSpace/2-radius>16
         : box.left+box.width/2-radius>rect.right+24;
-      mobileGlobeTarget=mobileIntro&&visible?(textBottom+playerTop)/2-(box.top+box.height/2):0;
+      const showIntro=visible&&!idleMotion.active;
+      const freeTop=document.querySelector('header').getBoundingClientRect().bottom;
+      // With the intro the sphere sits between the text and the player, without it in the middle of the free space.
+      mobileGlobeTarget=mobileIntro?(showIntro?(textBottom+playerTop)/2:(freeTop+playerTop)/2)-(box.top+box.height/2):0;
       if(mobileIntro){
         intro.style.top=`${introTop}px`;
       }else intro.style.removeProperty('top');
-      const showIntro=visible&&!idleMotion.active;
       intro.classList.toggle('visible',showIntro); intro.setAttribute('aria-hidden',String(!showIntro));
     }
     cityLayer.hidden=altitude>.35||discoMode;
@@ -376,7 +378,7 @@ export function createGlobe(container, onSelect) {
     if(camera.near!==near||animate.lastFov!==camera.fov){camera.near=near;camera.updateProjectionMatrix();animate.lastFov=camera.fov;}
     // Shift only the projection (not the canvas or positions); raycasting uses the inverse matrix so touch selection stays aligned.
     const mobileDrift=innerWidth<=760||document.body.dataset.embed==='true';
-    const target=(mobileDrift&&!idleMotion.active?mobileGlobeTarget:0)*entranceScale;
+    const target=(mobileDrift?mobileGlobeTarget:0)*entranceScale;
     mobileGlobeOffset=reducedMotion?target:mobileGlobeOffset+(target-mobileGlobeOffset)*(1-Math.exp(-dt/220));
     const idleWidth=container.clientWidth,idleHeight=container.clientHeight;
     const globeRadius=idleHeight/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*Math.tan(Math.asin(1/camera.position.length()));
@@ -388,10 +390,11 @@ export function createGlobe(container, onSelect) {
       verticalLimit=verticalDriftBounds(document.querySelector('header').getBoundingClientRect().bottom,document.querySelector('.player').getBoundingClientRect().top,center,globeRadius);
     }
     const idleState=idleMotion.update(time,dt/1000,idleWidth/2-globeRadius,verticalLimit,
-      rotationPaused||loadingWorld||reducedMotion||discoMode||globeHovered||!!down||document.body.dataset.catalogOpen==='true'||!!document.querySelector('dialog[open]'));
+      rotationPaused||loadingWorld||reducedMotion||discoMode||globeHovered||!!down||document.body.dataset.catalogOpen==='true'||!!document.querySelector('dialog[open]'),mobileDrift);
     camera.projectionMatrix.elements[8]=-2*idleState.x/Math.max(1,idleWidth);
     const projectionOffset=2*(mobileGlobeOffset+idleState.y)/Math.max(1,idleHeight);
     container.dataset.idleDrifting=String(idleState.active);
+    {const box=container.getBoundingClientRect(),middle=`${(box.left+idleWidth/2+idleState.x).toFixed(1)},${(box.top+idleHeight/2+mobileGlobeOffset+idleState.y).toFixed(1)},${globeRadius.toFixed(1)}`;if(container.dataset.globeCenter!==middle)container.dataset.globeCenter=middle;}
     if(camera.projectionMatrix.elements[9]!==projectionOffset){
       camera.projectionMatrix.elements[9]=projectionOffset;
       camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();

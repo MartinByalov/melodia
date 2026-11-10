@@ -62,7 +62,8 @@ test('mobile intro stays visible at overview and mobile zoom out has a larger ra
   const globe=await readFile(new URL('../public/globe.js',import.meta.url),'utf8');
   assert.match(globe,/innerWidth<=760\?9\.5:controls.maxDistance/);
   assert.match(globe,/const visible=mobileIntro\s*\? mobileSpace\/2-radius>16/);
-  assert.match(globe,/\(textBottom\+playerTop\)\/2-\(box.top\+box.height\/2\)/);
+  assert.match(globe,/\(showIntro\?\(textBottom\+playerTop\)\/2:\(freeTop\+playerTop\)\/2\)-\(box.top\+box.height\/2\)/);
+  assert.match(globe,/querySelector\('dialog\[open\]'\),mobileDrift\)/);
   assert.match(globe,/const introTop=mobileIntro\?Math\.max\(18,\(playerTop-box\.top-2\*radius-rect\.height\)\/3\):18/);
   assert.match(globe,/const textBottom=box\.top\+introTop\+rect\.height/);
   assert.match(globe,/intro\.style\.top=`\$\{introTop\}px`/);
