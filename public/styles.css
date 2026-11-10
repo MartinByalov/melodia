@@ -783,6 +783,8 @@ body[data-landscape-phone=true] #info-dialog #info-content:not([data-section=abo
 @media(min-width:1025px) and (pointer:fine),(min-width:1367px){
   body:not([data-embed=true]) #share-dialog{padding-top:10px}
   body:not([data-embed=true]) #share-dialog h2{justify-content:center;padding:0 48px;text-align:center}
+  body:not([data-embed=true]) #share-dialog #share-description{text-align:center}
+  body:not([data-embed=true]) #share-dialog .share-links{gap:6px}
 }
 @media(min-width:761px) and (max-width:1024px),(min-width:1025px) and (max-width:1366px) and (pointer:coarse){
   body:not([data-embed=true]):not([data-landscape-phone=true]) #share-dialog{padding-top:0}
@@ -795,3 +797,4 @@ body[data-mobile-player=true] #share-dialog h2,body[data-embed=true] #share-dial
 /* On desktop and tablet the Share and Mute buttons in the player are 34px icon buttons like the others, with no divider. */
 body:not([data-mobile-player=true]):not([data-embed=true]):not([data-landscape-phone=true]) .player-right #share{width:34px;height:34px;min-width:34px;flex:0 0 34px;padding:0;border:0}
 body:not([data-mobile-player=true]):not([data-embed=true]):not([data-landscape-phone=true]) .player-right #mute{width:34px;height:34px}
+body[data-landscape-phone=true] .player-right #mute{width:34px;height:34px}
