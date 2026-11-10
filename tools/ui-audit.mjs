@@ -58,7 +58,24 @@ const probe=document.createElement('div');probe.style.cssText='position:fixed;le
 const accent=getComputedStyle(probe).backgroundColor,onAccent=getComputedStyle(probe).color;probe.remove();
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
+// The selected artist's live feed remains available on phones as well as desktop.
+const feed=document.querySelector('#globe-status'),homepage=document.querySelector('#station-homepage'),notice=document.querySelector('#player-notice');
+if(feed&&homepage&&notice){
+  const state=[feed.hidden,homepage.hidden,notice.hidden];
+  feed.hidden=false;homepage.hidden=false;notice.hidden=true;
+  if(!visible(feed)||!visible(homepage))problems.push('artist live feed is hidden');
+  if(feed.getBoundingClientRect().width<40)problems.push('artist live feed has no readable space');
+  [feed.hidden,homepage.hidden,notice.hidden]=state;
+}
+
 // 1. The drawn shape of every icon sits in the middle of its button.
+const rotate=document.querySelector('#rotate');
+if(document.body.dataset.mobilePlayer==='true'||document.body.dataset.landscapePhone==='true'){
+  rotate.click();
+  if(rotate.getAttribute('aria-pressed')!=='true'||rotate.title!=='Resume globe rotation')problems.push('phone globe pause does not activate');
+  rotate.click();
+  if(rotate.getAttribute('aria-pressed')!=='false')problems.push('phone globe rotation does not resume');
+}
 const canvasCache=new Map();
 async function optical(svg){
   const key=svg.outerHTML;if(canvasCache.has(key))return canvasCache.get(key);
@@ -113,6 +130,9 @@ await openDialog('info',()=>infoOpener.click(),'#info-dialog');
 await openDialog('share',()=>document.querySelector('#share').click(),'#share-dialog');
 await openDialog('artist',()=>{const b=document.querySelector('#station-info');b.disabled=false;b.click()},'#station-dialog');
 await openDialog('favorites',()=>{const b=document.querySelector('#favorites-share');b.removeAttribute('hidden');b.click()},'#favorites-dialog');
+const actions=document.querySelector('#favorites-download').closest('.fav-actions'),qr=document.querySelector('#favorites-qr'),note=document.querySelector('#favorites-qr-note');
+if(!visible(qr))problems.push('favorites QR code is missing');
+else if(actions.getBoundingClientRect().bottom>qr.getBoundingClientRect().top||qr.getBoundingClientRect().bottom>note.getBoundingClientRect().top)problems.push('favorites order must be actions, QR code, scanning instructions');
 document.querySelectorAll('dialog[open]').forEach(d=>d.close());
 
 // Pressing Info or Share again closes the window it opened (where the window is not modal, so the button can be pressed).

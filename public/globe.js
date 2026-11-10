@@ -387,7 +387,7 @@ export function createGlobe(container, onSelect) {
       verticalLimit=verticalDriftBounds(document.querySelector('header').getBoundingClientRect().bottom,document.querySelector('.player').getBoundingClientRect().top,center,globeRadius);
     }
     const idleState=idleMotion.update(time,dt/1000,idleWidth/2-globeRadius,verticalLimit,
-      loadingWorld||reducedMotion||discoMode||globeHovered||!!down||document.body.dataset.catalogOpen==='true'||!!document.querySelector('dialog[open]'));
+      rotationPaused||loadingWorld||reducedMotion||discoMode||globeHovered||!!down||document.body.dataset.catalogOpen==='true'||!!document.querySelector('dialog[open]'));
     camera.projectionMatrix.elements[8]=-2*idleState.x/Math.max(1,idleWidth);
     const projectionOffset=2*(mobileGlobeOffset+idleState.y)/Math.max(1,idleHeight);
     container.dataset.idleDrifting=String(idleState.active);
@@ -475,6 +475,7 @@ export function createGlobe(container, onSelect) {
     resetAxis(){const distance=camera.position.length();controls.reset();camera.position.copy(start).setLength(distance);camera.up.set(0,1,0);down=null;pendingPointer=null;hovered=null;globeHovered=false;tooltip.style.display='none';controls.update();camera.updateMatrixWorld();updateOverlay();},
     reset(){camera.up.set(0,1,0);camera.position.copy(start);controls.update();},
     get rotating(){return !rotationPaused&&(controls.autoRotate||playing);},
+    get rotationPaused(){return rotationPaused;},
     dispose(){disposed=true;for(const event of idleEvents)document.removeEventListener(event,idleActivity,true);document.removeEventListener('visibilitychange',idleActivity);globeCorona.dispose();regionColors.dispose();loadingReveal.dispose();background.dispose();diagnostics?.dispose();mapWorker.terminate();stationGPU?.dispose();for(const batch of mapBatches){scene.remove(batch.object);batch.dispose();}cancelAnimationFrame(frame);resizeObserver.disconnect();controls.dispose();scene.traverse(object=>{object.geometry?.dispose();if(object.material){for(const material of Array.isArray(object.material)?object.material:[object.material])material.dispose();}});borderMaterial.dispose();municipalMaterial.dispose();detailedEarthGeometry.dispose();overviewEarthGeometry.dispose();dayEarthMaterial.dispose();nightEarthMaterial.dispose();entranceEarthMaterial.dispose();cityLayer.remove();renderer.dispose();renderer.domElement.remove();}
   };
 }

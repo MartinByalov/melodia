@@ -609,17 +609,12 @@ body[data-mode=day] #favorites-dialog .dialog-head h2,body[data-mode=day] #favor
 /* Links styled as text inside the information dialog. */
 .text-link{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer}
 #info-content ul{margin:0 0 12px;padding-left:20px}#info-content li{margin-bottom:6px;color:#fff}
-/* Phones in portrait: no moving line (it only appears for a notice). */
-body[data-mobile-player=true] #station-homepage{display:none}
-body[data-mobile-player=true] #globe-status:not(:has(#player-notice:not([hidden]))){display:none}
 /* Phones held sideways: no footer, and the info button follows Share. */
 body[data-landscape-phone=true] footer .footer-links{display:none}
 body[data-landscape-phone=true] .player-right #mobile-info{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;flex:0 0 34px;padding:0;border:1px solid var(--panel-edge);border-radius:8px;font-size:20px;color:var(--icon-color)}
 body[data-landscape-phone=true] .player-right #mobile-info[aria-expanded=true]{color:var(--on-accent);background:var(--accent);border-color:var(--accent);box-shadow:0 0 24px rgba(var(--accent-rgb),.12)}
-/* Phones held sideways: no live feed line, no intro text, a boxed Share, and a globe centred between header and player. */
+/* Phones held sideways: a boxed Share and a globe centred between header and player. */
 body[data-landscape-phone=true]{--player-bottom:10px}
-body[data-landscape-phone=true] #station-homepage{display:none}
-body[data-landscape-phone=true] #globe-status:not(:has(#player-notice:not([hidden]))){display:none}
 body[data-landscape-phone=true] .intro{left:16px;top:6px}
 body[data-landscape-phone=true] .intro h1{font-size:20px;line-height:1.12;margin-top:8px;letter-spacing:-.3px;word-spacing:.12em}
 body[data-landscape-phone=true] .intro .eyebrow{font-size:6px;letter-spacing:1px}
@@ -648,6 +643,7 @@ body[data-embed=true] #favorites-dialog .dialog-head{min-height:58px;margin:0 0 
 body[data-embed=true] #station-dialog .dialog-close,
 body[data-embed=true] #favorites-dialog .dialog-close{width:var(--mobile-square-size,40px);height:var(--mobile-square-size,40px);min-width:var(--mobile-square-size,40px);flex-basis:var(--mobile-square-size,40px)}
 body[data-landscape-phone=true] .player-right{gap:10px}
+body[data-landscape-phone=true] .player>#globe-status:not([hidden]){display:block;grid-column:1/-1;grid-row:2;width:100%;max-width:none;margin-top:6px}
 /* In portrait the search button is the same square as the buttons in the player. */
 @media(max-width:760px){.header-right #catalog-toggle{width:40px!important;height:40px!important;min-width:40px!important;max-height:40px}}
 /* Phones: header and player use the same side inset, so Share lines up with the search button at every width. */
@@ -743,8 +739,8 @@ body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-
   body:not([data-embed=true]) #info-dialog #info-content[data-section=credits]{justify-content:safe center}
   body:not([data-embed=true]) #station-dialog,body:not([data-embed=true]) #favorites-dialog{padding-top:10px}
 }
-/* Save your favorites: room above the QR code, and the note sits centred between the code and the bottom border. */
-#favorites-dialog .qr-box{margin:6px auto 0}
+/* Save your favorites: actions first, then the QR code and its scanning instructions. */
+#favorites-dialog .qr-box{margin:20px auto 0}
 #favorites-dialog .fav-note{margin:12px 0 0;text-align:center}
 #favorites-dialog .fav-note:empty{display:none}
 #favorites-dialog .fav-actions{margin:16px 0 0}

@@ -56,7 +56,7 @@ if(document.body.dataset.embed!=='true'){
       header.prepend($('.brand')||row.querySelector('.brand'));
       header.insertBefore(genres,headerRight);headerRight.prepend($('#catalog-toggle'),$('#favorites'),$('#mode-toggle'));row.remove();
       controls.append($('#favorite'),$('#previous'),$('#play'),$('#next'),$('#rotate'));
-      if(landscapePhone.matches)right.append($('#globe-status'),$('.volume'),$('#reduce-effects'),$('#mobile-info'),$('#share'));
+      if(landscapePhone.matches){right.append($('#globe-status'),$('.volume'),$('#reduce-effects'),$('#mobile-info'),$('#share'));player.append($('#globe-status'));}
       else{right.append($('#globe-status'),$('.volume'),$('#share'));$('footer').after($('#mobile-info'));}player.prepend(left);top.remove();bottom.remove();
     }
   }
@@ -588,7 +588,24 @@ $('#mute').addEventListener('click',()=>{
   syncVolume();
 });
 $('#refresh').addEventListener('click', refresh);
-$('#rotate').addEventListener('click', () => { globe?.resetAxis(); });
+const rotateButton=$('#rotate'),resetIcon=rotateButton.innerHTML;
+const phoneRotation=matchMedia('(max-width:760px), (orientation:landscape) and (max-height:500px)');
+function syncGlobeButton(){
+  const phone=phoneRotation.matches,paused=Boolean(globe?.rotationPaused);
+  const label=phone?(paused?'Resume globe rotation':'Pause and reset globe'):'Reset globe';
+  rotateButton.title=label;rotateButton.setAttribute('aria-label',label);
+  rotateButton.innerHTML=phone?resetIcon.replace('</svg>','<path d="M10 9v6m4-6v6" stroke-width="2"/></svg>'):resetIcon;
+  if(phone)rotateButton.setAttribute('aria-pressed',String(paused));
+  else rotateButton.removeAttribute('aria-pressed');
+}
+rotateButton.addEventListener('click',()=>{
+  if(phoneRotation.matches){
+    if(!globe?.rotationPaused)globe?.resetAxis();
+    globe?.toggleRotate();
+  }else globe?.resetAxis();
+  syncGlobeButton();
+});
+phoneRotation.addEventListener('change',syncGlobeButton);syncGlobeButton();
 $('#share-coffee').addEventListener('click',()=>{
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
     try{navigator.vibrate?.(12);}catch{/* Optional feedback must not block the button. */}
