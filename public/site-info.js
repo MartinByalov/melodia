@@ -20,10 +20,12 @@ export function setupSiteInfo(globe){
   dialog.addEventListener('close',()=>mobileInfo.setAttribute('aria-expanded',String(dialog.open)));
   // The same sky as behind the globe is drawn behind the window while it is open.
   let sky=null;
-  dialog.addEventListener('close',()=>{sky?.dispose();sky=null;});
-  async function showSky(){if(sky)return;try{const {createDialogSky}=await import('./dialog-sky.js');if(!dialog.open||sky)return;sky=createDialogSky(dialog);}catch{sky=null;}}
+  dialog.addEventListener('close',()=>sky?.pause());
+  window.addEventListener('pagehide',event=>{if(event.persisted)sky?.pause();else{sky?.dispose();sky=null;}});
+  window.addEventListener('pageshow',()=>{if(dialog.open)sky?.resume();});
+  async function showSky(){if(sky){sky.resume();return;}try{const {createDialogSky}=await import('./dialog-sky.js');if(!dialog.open)return;if(sky){sky.resume();return;}sky=createDialogSky(dialog);}catch{sky=null;}}
   const copyright=document.createElement('p');copyright.className='info-copyright';copyright.hidden=true;
-  copyright.textContent=`© ${new Date().getFullYear()} melodia.lol. All rights reserved.`;dialog.append(copyright);
+  copyright.textContent=`© ${new Date().getFullYear()} melodia.lol All rights reserved.`;dialog.append(copyright);
   const media=matchMedia('(prefers-reduced-motion: reduce)');
   let reduced=false;
   try{reduced=localStorage.getItem('melodia-reduce-effects')==='true';}catch{/* Optional storage. */}

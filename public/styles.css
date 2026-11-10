@@ -114,11 +114,12 @@ body[data-player-state=paused] #play-status{padding:4px 7px;border-radius:5px;ba
 #play-status{display:inline-block;padding:4px 7px;border-radius:5px;background:#e6ebf1;color:#141924;line-height:1.25}body[data-mode=day] #play-status{background:#141924;color:#e6ebf1}
 .header-right .coffee-button{aspect-ratio:1/1;max-width:40px;max-height:40px;border:1px solid var(--panel-edge);border-radius:9px;background:#ffffff05}
 .discover-panel{padding-top:12px;padding-bottom:12px}.panel-top{min-height:42px;padding-bottom:8px}.source-note{padding-top:8px}
-.player .play-controls{display:flex;align-items:center;gap:12px}.player #favorite,.player #rotate{display:inline-flex;width:34px;height:34px;flex:0 0 34px;border:1px solid var(--panel-edge);border-radius:8px}.player #rotate[aria-pressed=false]{opacity:.55}
+.player .play-controls{display:flex;align-items:center;gap:12px}.player #favorite,.player #rotate{display:inline-flex;width:34px;height:34px;flex:0 0 34px;border:1px solid var(--panel-edge);border-radius:8px}
 @media(max-width:760px){.header-right .coffee-button{max-width:32px;max-height:32px}.player .play-controls{gap:5px}.player #favorite,.player #rotate{display:inline-flex;width:28px;height:28px;flex-basis:28px;font-size:19px}.player{gap:6px}.track-info{min-width:0}}
 /* Equal side tracks keep Play centered independently of metadata and waves. */
 .player{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:16px}
 .player-left,.player-right{display:flex;align-items:center;gap:12px;min-width:0}
+.player-left{column-gap:19px}
 .player-right{justify-content:flex-end}.player-left .track-info{width:auto;flex:1;min-width:0}.player-left .track-info h3,.player-left .track-info p{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.player-left .visualizer{width:85px}.player .play-controls{justify-content:center}
 .station-filters select,body[data-mode=day] .station-filters select{background:#0e131e;color:#e6ebf1;border-color:#354155;color-scheme:dark}
 .station-filters select option{background:#0e131e;color:#e6ebf1}
@@ -620,6 +621,7 @@ body[data-landscape-phone=true] .intro h1{font-size:20px;line-height:1.12;margin
 body[data-landscape-phone=true] .intro .eyebrow{font-size:6px;letter-spacing:1px}
 /* The player is as wide as the header content, so the right edges of its last button and the day/night button line up. */
 body[data-landscape-phone=true] .player{width:calc(100% - 16px);margin:0;padding-left:7px;padding-right:7px}
+body[data-landscape-phone=true] .player-left{column-gap:8px}
 body[data-landscape-phone=true] #globe{inset:0 0 calc(var(--player-bottom) + var(--embed-player-height,88px));height:auto}
 body[data-landscape-phone=true] .player-right #share{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;flex:0 0 34px;padding:0;border:1px solid var(--panel-edge);border-radius:8px;color:var(--icon-color)}
 body[data-landscape-phone=true] .player-right #share[aria-expanded=true]{color:var(--on-accent);background:var(--accent);border-color:var(--accent);box-shadow:0 0 24px rgba(var(--accent-rgb),.12)}
@@ -643,7 +645,8 @@ body[data-embed=true] #favorites-dialog .dialog-head{min-height:58px;margin:0 0 
 body[data-embed=true] #station-dialog .dialog-close,
 body[data-embed=true] #favorites-dialog .dialog-close{width:var(--mobile-square-size,40px);height:var(--mobile-square-size,40px);min-width:var(--mobile-square-size,40px);flex-basis:var(--mobile-square-size,40px)}
 body[data-landscape-phone=true] .player-right{gap:10px}
-body[data-landscape-phone=true] .player>#globe-status:not([hidden]){display:block;grid-column:1/-1;grid-row:2;width:100%;max-width:none;margin-top:6px}
+body[data-mobile-player=true] .player #globe-status,body[data-landscape-phone=true] .player #globe-status{display:none!important}
+body[data-mode] .player #rotate{color:var(--icon-color);opacity:1}
 /* In portrait the search button is the same square as the buttons in the player. */
 @media(max-width:760px){.header-right #catalog-toggle{width:40px!important;height:40px!important;min-width:40px!important;max-height:40px}}
 /* Phones: header and player use the same side inset, so Share lines up with the search button at every width. */
@@ -750,7 +753,7 @@ body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-
 body[data-landscape-phone=true] #info-dialog #info-content[data-section=about]{padding-top:6px;font-size:12px;line-height:1.4}
 body[data-landscape-phone=true] #info-dialog #info-content[data-section=about] p{margin:0 0 6px}
 body[data-landscape-phone=true] #info-dialog #info-content[data-section=about] .about-support-divider{margin:4px 0 0}
-body[data-landscape-phone=true] #info-dialog .about-support{flex:0 0 auto;padding:6px 0 0}
+body[data-landscape-phone=true] #info-dialog .about-support{flex:1 0 52px;padding:0}
 body[data-landscape-phone=true] #info-dialog #about-coffee{min-height:34px;padding:5px 12px;font-size:13px}
 /* Sideways phone: Share fits above the player, and the Information dialog never scrolls as a whole, only its text does, with soft edges. */
 body[data-landscape-phone=true] #share-dialog[open]{padding:18px 32px 14px}
@@ -797,11 +800,18 @@ body[data-mode=day] #share-dialog #copy-link,body[data-mode=day] #share-dialog #
 body[data-mode] #share-dialog #copy-link:hover,body[data-mode] #share-dialog #embed-toggle:hover,body[data-mode] #favorites-dialog .copy-button:hover,body[data-mode] #station-dialog .copy-button:hover,body[data-mode] #share-dialog #copy-link:focus-visible,body[data-mode] #share-dialog #embed-toggle:focus-visible,body[data-mode] #favorites-dialog .copy-button:focus-visible,body[data-mode] #station-dialog .copy-button:focus-visible{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
 body[data-mode] #share-dialog #embed-toggle[aria-expanded=true]{color:var(--on-accent);background:var(--accent);border-color:var(--accent);box-shadow:0 0 24px rgba(var(--accent-rgb),.12)}
 body[data-mobile-player=true][data-mode] #share-dialog #copy-link,body[data-mobile-player=true][data-mode] #share-dialog #embed-toggle{min-height:40px;height:40px}
-/* Desktop About: the text, divider and coffee button sit together, centred between the title and the copyright line. */
+/* About: the support area fills the space between the divider and copyright. */
 @media(min-width:1025px) and (pointer:fine),(min-width:1367px){
   body:not([data-embed=true]) #info-dialog #info-content[data-section=about]{justify-content:safe center;padding-top:0}
-  body:not([data-embed=true]) #info-dialog .about-support{flex:0 0 auto;padding:22px 0 30px}
+  body:not([data-embed=true]) #info-dialog .about-support{flex:1 0 88px;padding:0}
 }
+#info-dialog:has(#info-content[data-section=about]) .info-copyright{padding:0}
+/* Artist actions sit halfway between the last fact and the bottom of the sheet. */
+body[data-mode] #station-dialog[open]{display:flex;flex-direction:column;padding-bottom:0}
+#station-dialog .dialog-head,#station-dialog #station-title,#station-dialog #station-facts{flex-shrink:0}
+#station-dialog #station-facts p:last-child{margin-bottom:0}
+#station-dialog .artist-actions{flex:1 0 auto;display:flex;align-items:center;justify-content:center;padding:24px 0}
+#station-dialog .artist-actions #copy-stream{width:100%;margin:0;flex-shrink:0}
 /* The artist count sits in the middle between the divider line and the bottom border of the directory. */
 body[data-mode] .discover-panel,body:not([data-embed=true])[data-landscape-phone=true][data-catalog-open=true] .discover-panel{padding-bottom:0}
 body[data-mode] .discover-panel .source-note{padding:14px 0}

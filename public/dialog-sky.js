@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createGlobeBackground } from './globe-background.js';
 import { profileColors } from './visual-styles.js';
+import { fitRenderer } from './renderer-size.js';
 
 // The sky of the globe (stars, glows, shooting stars) drawn behind a dialog with the same code, so it looks the same. Returns null without WebGL.
 export function createDialogSky(dialog) {
@@ -16,25 +17,37 @@ export function createDialogSky(dialog) {
   background.setColor(css('--accent') || '#62efc5');
   background.setVisualProfile({ colors: profileColors(globe?.dataset.visualStyle) });
   dialog.prepend(canvas);
-  let frame = 0, last = 0, width = 0, height = 0;
+  let frame = 0, last = 0, width = 0, height = 0, disposed = false;
   const fit = () => {
     width = dialog.clientWidth; height = dialog.clientHeight;
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
-    renderer.setSize(Math.max(1, width), Math.max(1, height), false);
+    fitRenderer(renderer, width, height, false);
   };
   const draw = now => {
+    if(disposed||!dialog.open){frame=0;return;}
     frame = requestAnimationFrame(draw);
+    if(document.hidden||renderer.getContext().isContextLost())return;
     if (now - last < 33) return;
     last = now;
     if (dialog.clientWidth !== width || dialog.clientHeight !== height) fit();
     background.update(now / 1000, width, height, document.body.dataset.reduceEffects === 'true', 0);
     renderer.render(scene, camera);
   };
-  fit(); frame = requestAnimationFrame(draw);
+  const pause=()=>{cancelAnimationFrame(frame);frame=0;};
+  const resume=()=>{
+    if(disposed||frame||!dialog.open)return;
+    scene.background.set(css('--bg') || '#080b14');
+    background.setColor(css('--accent') || '#62efc5');
+    background.setVisualProfile({ colors: profileColors(globe?.dataset.visualStyle) });
+    fit();last=0;frame=requestAnimationFrame(draw);
+  };
+  resume();
   return {
+    pause,
+    resume,
     dispose() {
-      cancelAnimationFrame(frame); background.dispose(); renderer.dispose();
-      try { renderer.forceContextLoss(); } catch { /* The context is already gone. */ }
+      if(disposed)return;
+      disposed=true;pause();background.dispose();renderer.dispose();
       canvas.remove();
     }
   };

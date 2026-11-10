@@ -107,7 +107,7 @@ test('mobile player is edge-to-edge, shows available moving text and hides waves
   assert.match(css,/body\[data-mobile-player=true\] \.player\{[^}]*padding:12px 12px env\(safe-area-inset-bottom,0px\)/);
   assert.match(css,/body\[data-mobile-player=true\] \.player \.visualizer\{display:none!important\}/);
   assert.match(css,/body\[data-mobile-player=true\] \.player #globe-status:not\(\[hidden\]\)\{display:block;width:100%;max-width:none;flex:none;font-size:11px;line-height:16px\}/);
-  assert.doesNotMatch(css,/body\[data-mobile-player=true\] \.player #globe-status(?:,|\{display:none!important)/);
+  assert.match(css,/body\[data-mobile-player=true\] \.player #globe-status,body\[data-landscape-phone=true\] \.player #globe-status\{display:none!important\}/);
   assert.match(css,/body\[data-mobile-player=true\] footer>span\{display:none\}/);
 });
 

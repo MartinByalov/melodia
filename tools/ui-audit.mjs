@@ -58,13 +58,25 @@ const probe=document.createElement('div');probe.style.cssText='position:fixed;le
 const accent=getComputedStyle(probe).backgroundColor,onAccent=getComputedStyle(probe).color;probe.remove();
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
-// The selected artist's live feed remains available on phones as well as desktop.
+// The cover has the same visual space to the player edge and the track text.
+const cover=document.querySelector('.player-left .album'),trackInfo=document.querySelector('.player-left .track-info');
+if(cover&&trackInfo&&visible(cover)){
+  const a=cover.getBoundingClientRect(),p=document.querySelector('.player').getBoundingClientRect(),t=trackInfo.getBoundingClientRect();
+  const left=a.left-p.left,right=t.left-a.right;
+  if(Math.abs(left-right)>1)problems.push('cover spacing differs: left '+left.toFixed(1)+' px, right '+right.toFixed(1)+' px');
+}
+
+// Phones never show the live feed, even when a notice is pending.
+const phoneLayout=document.body.dataset.mobilePlayer==='true'||document.body.dataset.landscapePhone==='true';
 const feed=document.querySelector('#globe-status'),homepage=document.querySelector('#station-homepage'),notice=document.querySelector('#player-notice');
 if(feed&&homepage&&notice){
   const state=[feed.hidden,homepage.hidden,notice.hidden];
   feed.hidden=false;homepage.hidden=false;notice.hidden=true;
-  if(!visible(feed)||!visible(homepage))problems.push('artist live feed is hidden');
-  if(feed.getBoundingClientRect().width<40)problems.push('artist live feed has no readable space');
+  if(phoneLayout){
+    if(visible(feed))problems.push('phone live feed must be hidden');
+    notice.hidden=false;
+    if(visible(feed))problems.push('phone live feed must stay hidden for notices');
+  }else if(!visible(feed)||!visible(homepage)||feed.getBoundingClientRect().width<40)problems.push('desktop live feed is hidden or has no readable space');
   [feed.hidden,homepage.hidden,notice.hidden]=state;
 }
 
@@ -75,6 +87,10 @@ if(document.body.dataset.mobilePlayer==='true'||document.body.dataset.landscapeP
   if(rotate.getAttribute('aria-pressed')!=='true'||rotate.title!=='Resume globe rotation')problems.push('phone globe pause does not activate');
   rotate.click();
   if(rotate.getAttribute('aria-pressed')!=='false')problems.push('phone globe rotation does not resume');
+  const heart=document.querySelector('#favorite'),old=heart.getAttribute('aria-pressed');heart.setAttribute('aria-pressed','false');
+  const a=getComputedStyle(rotate),b=getComputedStyle(heart),rs=rotate.querySelector('svg').getBoundingClientRect(),hs=heart.querySelector('svg').getBoundingClientRect();
+  if(a.color!==b.color||a.opacity!=='1'||rs.width!==hs.width||rs.height!==hs.height)problems.push('globe pause icon must match the unselected heart color, opacity and size');
+  heart.setAttribute('aria-pressed',old);
 }
 const canvasCache=new Map();
 async function optical(svg){
@@ -127,8 +143,32 @@ async function openDialog(name,open,selector){
 }
 const infoOpener=document.querySelector('#mobile-info')&&visible(document.querySelector('#mobile-info'))?document.querySelector('#mobile-info'):document.querySelector('footer [data-info=about]');
 await openDialog('info',()=>infoOpener.click(),'#info-dialog');
+await wait(200);
+const skyCanvas=document.querySelector('#info-dialog .dialog-sky');
+let lostSkyContexts=0;
+skyCanvas?.addEventListener('webglcontextlost',()=>lostSkyContexts++);
+for(let cycle=0;cycle<5;cycle++){
+  document.querySelector('#info-dialog').close();await wait(400);infoOpener.click();await wait(400);
+  if(skyCanvas&&document.querySelector('#info-dialog .dialog-sky')!==skyCanvas)problems.push('About recreated its WebGL canvas');
+}
+if(lostSkyContexts)problems.push('About lost '+lostSkyContexts+' WebGL contexts during reopening');
+const divider=document.querySelector('.about-support-divider'),coffee=document.querySelector('#about-coffee'),copyright=document.querySelector('.info-copyright');
+if(divider&&coffee&&copyright){
+  const a=divider.getBoundingClientRect(),b=coffee.getBoundingClientRect(),c=copyright.getBoundingClientRect();
+  const offset=(b.top+b.bottom)/2-(a.bottom+c.top)/2;
+  if(Math.abs(offset)>1)problems.push('About coffee button is '+offset.toFixed(1)+' px off the midpoint between divider and copyright');
+  if(copyright.textContent!=='© '+new Date().getFullYear()+' melodia.lol All rights reserved.')problems.push('About copyright text differs');
+}
 await openDialog('share',()=>document.querySelector('#share').click(),'#share-dialog');
 await openDialog('artist',()=>{const b=document.querySelector('#station-info');b.disabled=false;b.click()},'#station-dialog');
+const artistDialog=document.querySelector('#station-dialog'),lastFact=document.querySelector('#station-facts p:last-child'),copyTrack=document.querySelector('#copy-stream');
+if(lastFact&&copyTrack){
+  artistDialog.scrollTop=0;
+  const a=lastFact.getBoundingClientRect(),b=copyTrack.getBoundingClientRect(),d=artistDialog.getBoundingClientRect();
+  const bottom=Math.max(d.bottom-parseFloat(getComputedStyle(artistDialog).borderBottomWidth||0),d.top+artistDialog.scrollHeight);
+  const offset=(b.top+b.bottom)/2-(a.bottom+bottom)/2;
+  if(Math.abs(offset)>1.5)problems.push('artist copy button is '+offset.toFixed(1)+' px off the midpoint between last fact and bottom');
+}
 await openDialog('favorites',()=>{const b=document.querySelector('#favorites-share');b.removeAttribute('hidden');b.click()},'#favorites-dialog');
 const actions=document.querySelector('#favorites-download').closest('.fav-actions'),qr=document.querySelector('#favorites-qr'),note=document.querySelector('#favorites-qr-note');
 if(!visible(qr))problems.push('favorites QR code is missing');

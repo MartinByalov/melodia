@@ -19,6 +19,7 @@ import { createRegionColors } from './region-colors.js';
 import { createEffectScenes } from './effect-scenes.js';
 import { createGlobeCorona } from './globe-corona.js';
 import { spreadStationMarkers, pointGrowth as markerGrowth } from './station-layout.js';
+import { fitRenderer } from './renderer-size.js';
 
 // Same east-negative-Z geographic convention as latest/scripts/map-globe-surface.js.
 export function direction(lat, lon) {
@@ -174,7 +175,7 @@ export function createGlobe(container, onSelect) {
   let pendingPointer=null,idlePointer=null;
   renderer.domElement.addEventListener('pointerleave',()=>{idlePointer=null;pendingPointer=null;hovered=null;globeHovered=false;tooltip.style.display='none';});
   renderer.domElement.addEventListener('dblclick',event=>{if(discoMode)return;hit(event);if(raycaster.ray.intersectSphere(earthSphere,surfacePoint)){camera.position.copy(surfacePoint.normalize().multiplyScalar(camera.position.length()));controls.autoRotate=false;zoom(.55);}});
-  const resize=()=>{const w=container.clientWidth,h=container.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);controls.handleResize();};
+  const resize=()=>{const w=Math.max(1,container.clientWidth),h=Math.max(1,container.clientHeight);camera.aspect=w/h;camera.updateProjectionMatrix();fitRenderer(renderer,w,h);controls.handleResize();};
   const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);resize();
   const intro = document.querySelector('.intro');
   let mobileGlobeOffset=0,mobileGlobeTarget=0;

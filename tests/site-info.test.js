@@ -3,6 +3,14 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {openSiteDialog} from '../public/site-info.js';
 
+test('artist copy action fills the remaining space with equal vertical padding',async()=>{
+  const [html,css]=await Promise.all(['index.html','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
+  assert.match(html,/<div class="artist-actions"><button id="copy-stream"/);
+  assert.ok(css.includes('body[data-mode] #station-dialog[open]{display:flex;flex-direction:column;padding-bottom:0}'));
+  assert.ok(css.includes('#station-dialog #station-facts p:last-child{margin-bottom:0}'));
+  assert.ok(css.includes('#station-dialog .artist-actions{flex:1 0 auto;display:flex;align-items:center;justify-content:center;padding:24px 0}'));
+});
+
 test('footer information stays in dialogs with credits and copyright',async()=>{
   const html=await readFile(new URL('../public/index.html',import.meta.url),'utf8');
   const source=await readFile(new URL('../public/site-info.js',import.meta.url),'utf8');
@@ -12,7 +20,7 @@ test('footer information stays in dialogs with credits and copyright',async()=>{
   assert.match(source,/© OpenStreetMap contributors/);
   assert.match(source,/openSiteDialog\(dialog\)/);
   assert.doesNotMatch(html,/All rights reserved/);
-  assert.match(source,/melodia\.lol\. All rights reserved\./);
+  assert.match(source,/melodia\.lol All rights reserved\./);
   assert.match(source,/title:'About'/);
   assert.match(html,/<dialog id="info-dialog" aria-label="About">/);
   assert.match(html,/id="info-title"/);
@@ -100,6 +108,9 @@ test('information prose uses full sentences rather than semicolons',async()=>{
 
 test('About places support after its prose and copyright in a separate bottom row',async()=>{
   const [source,css]=await Promise.all(['site-info.js','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
+  assert.ok(source.includes('melodia.lol All rights reserved.'));
+  assert.ok(!source.includes('melodia.lol. All rights reserved.'));
+  assert.ok(css.includes('#info-dialog:has(#info-content[data-section=about]) .info-copyright{padding:0}'));
   assert.match(source,/shown with each track\.<\/p><span class="about-support-divider" aria-hidden="true"><\/span><button id="about-coffee" class="coffee-link" type="button"><span class="coffee-cup" aria-hidden="true">♥<\/span>Buy me a coffee!<\/button>/);
   assert.match(css,/#info-dialog #about-coffee\{align-self:center;flex-shrink:0;margin:0\}/);
   assert.match(source,/content\.dataset\.section=opener\.dataset\.info/);
