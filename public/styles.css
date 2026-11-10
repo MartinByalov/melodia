@@ -677,7 +677,7 @@ body[data-landscape-phone=true] .discover-panel .station-list{flex:0 0 auto;min-
 /* Reduce effects is a player button on phones, placed just before Info. */
 #reduce-effects{display:none}
 body[data-mobile-player=true] #reduce-effects,body[data-landscape-phone=true] #reduce-effects{display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--panel-edge);border-radius:8px;color:var(--icon-color)}
-#reduce-effects[aria-pressed=true]{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
+body[data-mobile-player=true] #reduce-effects[aria-pressed=true],body[data-landscape-phone=true] #reduce-effects[aria-pressed=true]{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
 body[data-landscape-phone=true] .player-right #reduce-effects{width:34px;height:34px;min-width:34px;flex:0 0 34px}
 body[data-landscape-phone=true] .player-right #mobile-info{margin-left:10px}
 /* Phones in portrait: Favorites sits under Play, and the other four tools share the right half at one size. */
@@ -757,3 +757,15 @@ body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-
 #favorites-dialog .fav-note{margin:16px 0 0;text-align:center}
 #favorites-dialog .fav-note:empty{display:none}
 #favorites-dialog{padding-bottom:16px}
+/* Sideways phone: the About text is compact so the divider and the coffee button fit without scrolling. */
+body[data-landscape-phone=true] #info-dialog #info-content[data-section=about]{padding-top:6px;font-size:12px;line-height:1.4}
+body[data-landscape-phone=true] #info-dialog #info-content[data-section=about] p{margin:0 0 6px}
+body[data-landscape-phone=true] #info-dialog #info-content[data-section=about] .about-support-divider{margin:4px 0 0}
+body[data-landscape-phone=true] #info-dialog .about-support{flex:0 0 auto;padding:6px 0 0}
+body[data-landscape-phone=true] #info-dialog #about-coffee{min-height:34px;padding:5px 12px;font-size:13px}
+/* Sideways phone: Share fits above the player, and the Information dialog never scrolls as a whole, only its text does, with soft edges. */
+body[data-landscape-phone=true] #share-dialog[open]{padding:18px 32px 14px}
+body[data-landscape-phone=true] #share-dialog h2{margin:8px 0}
+body[data-landscape-phone=true] #share-dialog .share-links{margin:14px 0}
+body[data-landscape-phone=true] #info-dialog[open]{overflow:hidden}
+body[data-landscape-phone=true] #info-dialog #info-content:not([data-section=about]){padding:14px 0;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 14px),transparent 100%)}
