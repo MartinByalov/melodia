@@ -72,19 +72,16 @@ test('favorites toggles closed and switches from Stations without closing the pa
   }
 });
 
-test('night header backgrounds distinguish selected and closed menus',async()=>{
+test('open header menus use the Play look and closed ones keep the plain header look',async()=>{
   const styles=await readFile(new URL('../public/styles.css',import.meta.url),'utf8');
-  for(const id of ['catalog-toggle','favorites']){
-    assert.match(styles,new RegExp(`body\\[data-mode=night\\] \\.header-right #${id}\\[aria-expanded=true\\]\\{background:#e3e8f0`));
-    assert.match(styles,new RegExp(`body\\[data-mode=night\\] \\.header-right #${id},[^\\n]*\\{background:#151924`));
-  }
+  for(const id of ['catalog-toggle','favorites'])assert.match(styles,new RegExp('body\\[data-mode\\] \\.header-right #'+id+'\\[aria-expanded=true\\]'));
+  assert.match(styles,/body\[data-mode\] \.header-right #catalog-toggle\[aria-expanded=true\],[^{]*\{background:var\(--accent\);border-color:var\(--accent\);color:var\(--on-accent\)/);
+  assert.doesNotMatch(styles,/#e3e8f0;border-color:#94a3b8/);
+  for(const id of ['catalog-toggle','favorites'])assert.match(styles,new RegExp('body\\[data-mode=night\\] \\.header-right #'+id+',[^\\n]*\\{background:#151924'));
 });
 
-test('day selected menus and moon button use the dark background',async()=>{
+test('day moon button uses the dark background',async()=>{
   const styles=await readFile(new URL('../public/styles.css',import.meta.url),'utf8');
-  for(const id of ['catalog-toggle','favorites']){
-    assert.match(styles,new RegExp(`body\\[data-mode=day\\] \\.header-right #${id}\\[aria-expanded=true\\]\\{background:#151924`));
-  }
   assert.match(styles,/body\[data-mode=day\] \.header-right #mode-toggle\{background:#151924;color:#e6ebf1/);
   assert.match(styles,/body\[data-mode=day\] \.header-right #mode-toggle:focus-visible\{background:#151924;color:#fff/);
 });

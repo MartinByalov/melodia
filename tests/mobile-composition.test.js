@@ -98,7 +98,7 @@ test('mobile mode, Share and Info buttons keep their active colors independently
   for(const selector of ['#mode-toggle[aria-pressed=true]','#share[aria-expanded=true]','#mobile-info[aria-expanded=true]']){
     assert.ok(css.includes(`.mobile-player-bottom ${selector}`));
   }
-  assert.match(css,/body\[data-mobile-player=true\]\[data-mode=night\] \.player \.mobile-player-bottom #mode-toggle\{color:var\(--accent\);background:rgba\(var\(--accent-rgb\),\.15\);border-color:var\(--accent\)\}/);
+  assert.match(css,/body\[data-mobile-player=true\]\[data-mode=night\] \.player \.mobile-player-bottom #mode-toggle\{color:var\(--on-accent\);background:var\(--accent\);border-color:var\(--accent\);box-shadow:0 0 24px rgba\(var\(--accent-rgb\),\.12\)\}/);
 });
 
 test('mobile player is edge-to-edge, shows available moving text and hides waves and footer attribution',async()=>{

@@ -14,14 +14,14 @@ test('player hover and focus tooltips use current accessible labels with mode-in
 test('startup waits for map layers and catalogue, and player tooltips describe current actions',async()=>{
   const [app,html,globe]=await Promise.all(['app.js','index.html','globe.js'].map(file=>readFile(new URL('../public/'+file,import.meta.url),'utf8')));
   // The animated reveal on the globe is the only loading label; the plain message box stays hidden.
-  assert.match(html,/<div id="world-status"[^>]*hidden><span id="world-message"><\/span><\/div>/);
+  assert.doesNotMatch(html,/world-status|world-message/);
   assert.doesNotMatch(app,/Loading World Vibe/);
   assert.match(app,/Promise\.all\(\[refresh\(\),globe\?\.ready/);
   assert.match(globe,/pendingMaps=new Set\(\['overview','detail','district'\]\)/);
   // Startup waits for the overview map only; detail and district layers load in the background.
   assert.match(globe,/if\(kind==='overview'\)resolveReady\(!failed\)/);
   assert.doesNotMatch(globe,/if\(!pendingMaps\.size\)resolveReady/);
-  assert.match(app,/favorite\?'Remove this song from favorites':'Add this song to favorites'/);
+  assert.match(app,/favorite\?'Remove from Favorites':'Add to Favorites'/);
   assert.match(app,/title=playing\?'Pause':'Play'/);
 });
 

@@ -8,10 +8,10 @@ test('footer information stays in dialogs with credits and copyright',async()=>{
   const source=await readFile(new URL('../public/site-info.js',import.meta.url),'utf8');
   assert.doesNotMatch(html,/POWERED BY RADIO-BROWSER/);
   for(const key of ['about','credits','privacy'])assert.ok(html.includes(`data-info="${key}"`));
-  assert.match(html,/id="copyright-year"/);
+  assert.doesNotMatch(html,/copyright-year|site-copyright/);
   assert.match(source,/© OpenStreetMap contributors/);
   assert.match(source,/openSiteDialog\(dialog\)/);
-  assert.match(html,/id="copyright-year">2026<\/span> melodia\.lol\. All rights reserved\./);
+  assert.doesNotMatch(html,/All rights reserved/);
   assert.match(source,/melodia\.lol\. All rights reserved\./);
   assert.match(source,/title:'About'/);
   assert.match(html,/<dialog id="info-dialog" aria-label="About">/);
@@ -139,7 +139,7 @@ test('selected information button keeps its accent color until another section i
   const [source,css]=await Promise.all(['site-info.js','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
   assert.match(source,/dialog\.querySelectorAll\('\.info-tabs button\[data-info\]'\)\.forEach\(button=>\{/);
   assert.match(source,/button\.setAttribute\('aria-pressed',String\(button\.dataset\.info===opener\.dataset\.info\)\)/);
-  assert.match(css,/#info-dialog \.info-tabs button\[aria-pressed=true\]\{color:var\(--accent\);border-color:var\(--accent\);background:rgba\(var\(--accent-rgb\),\.15\)\}/);
+  assert.match(css,/#info-dialog \.info-tabs button\[aria-pressed=true\]\{color:var\(--on-accent\);background:var\(--accent\);border-color:var\(--accent\);box-shadow:0 0 24px rgba\(var\(--accent-rgb\),\.12\)\}/);
 });
 
 test('mobile information opens from the player, just before Share, instead of floating over the header',async()=>{
@@ -151,4 +151,9 @@ test('mobile information opens from the player, just before Share, instead of fl
   assert.doesNotMatch(css,/#mobile-info\{display:flex;position:fixed/);
   assert.doesNotMatch(css,/body\[data-catalog-open=true\] #mobile-info\{display:none\}/);
   assert.match(css,/body\[data-embed=true\] #mobile-info\{display:none!important\}/);
+});
+test('pressing the Info or Share button a second time closes the window it opened',async()=>{
+  const [info,app]=await Promise.all(['site-info.js','app.js'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
+  assert.match(info,/if\(opener\.id==='mobile-info'&&dialog\.open\)\{dialog\.close\(\);return;\}/);
+  assert.match(app,/\$\('#share'\)\.addEventListener\('click', \(\) => \{ if \(\$\('#share-dialog'\)\.open\) \{ \$\('#share-dialog'\)\.close\(\); return; \}/);
 });

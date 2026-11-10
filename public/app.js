@@ -97,10 +97,10 @@ $('#globe').addEventListener('themeaccent',event=>{
   document.documentElement.style.setProperty('--accent-rgb',channels.join(','));
   document.documentElement.style.setProperty('--bg','#'+channels.map(value=>Math.round(6+value*.045).toString(16).padStart(2,'0')).join(''));
 });
+// Every message is shown in the player's moving line, never over the globe.
 function setPlayerMessage(text){
   playerMessage=text;
-  $('#world-message').textContent=text;
-  $('#world-status').hidden=!text;
+  notify(text);
 }
 // Playback problems appear in the player's moving line, never over the globe.
 function ensurePlayerLine(){
@@ -190,6 +190,7 @@ function syncVolume(){
 let favorites = (() => { try { return loadFavorites(localStorage); } catch { return []; } })();
 let favoriteIds = favoriteArtistIds(favorites);
 let globe;
+$('#globe').addEventListener('globemessage', event => notify(event.detail));
 try { globe = createGlobe($('#globe'), s => choose(s, true)); } catch (e) { console.error(e); setPlayerMessage('3D view is unavailable. Listen from the artist list.'); }
 globe?.setDiscoMode?.(underDevelopment);
 let displayMode='night';
@@ -198,7 +199,7 @@ const modeToggle=$('#mode-toggle');
 if(!modeToggle)throw new Error('Missing required #mode-toggle button in index.html');
 function applyMode(){
   document.body.dataset.mode=displayMode;globe?.setMode(displayMode);
-  modeToggle.innerHTML=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${displayMode==='day'?'<path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z"/>':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'}</svg>`;
+  modeToggle.innerHTML=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${displayMode==='day'?'<path transform="translate(.47 .14)" d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z"/>':'<g transform="translate(0 -.6)"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g>'}</svg>`;
   modeToggle.setAttribute('aria-pressed',String(displayMode==='day'));
   modeToggle.setAttribute('aria-label',displayMode==='day'?'Switch to night mode':'Switch to day mode');
   document.querySelector('meta[name="theme-color"]').content=displayMode==='day'?'#f3f6fa':'#080b14';
@@ -206,7 +207,7 @@ function applyMode(){
 modeToggle.addEventListener('click',()=>{displayMode=displayMode==='day'?'night':'day';applyMode();});
 applyMode();
 // Status messages are separate from the station website ticker.
-function toast(text) { setPlayerMessage(text); }
+function toast(text) { playerMessage=text; notify(text,5000); }
 function setTheme(s) {
   // Filters must not overwrite the identity of the currently selected station.
   const station=s.id?s:selected;
@@ -241,9 +242,9 @@ function updateFavorites() {
   updateHeaderStyles();
   $('#fav-count').textContent = favorites.length;
   const track = currentTrack(), favorite = Boolean(track && hasFavorite(favorites, track.id));
-  $('#favorite').innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="${favorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>`;
+  $('#favorite').innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="${favorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path transform="translate(0 -.59)" d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>`;
   $('#favorite').setAttribute('aria-pressed', String(!!favorite));
-  const label=favorite?'Remove this song from favorites':'Add this song to favorites';
+  const label=favorite?'Remove from Favorites':'Add to Favorites';
   $('#favorite').title=label;$('#favorite').setAttribute('aria-label',label);
 }
 // Country and style choices only list what still has artists under the other filters, so there is never an empty combination.
@@ -617,7 +618,7 @@ $('#copy-stream').addEventListener('click',async()=>{
   catch{$('#copy-stream').textContent='Copy the address from your browser';}
 });
 $('#share').setAttribute('aria-controls','share-dialog');$('#share').setAttribute('aria-expanded','false');
-$('#share').addEventListener('click', () => { if (!selected) return setPlayerMessage('Choose an artist to share.'); $('#share-description').textContent = `${selected.name} · ${selected.country}`; $('#native-share').hidden = !navigator.share; $('#embed-options').hidden=true;$('#embed-toggle').setAttribute('aria-expanded','false');$('#embed-code').value=embedCode(shareBase(),selected);openSiteDialog($('#share-dialog'));$('#share').setAttribute('aria-expanded',String($('#share-dialog').open)); });
+$('#share').addEventListener('click', () => { if ($('#share-dialog').open) { $('#share-dialog').close(); return; } if (!selected) return setPlayerMessage('Choose an artist to share.'); $('#share-description').textContent = `${selected.name} · ${selected.country}`; $('#native-share').hidden = !navigator.share; $('#embed-options').hidden=true;$('#embed-toggle').setAttribute('aria-expanded','false');$('#embed-code').value=embedCode(shareBase(),selected);openSiteDialog($('#share-dialog'));$('#share').setAttribute('aria-expanded',String($('#share-dialog').open)); });
 $('#embed-toggle').addEventListener('click',()=>{
   if(document.body.dataset.embed==='true')return;
   const options=$('#embed-options');options.hidden=!options.hidden;

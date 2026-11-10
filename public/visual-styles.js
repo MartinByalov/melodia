@@ -80,3 +80,5 @@ function baseProfile(tags){
   if(['techno','house','trance','drumandbass','metal','electronic'].includes(style))return {style,pulse:1.3,ray:1,colors:1,pulseRise:110,pulseFall:380};
   return {style,pulse:.85,ray:1,colors:1,pulseRise:140,pulseFall:450};
 }
+// The globe sky is colourful for lively styles and plain accent for quiet ones, like the style profile says.
+export function profileColors(style){return ['classical','ambient','talk','jazz','blues','lofi','chill','folk','country','soul'].includes(style)?0:1;}

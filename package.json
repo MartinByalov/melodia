@@ -4,6 +4,7 @@
   "scripts": {
     "start": "node server.js",
     "check": "node scripts/check.js",
+    "audit": "node tools/ui-audit.mjs",
     "update:artists": "node scripts/update-artists.js",
     "test:catalogue": "node --test tests/music.test.js tests/geocode.test.js tests/update-artists.test.js tests/station-exclusions.test.js",
     "test": "node --test tests/*.test.js",

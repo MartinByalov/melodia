@@ -11,9 +11,9 @@ test('information links live in the footer next to the copyright line',async()=>
   assert.ok(header,'header present');
   assert.ok(footer,'footer present');
   assert.ok(!header.includes('footer-links')&&!header.includes('data-reduce-effects'),'links moved out of the header');
-  for(const marker of ['data-info="about"','data-info="credits"','data-info="privacy"','data-info="requests"','data-reduce-effects','copyright-year'])
+  for(const marker of ['data-info="about"','data-info="credits"','data-info="privacy"','data-info="requests"','data-reduce-effects'])
     assert.ok(footer.includes(marker),`footer holds ${marker}`);
-  assert.ok(footer.indexOf('data-info="about"')<footer.indexOf('All rights reserved.'),'links sit on the copyright row');
+  assert.ok(!footer.includes('All rights reserved'),'the copyright line is only in About');
   const css=await read('styles.css');
   assert.match(css,/footer\{justify-content:center;gap:16px\}/);
   assert.doesNotMatch(css,/header \.footer-links\{/);
@@ -26,7 +26,7 @@ test('start page is not locked in under-development mode',async()=>{
   assert.match(app,/if\(underDevelopment\)autoplay=false/);
   assert.match(app,/globe\?\.setDiscoMode\?\.\(underDevelopment\)/);
   assert.match(css,/body\[data-under-development=true\] header,body\[data-under-development=true\] \.player,body\[data-under-development=true\] footer\{filter:blur\(7px\);pointer-events:none\}/);
-  assert.match(css,/body\[data-under-development=true\] #world-status\{display:none\}/);
+  assert.doesNotMatch(css,/world-status/);
   assert.match(css,/body\[data-under-development=true\] #globe canvas\{filter:saturate\(1\.6\)/);
   assert.match(css,/disco-ball-hue/);
   assert.match(revealSource,/element\.hidden=!\(loading\|\|persistent\)/);

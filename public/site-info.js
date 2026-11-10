@@ -18,9 +18,12 @@ export function setupSiteInfo(globe){
   const dialog=document.querySelector('#info-dialog'),content=document.querySelector('#info-content'),title=document.querySelector('#info-title');
   const mobileInfo=document.querySelector('#mobile-info');
   dialog.addEventListener('close',()=>mobileInfo.setAttribute('aria-expanded',String(dialog.open)));
+  // The same sky as behind the globe is drawn behind the window while it is open.
+  let sky=null;
+  dialog.addEventListener('close',()=>{sky?.dispose();sky=null;});
+  async function showSky(){if(sky)return;try{const {createDialogSky}=await import('./dialog-sky.js');if(!dialog.open||sky)return;sky=createDialogSky(dialog);}catch{sky=null;}}
   const copyright=document.createElement('p');copyright.className='info-copyright';copyright.hidden=true;
   copyright.textContent=`© ${new Date().getFullYear()} melodia.lol. All rights reserved.`;dialog.append(copyright);
-  document.querySelector('#copyright-year').textContent=new Date().getFullYear();
   const media=matchMedia('(prefers-reduced-motion: reduce)');
   let reduced=false;
   try{reduced=localStorage.getItem('melodia-reduce-effects')==='true';}catch{/* Optional storage. */}
@@ -41,6 +44,7 @@ export function setupSiteInfo(globe){
   document.addEventListener('click',event=>{
     const opener=event.target.closest('[data-info]');
     if(opener){
+      if(opener.id==='mobile-info'&&dialog.open){dialog.close();return;}
       const section=sections[opener.dataset.info];if(!section)return;
       dialog.setAttribute('aria-label',section.title);title.textContent=section.title;content.innerHTML=section.html;
       content.dataset.section=opener.dataset.info;
@@ -54,6 +58,7 @@ export function setupSiteInfo(globe){
       copyright.hidden=opener.dataset.info!=='about';
       openSiteDialog(dialog);
       mobileInfo.setAttribute('aria-expanded',String(dialog.open));
+      showSky();
     }
     if(event.target.closest('button[data-reduce-effects]')){
       reduced=!reduced;try{localStorage.setItem('melodia-reduce-effects',String(reduced));}catch{/* Optional storage. */}apply();

@@ -41,7 +41,7 @@ export function createGlobe(container, onSelect) {
   controls.minDistance = 1.0008; controls.maxDistance = 6.5; controls.autoRotateSpeed = .25;
   controls.zoomSpeed = .65;
   controls.enableZoom = false;
-  installDragRotation({ THREE, camera, controls, canvas: renderer.domElement });
+  const drag = installDragRotation({ THREE, camera, controls, canvas: renderer.domElement });
   function zoom(factor) {
     if(discoMode)return;
     const distance=camera.position.length();
@@ -91,7 +91,7 @@ export function createGlobe(container, onSelect) {
     fragmentShader:'uniform vec3 interiorTint;uniform float interiorStrength;varying vec3 n; varying vec3 v; void main(){float center=pow(max(dot(normalize(n),normalize(v)),0.0),.6);vec3 color=mix(vec3(.24,.31,.39),vec3(.72,.77,.80),center);color=mix(color,interiorTint,interiorStrength);gl_FragColor=vec4(color,1.0);}',
     polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:2
   });
-  const status = document.querySelector('#player-message');
+  const say = text => container.dispatchEvent(new CustomEvent('globemessage', { detail: text }));
   const player=document.querySelector('.player');
   if(!player)throw new Error('Missing required .player element in index.html');
   const borderMaterial = new LineMaterial({ color: 0x62efc5, linewidth: 2.3, depthWrite: false });
@@ -220,7 +220,7 @@ export function createGlobe(container, onSelect) {
     if(disposed)return;
     if(error){
       settleMap(kind,true);
-      if(kind==='detail')status.textContent='Map could not load. Refresh the page.';
+      if(kind==='detail')say('Map could not load. Refresh the page.');
       if(kind==='district')container.dataset.districtBoundaries='unavailable';
       return;
     }
@@ -243,7 +243,7 @@ export function createGlobe(container, onSelect) {
     updateOverlay();updateCityBoundaries();
     settleMap(kind);
   };
-  mapWorker.onerror=()=>{status.textContent='Map could not load. Refresh the page.';container.dataset.districtBoundaries='unavailable';mapsFailed=true;resolveReady(false);};
+  mapWorker.onerror=()=>{say('Map could not load. Refresh the page.');container.dataset.districtBoundaries='unavailable';mapsFailed=true;resolveReady(false);};
   for(const [kind,file] of [['overview','countries.geojson'],['detail','countries-detail.geojson'],['district','districts.geojson']]){
     mapWorker.postMessage({kind,url:new URL('./assets/'+file,import.meta.url).href,maxTextureSize:Math.min(4096,renderer.capabilities.maxTextureSize)});
   }
@@ -363,6 +363,7 @@ export function createGlobe(container, onSelect) {
     const cadence=playing?Math.sin(time/1000*2*Math.PI/(styleProfile.period??5))*(styleProfile.cadence??0):0;
     const motion=(styleProfile.motion==='sway'?1+Math.sin(time/1700)*.45:styleProfile.motion==='beat'?1+rhythm*.8:1)*(1+cadence);
     if(!rotationPaused&&(controls.autoRotate||playing)&&!down&&(!globeHovered||discoMode)&&!reducedMotion)camera.position.applyAxisAngle(axis.copy(camera.up).normalize(),-.00095*(dt/16.667)*Math.min(1,(camera.position.length()-1)/.5)*(styleProfile.rotation??1)*motion);
+    drag.update(dt);
     controls.update();
     updateMapAccent(time/1000);
     const pulseTarget=playing&&!globeHovered&&!reducedMotion?(audioReaction.available?rhythm:pulseLevel(active?.profile||defaultProfile,time/1000))*6:0;
