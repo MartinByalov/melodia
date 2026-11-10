@@ -745,6 +745,8 @@ body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-
   body:not([data-embed=true]) #info-dialog,body:not([data-embed=true])[data-mode=day] #info-dialog{padding:10px 32px 32px}
   body:not([data-embed=true]) #info-dialog .info-head{display:flex;align-items:center;min-height:34px;margin:0 0 14px;flex-shrink:0}
   body:not([data-embed=true]) #info-dialog .info-head h2{margin:0;padding-right:48px;font-size:22px;line-height:1.25;color:#fff}
+  body:not([data-embed=true]) #info-dialog .info-head,body:not([data-embed=true]) #station-dialog .dialog-head,body:not([data-embed=true]) #favorites-dialog .dialog-head{justify-content:center}
+  body:not([data-embed=true]) #info-dialog .info-head h2,body:not([data-embed=true]) #station-dialog .dialog-head h2,body:not([data-embed=true]) #favorites-dialog .dialog-head h2{flex:1;padding:0 48px;text-align:center}
   body:not([data-embed=true]) #info-dialog .dialog-close{position:absolute;top:10px;right:12px}
   body:not([data-embed=true]) #info-dialog #info-content[data-section]{padding-top:0}
   body:not([data-embed=true]) #station-dialog,body:not([data-embed=true]) #favorites-dialog{padding-top:10px}
