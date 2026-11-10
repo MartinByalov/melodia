@@ -777,3 +777,21 @@ body[data-landscape-phone=true] #info-dialog #info-content:not([data-section=abo
   body:not([data-embed=true]):not([data-landscape-phone=true]) #station-dialog .dialog-head,body:not([data-embed=true]):not([data-landscape-phone=true]) #favorites-dialog .dialog-head{min-height:54px}
   body:not([data-embed=true]):not([data-landscape-phone=true]) #station-dialog[open],body:not([data-embed=true]):not([data-landscape-phone=true]) #favorites-dialog[open]{padding-right:12px}
 }
+/* Share has the same title row as the other dialogs (title on the row of the X, no eyebrow). The row height per layout matches the other dialogs. */
+#share-dialog .eyebrow{display:none}
+#share-dialog h2{display:flex;align-items:center;min-height:34px;margin:0 0 14px;padding-right:48px;font-size:22px;line-height:1.25}
+@media(min-width:1025px) and (pointer:fine),(min-width:1367px){
+  body:not([data-embed=true]) #share-dialog{padding-top:10px}
+  body:not([data-embed=true]) #share-dialog h2{justify-content:center;padding:0 48px;text-align:center}
+}
+@media(min-width:761px) and (max-width:1024px),(min-width:1025px) and (max-width:1366px) and (pointer:coarse){
+  body:not([data-embed=true]):not([data-landscape-phone=true]) #share-dialog{padding-top:0}
+  body:not([data-embed=true]):not([data-landscape-phone=true]) #share-dialog h2{min-height:54px;margin-bottom:6px}
+}
+body[data-landscape-phone=true] #share-dialog[open]{padding-top:0}
+body[data-landscape-phone=true] #share-dialog h2{min-height:72px;margin:0 0 4px}
+body[data-mobile-player=true] #share-dialog,body[data-embed=true] #share-dialog{padding-top:env(safe-area-inset-top,0px)}
+body[data-mobile-player=true] #share-dialog h2,body[data-embed=true] #share-dialog h2{min-height:58px;margin-bottom:4px}
+/* On desktop and tablet the Share and Mute buttons in the player are 34px icon buttons like the others, with no divider. */
+body:not([data-mobile-player=true]):not([data-embed=true]):not([data-landscape-phone=true]) .player-right #share{width:34px;height:34px;min-width:34px;flex:0 0 34px;padding:0;border:0}
+body:not([data-mobile-player=true]):not([data-embed=true]):not([data-landscape-phone=true]) .player-right #mute{width:34px;height:34px}
