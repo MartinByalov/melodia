@@ -594,7 +594,7 @@ function syncGlobeButton(){
   const phone=phoneRotation.matches,paused=Boolean(globe?.rotationPaused);
   const label=phone?(paused?'Resume globe rotation':'Pause and reset globe'):'Reset globe';
   rotateButton.title=label;rotateButton.setAttribute('aria-label',label);
-  rotateButton.innerHTML=phone?'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a9 9 0 1 1-1 7M4 3v4h4"/><path d="M10 9v6m4-6v6"/></svg>':resetIcon;
+  rotateButton.innerHTML=phone?'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a9 9 0 1 1-1 7M4 3v4h4"/>'+(paused?'<path d="M10.5 8.8v6.4l5-3.2z" fill="currentColor"/>':'<path d="M10 9v6m4-6v6"/>')+'</svg>':resetIcon;
   if(phone)rotateButton.setAttribute('aria-pressed',String(paused));
   else rotateButton.removeAttribute('aria-pressed');
 }

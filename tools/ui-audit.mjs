@@ -139,7 +139,18 @@ async function openDialog(name,open,selector){
   const x=d.querySelector('.dialog-close'),h=[...d.querySelectorAll('h2')].find(visible);
   if(x&&h){const xb=x.getBoundingClientRect(),hb=h.getBoundingClientRect();const dy=(hb.top+hb.height/2)-(xb.top+xb.height/2);if(Math.abs(dy)>1.5)problems.push(name+' title is '+dy.toFixed(1)+' px off the X row')}
   if(d.scrollWidth>d.clientWidth+1)problems.push(name+' scrolls sideways');
+  const phoneTabs=[...d.querySelectorAll('.info-tabs button')].filter(visible);
+  const sideways=matchMedia('(orientation:landscape) and (max-height:500px)').matches;
+  if(name==='info'&&phoneTabs.length&&x&&(innerWidth<=760||sideways)){
+    const xr=x.getBoundingClientRect(),xcy=xr.top+xr.height/2,tab=k=>d.querySelector('.info-tabs [data-info='+k+']').getBoundingClientRect();
+    for(const k of ['about','privacy','requests']){const r=tab(k);if(Math.abs(r.top+r.height/2-xcy)>2)problems.push('info tab '+k+' is not on the row of the X');}
+    if(Math.abs(tab('about').height-xr.height)>1)problems.push('info tabs are not as high as the X button');
+    const c=tab('credits'),a=tab('about');
+    if(sideways){if(Math.abs(c.top+c.height/2-xcy)>2)problems.push('Sources & Credits tab is not on the row of the X');}
+    else if(c.top<a.bottom-1)problems.push('Sources & Credits should be on the second row');
+  }
   for(const b of d.querySelectorAll('.copy-button, #copy-link, #embed-toggle'))if(visible(b)){const r=getComputedStyle(b);if(r.borderTopWidth!=='1px'||parseFloat(r.height)<39.5)problems.push(name+' button '+label(b)+' differs: '+r.height)}
+  for(const b of d.querySelectorAll('.copy-button, #copy-link, #embed-toggle'))if(visible(b)){const wide=Math.min(260,b.parentElement.clientWidth),w=b.getBoundingClientRect().width;if(Math.abs(w-wide)>1.5)problems.push(name+' button '+label(b)+' is '+w.toFixed(0)+' px wide, expected '+wide.toFixed(0)+' px (the QR code width)')}
 }
 const infoOpener=document.querySelector('#mobile-info')&&visible(document.querySelector('#mobile-info'))?document.querySelector('#mobile-info'):document.querySelector('footer [data-info=about]');
 await openDialog('info',()=>infoOpener.click(),'#info-dialog');
@@ -183,6 +194,18 @@ for(const [selector,dialogId,applies] of [['#mobile-info','#info-dialog',true],[
   if(!opened||target.open||button.getAttribute('aria-expanded')!=='false')problems.push(selector+' does not close its window when pressed again');
   target.close();
 }
+
+// The Reset button on phones pauses the rotation and shows Play inside the arrow while it is paused.
+{const r=document.querySelector('#rotate');
+  if(r&&visible(r)&&(innerWidth<=760||matchMedia('(orientation:landscape) and (max-height:500px)').matches)){
+    const paused=()=>r.getAttribute('aria-pressed')==='true',play=()=>Boolean(r.querySelector('path[d^="M10.5 8.8"]')),bars=()=>Boolean(r.querySelector('path[d^="M10 9v6"]'));
+    if(paused())r.click();await wait(150);
+    if(paused()||!bars())problems.push('Reset button should show the pause bars while the globe turns');
+    r.click();await wait(150);
+    if(!paused()||!play())problems.push('Reset button should show Play inside the arrow while paused');
+    r.click();await wait(150);
+    if(paused()||!bars())problems.push('Pressing the Reset button again should resume the rotation');
+  }}
 
 // 5. No message is painted over the globe.
 if(document.querySelector('#world-status'))problems.push('#world-status overlay exists: messages must go to the player line');

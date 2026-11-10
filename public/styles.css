@@ -862,3 +862,20 @@ body[data-mode=night] #info-dialog .info-tabs button:not([aria-pressed=true]),bo
 body[data-mode=day] #info-dialog .info-tabs button:not([aria-pressed=true]),body[data-mode=day] #info-dialog .dialog-close:not(:hover):not(:focus-visible):not(:active){background:#f8fafc;color:#151924;border:1px solid #64748b}
 body[data-mode] #info-dialog .info-tabs button:not([aria-pressed=true]):hover,body[data-mode] #info-dialog .info-tabs button:not([aria-pressed=true]):focus-visible{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
 body[data-mode] #info-dialog .dialog-close:active{color:var(--on-accent);background:var(--accent);border-color:var(--accent);box-shadow:0 0 24px rgba(var(--accent-rgb),.12)}
+/* Dialog action buttons are as wide as the QR code, which is the width of this kind of button everywhere. */
+:root{--action-width:260px}
+.qr-box{width:min(var(--action-width),100%)}
+body[data-mode] #share-dialog #copy-link,body[data-mode] #share-dialog #embed-toggle,body[data-mode] #favorites-dialog .copy-button,body[data-mode] #station-dialog .copy-button{width:min(var(--action-width),100%);margin-inline:auto}
+#favorites-dialog .fav-actions{justify-items:center}
+body[data-mode] #station-dialog .artist-actions #copy-stream{width:min(var(--action-width),100%);margin-inline:auto}
+/* Information tabs on phones: portrait puts About, Privacy and Contact on the row of the X and Sources & Credits under them. Sideways, all four are on the row of the X and as high as it. */
+body[data-mobile-player=true] #info-dialog[open]{padding:calc((58px - var(--tool-size)) / 2 + env(safe-area-inset-top,0px)) 12px 24px}
+body[data-mobile-player=true] #info-dialog .info-tabs{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:8px;margin:0;padding-right:calc(var(--tool-size) + 8px)}
+body[data-mobile-player=true] #info-dialog .info-tabs button{min-height:0;height:var(--tool-size);padding:0 12px;font-size:14px;white-space:nowrap}
+body[data-mobile-player=true] #info-dialog .info-tabs [data-info=about]{order:1}
+body[data-mobile-player=true] #info-dialog .info-tabs [data-info=privacy]{order:2}
+body[data-mobile-player=true] #info-dialog .info-tabs [data-info=requests]{order:3}
+body[data-mobile-player=true] #info-dialog .info-tabs [data-info=credits]{order:4;grid-column:1 / -1;justify-self:start}
+body[data-landscape-phone=true] #info-dialog[open]{padding:19px 66px 12px}
+body[data-landscape-phone=true] #info-dialog .info-tabs{margin:0;height:34px;flex-wrap:nowrap;align-items:center;justify-content:center;gap:6px}
+body[data-landscape-phone=true] #info-dialog .info-tabs button{height:34px;min-height:0;padding:0 12px;font-size:13px}
