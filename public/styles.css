@@ -130,7 +130,7 @@ body[data-playing=true] .ambient:after{opacity:clamp(.7,calc(var(--beat,.5) * 1.
 @media(max-width:760px){.intro{display:block;left:16px;top:20px;width:calc(100% - 32px);text-align:center}.intro .eyebrow{justify-content:center;font-size:8px;letter-spacing:1px}.intro h1{font-size:27px;line-height:1.15;letter-spacing:-.8px;margin:12px 0 0}body[data-catalog-open=true] .intro{opacity:0}}
 @media(max-width:760px){.player{column-gap:6px}.player-left,.player-right{gap:5px}.player-left .album,.player-left .visualizer{display:none}.player-left .track-info{width:100%}.player-right .share-button{min-width:30px;padding:0}.player .play-controls{gap:5px}}
 .player #favorite,.player #rotate,body[data-mode=day] .player #favorite,body[data-mode=day] .player #rotate{border:0;box-shadow:none;background:none;color:#e6ebf1;font-weight:800}
-body[data-mode=day] .player #favorite,body[data-mode=day] .player #rotate{color:#243044}
+body[data-mode=day] .player #favorite,body[data-mode=day] .player #rotate{color:var(--icon-color)}
 body[data-mode=day] .player #favorite:hover,body[data-mode=day] .player #rotate:hover{color:#111b2b}
 .player #previous,.player #next{display:inline-flex;width:30px;height:34px;flex:0 0 30px}.player #rotate[aria-pressed=false]{opacity:.7}
 .player .album{background:#162736}.player #favorite svg,.player #rotate svg{width:22px;height:22px;display:block;flex-shrink:0}
@@ -737,10 +737,10 @@ body[data-mode=day] dialog{--muted:#475569}
 body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-dialog .copy-button{color:#151924}
 /* On desktop the X of these dialogs sits in the corner, exactly like Share and Info. */
 #station-dialog .dialog-head h2,#favorites-dialog .dialog-head h2{padding-right:48px}
-@media(min-width:1025px){body:not([data-embed=true]) #station-dialog .dialog-close,body:not([data-embed=true]) #favorites-dialog .dialog-close{position:absolute;top:10px;right:12px}}
+@media(min-width:1025px) and (pointer:fine),(min-width:1367px){body:not([data-embed=true]) #station-dialog .dialog-close,body:not([data-embed=true]) #favorites-dialog .dialog-close{position:absolute;top:10px;right:12px}}
 /* Desktop: every section is its own dialog with a title row and the X, no tab bar. Tabs stay on phones and tablets. */
 .info-head{display:none}
-@media(min-width:1025px){
+@media(min-width:1025px) and (pointer:fine),(min-width:1367px){
   body:not([data-embed=true]) #info-dialog .info-tabs{display:none}
   body:not([data-embed=true]) #info-dialog,body:not([data-embed=true])[data-mode=day] #info-dialog{padding:10px 32px 32px}
   body:not([data-embed=true]) #info-dialog .info-head{display:flex;align-items:center;min-height:34px;margin:0 0 14px;flex-shrink:0}
@@ -750,7 +750,6 @@ body[data-mode=day] #favorites-dialog .copy-button,body[data-mode=day] #station-
   body:not([data-embed=true]) #info-dialog .dialog-close{position:absolute;top:10px;right:12px}
   body:not([data-embed=true]) #info-dialog #info-content[data-section]{padding-top:0}
   body:not([data-embed=true]) #station-dialog,body:not([data-embed=true]) #favorites-dialog{padding-top:10px}
-  body:not([data-embed=true]) footer>.site-copyright{position:absolute;left:16px;bottom:0;height:var(--player-bottom);display:flex;align-items:center;white-space:nowrap;font-size:10px}
 }
 /* Save your favorites: room above the QR code, and the note sits centred between the code and the bottom border. */
 #favorites-dialog .qr-box{margin:20px auto 0}
@@ -769,3 +768,12 @@ body[data-landscape-phone=true] #share-dialog h2{margin:8px 0}
 body[data-landscape-phone=true] #share-dialog .share-links{margin:14px 0}
 body[data-landscape-phone=true] #info-dialog[open]{overflow:hidden}
 body[data-landscape-phone=true] #info-dialog #info-content:not([data-section=about]){padding:14px 0;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 14px),transparent 100%)}
+@media(min-width:1025px){
+  body:not([data-embed=true]) footer>.site-copyright{position:absolute;left:16px;bottom:0;height:var(--player-bottom);display:flex;align-items:center;white-space:nowrap;font-size:10px}
+}
+/* Tablet sheets: the X of every dialog is the same 34px square at the same place as in Information and Share. */
+@media(min-width:761px) and (max-width:1024px),(min-width:1025px) and (max-width:1366px) and (pointer:coarse){
+  body:not([data-embed=true]):not([data-landscape-phone=true]) #station-dialog .dialog-close,body:not([data-embed=true]):not([data-landscape-phone=true]) #favorites-dialog .dialog-close{width:34px;height:34px;min-width:34px;flex:0 0 34px}
+  body:not([data-embed=true]):not([data-landscape-phone=true]) #station-dialog .dialog-head,body:not([data-embed=true]):not([data-landscape-phone=true]) #favorites-dialog .dialog-head{min-height:54px}
+  body:not([data-embed=true]):not([data-landscape-phone=true]) #station-dialog[open],body:not([data-embed=true]):not([data-landscape-phone=true]) #favorites-dialog[open]{padding-right:12px}
+}

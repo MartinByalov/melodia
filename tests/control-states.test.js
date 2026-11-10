@@ -25,3 +25,9 @@ test('the pressed Reduce effects rule is not outranked by the layout rule that s
   assert.match(pressed.selector, /body\[data-mobile-player=true\] #reduce-effects\[aria-pressed=true\]/);
   assert.match(pressed.selector, /body\[data-landscape-phone=true\] #reduce-effects\[aria-pressed=true\]/);
 });
+
+test('player icons have one icon color in day mode', () => {
+  assert.doesNotMatch(css, /\.player #(favorite|rotate)\{color:#/);
+  const rule = rules.filter(item => item.selector.endsWith('body[data-mode=day] .player #rotate') && 'color' in declarations(item.body)).at(-1);
+  assert.equal(declarations(rule.body).color, 'var(--icon-color)');
+});
