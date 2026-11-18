@@ -47,14 +47,14 @@ if(document.body.dataset.embed!=='true'){
     document.body.dataset.mobilePlayer=String(mobile.matches);
     document.body.dataset.landscapePhone=String(landscapePhone.matches&&!mobile.matches);
     if(mobile.matches){
-      row.append(genres,actions);actions.append($('#catalog-toggle'));header.append(row);
+      row.append(genres,actions);actions.append($('#catalog-toggle'),$('#fullscreen-toggle'));header.append(row);
       row.prepend($('.brand'));
       top.append($('#rotate'),$('#previous'),$('#play'),$('#next'),$('.volume'));
       searchRow.prepend($('#favorites'));
       tools.append($('#mode-toggle'),$('#reduce-effects'),$('#mobile-info'),$('#share'));bottom.append(left,$('#favorite'),tools);player.append(top,bottom,$('#globe-status'));
     }else{
       header.prepend($('.brand')||row.querySelector('.brand'));
-      header.insertBefore(genres,headerRight);headerRight.prepend($('#catalog-toggle'),$('#favorites'),$('#mode-toggle'));row.remove();
+      header.insertBefore(genres,headerRight);headerRight.prepend($('#catalog-toggle'),$('#fullscreen-toggle'),$('#favorites'),$('#mode-toggle'));row.remove();
       controls.append($('#favorite'),$('#previous'),$('#play'),$('#next'),$('#rotate'));
       if(landscapePhone.matches){right.append($('#globe-status'),$('.volume'),$('#reduce-effects'),$('#mobile-info'),$('#share'));player.append($('#globe-status'));}
       else{right.append($('#globe-status'),$('.volume'),$('#share'));$('footer').after($('#mobile-info'));}player.prepend(left);top.remove();bottom.remove();
@@ -75,6 +75,13 @@ if(document.body.dataset.embed!=='true'){
   const genreResizeObserver=new ResizeObserver(fitGenres);genreResizeObserver.observe(genres);
   const genreMutationObserver=new MutationObserver(fitGenres);genreMutationObserver.observe(genres,{childList:true});
   mobile.addEventListener('change',fitGenres);document.fonts.ready.then(fitGenres);
+  const fsBtn=$('#fullscreen-toggle');
+  if(fsBtn){
+    const ENTER_FS='<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>',EXIT_FS='<path d="M9 4v5H4M15 4v5h5M20 15h-5v5M4 15h5v5"/>';
+    const syncFullscreen=()=>{const active=Boolean(document.fullscreenElement||document.webkitFullscreenElement),label=active?'Exit full screen':'Enter full screen';fsBtn.setAttribute('aria-pressed',String(active));fsBtn.setAttribute('aria-label',label);fsBtn.title=label;fsBtn.querySelector('svg').innerHTML=active?EXIT_FS:ENTER_FS;};
+    fsBtn.addEventListener('click',()=>{try{const active=Boolean(document.fullscreenElement||document.webkitFullscreenElement);const call=active?(document.exitFullscreen||document.webkitExitFullscreen)?.call(document):(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen)?.call(document.documentElement);Promise.resolve(call).catch(()=>{});}catch{/* Fullscreen may be unavailable in this browser. */}});
+    document.addEventListener('fullscreenchange',syncFullscreen);document.addEventListener('webkitfullscreenchange',syncFullscreen);syncFullscreen();
+  }
   $('#mute').addEventListener('click',()=>{if(mobile.matches)$('.volume').classList.toggle('volume-open');});
   document.addEventListener('pointerdown',event=>{if(!event.target.closest('.volume'))$('.volume').classList.remove('volume-open');});
 }

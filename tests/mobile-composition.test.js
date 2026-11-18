@@ -50,11 +50,11 @@ test('mobile composition reuses controls in two rows and restores desktop on res
   assert.match(app,/mobile\.addEventListener\('change',layout\)/);
   assert.match(app,/row\.append\(genres,actions\)/);
   assert.match(app,/row\.prepend\(\$\('\.brand'\)\)/);
-  assert.match(app,/actions\.append\(\$\('#catalog-toggle'\)\)/);
+  assert.match(app,/actions\.append\(\$\('#catalog-toggle'\),\$\('#fullscreen-toggle'\)\)/);
   assert.match(app,/tools\.append\(\$\('#mode-toggle'\),\$\('#reduce-effects'\),\$\('#mobile-info'\),\$\('#share'\)\);bottom\.append\(left,\$\('#favorite'\),tools\)/);
   assert.match(app,/\$\('footer'\)\.after\(\$\('#mobile-info'\)\)/);
   assert.match(app,/searchRow\.prepend\(\$\('#favorites'\)\)/);
-  assert.match(app,/headerRight\.prepend\(\$\('#catalog-toggle'\),\$\('#favorites'\),\$\('#mode-toggle'\)\)/);
+  assert.match(app,/headerRight\.prepend\(\$\('#catalog-toggle'\),\$\('#fullscreen-toggle'\),\$\('#favorites'\),\$\('#mode-toggle'\)\)/);
   assert.match(app,/top\.remove\(\);bottom\.remove\(\)/);
 });
 
@@ -112,6 +112,14 @@ test('mobile player is edge-to-edge, shows available moving text and hides waves
   assert.match(css,/body\[data-mobile-player=true\] footer>span\{display:none\}/);
 });
 
+test('mobile portrait and landscape place a fullscreen toggle to the right of Search',async()=>{
+  const [html,app,css]=await Promise.all(['index.html','app.js','styles.css'].map(name=>readFile(new URL(`../public/${name}`,import.meta.url),'utf8')));
+  assert.match(html,/id="catalog-toggle"[\s\S]*id="fullscreen-toggle"/);
+  assert.match(app,/actions\.append\(\$\('#catalog-toggle'\),\$\('#fullscreen-toggle'\)\)/);
+  assert.match(app,/headerRight\.prepend\(\$\('#catalog-toggle'\),\$\('#fullscreen-toggle'\),\$\('#favorites'\),\$\('#mode-toggle'\)\)/);
+  assert.match(css,/#fullscreen-toggle\{display:none\}/);
+  assert.match(css,/body\[data-mobile-player=true\] #fullscreen-toggle,body\[data-landscape-phone=true\] #fullscreen-toggle\{display:inline-flex/);
+});
 test('mobile genres lose underline and Share hides its coffee button',async()=>{
   const [css,html]=await Promise.all([readFile(new URL('../public/styles.css',import.meta.url),'utf8'),readFile(new URL('../public/index.html',import.meta.url),'utf8')]);
   assert.match(css,/\.header-genres button:after\{display:none!important\}/);

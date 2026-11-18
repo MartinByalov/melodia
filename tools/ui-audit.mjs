@@ -115,7 +115,7 @@ for(const button of document.querySelectorAll('header button, .player button, .m
 }
 
 // 2. Pressed or open buttons look like Play.
-for(const [selector,attribute] of [['#mobile-info','aria-expanded'],['#share','aria-expanded'],['#reduce-effects','aria-pressed'],['#catalog-toggle','aria-expanded'],['#favorites','aria-expanded']]){
+for(const [selector,attribute] of [['#mobile-info','aria-expanded'],['#share','aria-expanded'],['#reduce-effects','aria-pressed'],['#catalog-toggle','aria-expanded'],['#favorites','aria-expanded'],['#fullscreen-toggle','aria-pressed']]){
   const e=document.querySelector(selector);if(!e||!visible(e))continue;
   const old=e.getAttribute(attribute);e.setAttribute(attribute,'true');await wait(30);
   const c=getComputedStyle(e);
@@ -223,6 +223,15 @@ for(const [selector,dialogId,applies] of [['#mobile-info','#info-dialog',true],[
       if(Math.abs(cy-free)>2)problems.push('the globe is '+(cy-free).toFixed(1)+' px off the middle of the free space (up and down)');
       if(Math.abs(cx-innerWidth/2)>2)problems.push('the globe is '+(cx-innerWidth/2).toFixed(1)+' px off the middle of the screen (left and right)');
     }
+  }}
+
+// 4b. Full-screen button is shown to the right of Search on phones, and hidden on desktop/tablet.
+{const fs=document.querySelector('#fullscreen-toggle'),search=document.querySelector('#catalog-toggle');
+  if(fs&&search){
+    if(phoneLayout){
+      if(!visible(fs))problems.push('phone fullscreen button must be visible');
+      else if(fs.getBoundingClientRect().left<search.getBoundingClientRect().right-1)problems.push('fullscreen button must sit to the right of Search');
+    }else if(visible(fs))problems.push('desktop/tablet fullscreen button must be hidden');
   }}
 
 // 5. No message is painted over the globe.

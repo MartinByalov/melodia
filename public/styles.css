@@ -423,6 +423,7 @@ body[data-embed=true] #embed-toggle,body[data-embed=true] #embed-options{display
 @media(max-width:760px){
   body[data-mobile-player=true]{--mobile-square-size:40px}
   body[data-mobile-player=true] .mobile-header-actions #catalog-toggle,
+  body[data-mobile-player=true] .mobile-header-actions #fullscreen-toggle,
   body[data-mobile-player=true] .discover-panel #catalog-close,
   body[data-mobile-player=true] .discover-panel #clear-filters,
   body[data-mobile-player=true] .discover-panel #random,
@@ -572,8 +573,8 @@ body[data-under-development=true] #globe canvas{filter:saturate(1.6) contrast(1.
 
 /* Header actions share one size and icon size; the directory panel has equal padding on every side. */
 /* Same square as the X button of the directory panel (34px). */
-.header-right #catalog-toggle,.header-right #favorites,.header-right #mode-toggle{width:34px;height:34px;min-width:34px;flex:0 0 34px;border-radius:8px}
-.header-right #catalog-toggle svg,.header-right #favorites svg,.header-right #mode-toggle svg{width:20px;height:20px;display:block}
+.header-right #catalog-toggle,.header-right #fullscreen-toggle,.header-right #favorites,.header-right #mode-toggle{width:34px;height:34px;min-width:34px;flex:0 0 34px;border-radius:8px}
+.header-right #catalog-toggle svg,.header-right #fullscreen-toggle svg,.header-right #favorites svg,.header-right #mode-toggle svg{width:20px;height:20px;display:block}
 @media(min-width:761px){.discover-panel{padding:19px}}
 @media(min-width:761px) and (max-width:1100px){.discover-panel{padding:14px}}
 /* The day/night button sits exactly above the directory panel's X button (panel gap + border + padding). */
@@ -675,7 +676,7 @@ body[data-landscape-phone=true] .player-right #mobile-info{margin-left:10px}
   body[data-mobile-player=true] .mobile-player-bottom{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:8px}
   body[data-mobile-player=true] .mobile-player-bottom #favorite{grid-column:2}
   body[data-mobile-player=true] .mobile-tools{grid-column:3;justify-self:end;display:flex;align-items:center;gap:6px}
-  body[data-mobile-player=true] .mobile-player-bottom #favorite,body[data-mobile-player=true] .mobile-tools button,.header-right #catalog-toggle{width:var(--tool-size)!important;height:var(--tool-size)!important;min-width:var(--tool-size)!important;max-width:var(--tool-size)!important;min-height:var(--tool-size)!important;max-height:var(--tool-size)!important;flex:0 0 var(--tool-size)}
+  body[data-mobile-player=true] .mobile-player-bottom #favorite,body[data-mobile-player=true] .mobile-tools button,.header-right #catalog-toggle,.mobile-header-actions #fullscreen-toggle{width:var(--tool-size)!important;height:var(--tool-size)!important;min-width:var(--tool-size)!important;max-width:var(--tool-size)!important;min-height:var(--tool-size)!important;max-height:var(--tool-size)!important;flex:0 0 var(--tool-size)}
   body[data-mobile-player=true] .mobile-tools button{display:inline-flex;align-items:center;justify-content:center;padding:0}
   body[data-mobile-player=true] .mobile-tools svg{width:calc(var(--tool-size) * .55);height:calc(var(--tool-size) * .55)}
 }
@@ -844,7 +845,7 @@ body[data-mobile-player=true] .brand-icon{transform:translateY(-1px)}
 body[data-mobile-player=true] .brand-word{transform:translateY(-.75px)}
 body[data-mobile-player=true] .mobile-header-row .header-genres{transform:translateY(.9px)}
 /* The open Artists and Favorites buttons in the header look like every other pressed button (the Play look), in all layouts. */
-body[data-mode] .header-right #catalog-toggle[aria-expanded=true],body[data-mode] .header-right #favorites[aria-expanded=true],body[data-mode] .mobile-search-row #favorites[aria-expanded=true],body[data-mobile-player=true][data-mode] .player #favorites[aria-expanded=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);--control-ink:var(--on-accent);box-shadow:0 0 24px rgba(var(--accent-rgb),.12)}
+body[data-mode] .header-right #catalog-toggle[aria-expanded=true],body[data-mode] .header-right #favorites[aria-expanded=true],body[data-mode] .mobile-search-row #favorites[aria-expanded=true],body[data-mobile-player=true][data-mode] .player #favorites[aria-expanded=true],body[data-mode] .header-right #fullscreen-toggle[aria-pressed=true],body[data-mode] .mobile-header-actions #fullscreen-toggle[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);--control-ink:var(--on-accent);box-shadow:0 0 24px rgba(var(--accent-rgb),.12)}
 body[data-mode] .header-right #favorites[aria-expanded=true] #fav-count,body[data-mode] .mobile-search-row #favorites[aria-expanded=true] #fav-count,body[data-mobile-player=true][data-mode] .player #favorites[aria-expanded=true] #fav-count{color:var(--on-accent)}
 /* Phone tool buttons are a whole even number of pixels, so their icons sit exactly in the middle. */
 @supports (width:round(down,1px,1px)){:root{--tool-size:round(down,clamp(28px,calc((50vw - 50px) / 4),40px),2px)}}
@@ -892,3 +893,7 @@ body[data-landscape-phone=true] #info-dialog .info-tabs button{height:34px;min-h
   body[data-mobile-player=true] #info-dialog .about-support{flex:0 0 auto;padding:6px 0 0}
   body[data-mobile-player=true] #info-dialog #about-coffee{min-height:34px;padding:5px 12px;font-size:13px}
 }
+/* Full-screen button sits to the right of Search on phones (portrait and sideways). */
+#fullscreen-toggle{display:none}
+body[data-mobile-player=true] #fullscreen-toggle,body[data-landscape-phone=true] #fullscreen-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--panel-edge);border-radius:8px;color:var(--icon-color);background:transparent}
+body[data-mobile-player=true] #fullscreen-toggle:hover,body[data-mobile-player=true] #fullscreen-toggle:focus-visible,body[data-landscape-phone=true] #fullscreen-toggle:hover,body[data-landscape-phone=true] #fullscreen-toggle:focus-visible{color:var(--accent);background:rgba(var(--accent-rgb),.15);border-color:var(--accent)}
