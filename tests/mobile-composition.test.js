@@ -105,7 +105,7 @@ test('mobile mode, Share and Info buttons keep their active colors independently
 test('mobile player is edge-to-edge, shows available moving text and hides waves and footer attribution',async()=>{
   const css=await readFile(new URL('../public/styles.css',import.meta.url),'utf8');
   assert.match(css,/left:0;right:0;bottom:0;width:100%;max-width:none;transform:none;border-radius:0/);
-  assert.match(css,/body\[data-mobile-player=true\] \.player\{[^}]*padding:12px 12px env\(safe-area-inset-bottom,0px\)/);
+  assert.match(css,/body\[data-mobile-player=true\] \.player\{[^}]*padding:10px 12px max\(6px,env\(safe-area-inset-bottom,0px\)\)/);
   assert.match(css,/body\[data-mobile-player=true\] \.player \.visualizer\{display:none!important\}/);
   assert.match(css,/body\[data-mobile-player=true\] \.player #globe-status:not\(\[hidden\]\)\{display:block;width:100%;max-width:none;flex:none;font-size:11px;line-height:16px\}/);
   assert.match(css,/body\[data-mobile-player=true\] \.player #globe-status,body\[data-landscape-phone=true\] \.player #globe-status\{display:none!important\}/);

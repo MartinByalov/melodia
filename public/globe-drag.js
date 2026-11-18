@@ -41,14 +41,18 @@ export function applyTurn(camera, turn) {
 }
 
 // How far the globe turns compared with the pointer: 1 keeps the touched point under the pointer, less is calmer.
-export const DRAG_GAIN = .55;
+export const DRAG_GAIN = 1;
 // Milliseconds for the globe to cover about two thirds of the way to where the drag wants it. Long enough to feel smooth.
-export const DRAG_SMOOTHING = 110;
+export const DRAG_SMOOTHING = 80;
 
 export function installDragRotation({ THREE, camera, controls, canvas, smoothing = DRAG_SMOOTHING, gain = DRAG_GAIN }) {
-  let gesture = null, settling = null;
-  const fingers = new Set();
+  let gesture = null, twist = null, settling = null;
+  const fingers = new Map();
   const identity = new THREE.Quaternion();
+  function twoFingerAngle() {
+    const [a, b] = fingers.values();
+    return Math.atan2(b.y - a.y, b.x - a.x);
+  }
   // Rotation is ours for the left mouse button and one finger. Pinch zoom stays in the globe code.
   controls.mouseButtons.LEFT = -1;
   controls.noRotate = true;
@@ -62,14 +66,35 @@ export function installDragRotation({ THREE, camera, controls, canvas, smoothing
   function finish(g) { advance(g, 1); controls.update(); }
   function down(event) {
     if (event.pointerType === 'touch' || event.pointerType === 'pen') {
-      fingers.add(event.pointerId);
-      if (fingers.size > 1) { if (gesture) finish(gesture); gesture = null; return; }
+      fingers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      try { canvas.setPointerCapture(event.pointerId); } catch { /* The drag still works without capture. */ }
+      if (fingers.size > 1) {
+        if (gesture) { finish(gesture); gesture = null; }
+        if (fingers.size === 2) {
+          if (settling) { finish(settling); settling = null; }
+          twist = { angle: twoFingerAngle(), pending: new THREE.Quaternion() };
+        } else if (twist) { finish(twist); twist = null; }
+        return;
+      }
     } else if (event.pointerType !== 'mouse' || event.button !== 0) return;
     if (settling) { finish(settling); settling = null; }
     gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, pending: new THREE.Quaternion(), onGlobe: surfacePoint(THREE, camera, canvas, event.clientX, event.clientY).onGlobe };
     try { canvas.setPointerCapture(event.pointerId); } catch { /* The drag still works without capture. */ }
   }
   function move(event) {
+    if (fingers.has(event.pointerId)) fingers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (twist && fingers.size === 2) {
+      const next = twoFingerAngle();
+      let delta = next - twist.angle;
+      if (delta > Math.PI) delta -= Math.PI * 2;
+      if (delta < -Math.PI) delta += Math.PI * 2;
+      twist.angle = next;
+      if (delta) {
+        const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(camera.quaternion).normalize();
+        twist.pending.premultiply(new THREE.Quaternion().setFromAxisAngle(axis, delta));
+      }
+      return;
+    }
     if (!gesture || event.pointerId !== gesture.id) return;
     // The turn between the point under the previous pointer position and the point under the new one, seen from the camera as it is now.
     const before = surfacePoint(THREE, camera, canvas, gesture.x, gesture.y).point, now = surfacePoint(THREE, camera, canvas, event.clientX, event.clientY).point;
@@ -79,20 +104,22 @@ export function installDragRotation({ THREE, camera, controls, canvas, smoothing
   }
   function up(event) {
     fingers.delete(event.pointerId);
+    try { if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId); } catch { /* Already released. */ }
+    if (twist && fingers.size < 2) { settling = Object.assign(twist, { age: 0 }); twist = null; }
     if (!gesture || event.pointerId !== gesture.id) return;
     settling = Object.assign(gesture, { age: 0 }); gesture = null;
-    try { if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId); } catch { /* Already released. */ }
   }
   canvas.addEventListener('pointerdown', down);
   canvas.addEventListener('pointermove', move);
   canvas.addEventListener('pointerup', up);
   canvas.addEventListener('pointercancel', up);
   return {
-    dragging: () => Boolean(gesture),
+    dragging: () => Boolean(gesture || twist),
     // Called once per frame with the frame time in milliseconds. Without a time the globe takes the whole turn at once.
     update(dt) {
       const fraction = !(dt >= 0) || smoothing <= 0 ? 1 : 1 - Math.exp(-dt / smoothing);
       if (gesture) advance(gesture, fraction);
+      else if (twist) advance(twist, fraction);
       else if (settling) {
         settling.age += dt >= 0 ? dt : 1e3;
         const left = advance(settling, fraction);

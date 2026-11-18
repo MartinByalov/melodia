@@ -21,7 +21,7 @@ function inRing(lon, lat, ring) {
   }
   return inside;
 }
-function inPolygon(lon, lat, polygon) {
+export function inPolygon(lon, lat, polygon) {
   if (!inRing(lon, lat, polygon[0])) return false;
   for (let i = 1; i < polygon.length; i++) if (inRing(lon, lat, polygon[i])) return false;
   return true;
@@ -31,10 +31,19 @@ function polygonsOf(geometry) {
   if (geometry.type === 'MultiPolygon') return geometry.coordinates;
   return [];
 }
+// Shoelace area of a ring in square degrees.
+function ringArea(ring) {
+  let sum = 0;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) sum += ring[j][0] * ring[i][1] - ring[i][0] * ring[j][1];
+  return Math.abs(sum) / 2;
+}
 function boundsOf(polygon) {
   let west = 180, east = -180, south = 90, north = -90;
   for (const [lon, lat] of polygon[0]) { west = Math.min(west, lon); east = Math.max(east, lon); south = Math.min(south, lat); north = Math.max(north, lat); }
-  return { west, east, south, north, area: Math.max(1e-6, (east - west) * (north - south)) };
+  // Weight by real polygon area (holes removed, shrunk by latitude), not by the bounding box.
+  const real = ringArea(polygon[0]) - polygon.slice(1).reduce((sum, ring) => sum + ringArea(ring), 0);
+  const shrink = Math.max(0.05, Math.cos(((south + north) / 2) * Math.PI / 180));
+  return { west, east, south, north, area: Math.max(1e-6, real * shrink) };
 }
 
 // Builds ISO-3 -> border lookup from a Natural Earth style FeatureCollection.
@@ -54,15 +63,24 @@ export function buildBorders(geojson) {
 
 export function pointInCountry(polygons, random) {
   const total = polygons.reduce((sum, item) => sum + item.bounds.area, 0);
-  for (let attempt = 0; attempt < 80; attempt++) {
+  for (let attempt = 0; attempt < 400; attempt++) {
     let pick = random() * total, item = polygons[0];
     for (const candidate of polygons) { pick -= candidate.bounds.area; if (pick <= 0) { item = candidate; break; } }
     const { west, east, south, north } = item.bounds;
     const lon = west + random() * (east - west), lat = south + random() * (north - south);
     if (inPolygon(lon, lat, item.polygon)) return { lat, lon };
   }
-  const { west, east, south, north } = polygons[0].bounds;
-  return { lat: (south + north) / 2, lon: (west + east) / 2 };
+  // Rejection failed (thin or curved shape): scan a grid over the largest polygon from a random start.
+  const largest = polygons.reduce((best, item) => item.bounds.area > best.bounds.area ? item : best);
+  const { west, east, south, north } = largest.bounds, steps = 60, start = Math.floor(random() * steps * steps);
+  for (let k = 0; k < steps * steps; k++) {
+    const cell = (start + k) % (steps * steps);
+    const lon = west + ((cell % steps) + .5) / steps * (east - west), lat = south + (Math.floor(cell / steps) + .5) / steps * (north - south);
+    if (inPolygon(lon, lat, largest.polygon)) return { lat, lon };
+  }
+  // Last resort: a vertex of the border itself, never open water.
+  const [lon, lat] = largest.polygon[0][0];
+  return { lat, lon };
 }
 
 // places: [{name, alt:[...], cc, lat, lon, pop}] with cc as ISO-2.

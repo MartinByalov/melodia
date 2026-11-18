@@ -122,10 +122,22 @@ const turnedBy=(options,frames)=>{
   return {samples,final:angle(),camera,drag};
 };
 
-test('the globe turns at a calm fraction of the pointer speed',()=>{
+test('the globe tracks the pointer speed directly without sluggishness',()=>{
   const full=turnedBy({gain:1,smoothing:0},1).final,calm=turnedBy({},1).final;
   assert.ok(Math.abs(calm/full-DRAG_GAIN)<.03,'ratio '+calm/full+' against '+DRAG_GAIN);
-  assert.ok(DRAG_GAIN<=.6&&DRAG_GAIN>=.4);
+  assert.ok(DRAG_GAIN>=.9&&DRAG_GAIN<=1.1);
+});
+test('two touches dragging in opposite directions spin the globe around the view axis',()=>{
+  const camera=makeCamera(3),canvas=new FakeCanvas();
+  const drag=installDragRotation({THREE,camera,controls:{mouseButtons:{},update(){}},canvas,smoothing:0});
+  const startPos=camera.position.clone(),startUp=camera.up.clone();
+  canvas.fire('pointerdown',{pointerId:1,pointerType:'touch',button:0,clientX:300,clientY:400});
+  canvas.fire('pointerdown',{pointerId:2,pointerType:'touch',button:0,clientX:500,clientY:400});
+  canvas.fire('pointermove',{pointerId:1,clientX:300,clientY:360});
+  canvas.fire('pointermove',{pointerId:2,clientX:500,clientY:440});
+  drag.update();
+  assert.ok(camera.position.distanceTo(startPos)<1e-12,'view position stays fixed on axis');
+  assert.ok(camera.up.angleTo(startUp)>0.1,'up vector rolled around view axis');
 });
 
 test('the globe eases into the drag in a few frames, never goes back, and stops after release',()=>{

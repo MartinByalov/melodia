@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {deflateRawSync} from 'node:zlib';
-import {seededRandom,buildBorders,pointInCountry,createGeocoder,readZipEntry,parseCities,parseCountryInfo} from '../scripts/geocode.js';
+import {seededRandom,buildBorders,pointInCountry,inPolygon,createGeocoder,readZipEntry,parseCities,parseCountryInfo} from '../scripts/geocode.js';
 
 const square={type:'Feature',properties:{ADM0_A3:'BGR',ISO_A3:'-99'},geometry:{type:'Polygon',coordinates:[[[22,41],[28,41],[28,44],[22,44],[22,41]]]}};
 const holed={type:'Feature',properties:{ADM0_A3:'ITA'},geometry:{type:'Polygon',coordinates:[[[0,0],[10,0],[10,10],[0,10],[0,0]],[[2,2],[8,2],[8,8],[2,8],[2,2]]]}};
@@ -33,6 +33,22 @@ test('country placement stays inside the border and avoids holes',()=>{
     const point=pointInCountry(borders.get('ITA'),random);
     assert.ok(!(point.lon>2&&point.lon<8&&point.lat>2&&point.lat<8),'point fell inside the hole');
   }
+});
+test('country placement falls back to a point inside a crescent whose bbox centre is open water',()=>{
+  const crescent={type:'Feature',properties:{ADM0_A3:'CRS'},geometry:{type:'Polygon',coordinates:[[[0,0],[10,0],[10,1],[1,1],[1,9],[10,9],[10,10],[0,10],[0,0]]]}};
+  const border=buildBorders({features:[crescent]}).get('CRS');
+  // A constant random always aims at (5,5), which is outside the shape, so rejection can never succeed.
+  const point=pointInCountry(border,()=>0.5);
+  assert.ok(inPolygon(point.lon,point.lat,border[0].polygon),'fallback point left the polygon');
+});
+test('country placement weights polygons by real area, so a tiny island with a big bbox is rare',()=>{
+  const mainland={type:'Polygon',coordinates:[[[0,0],[10,0],[10,10],[0,10],[0,0]]]};
+  const sliver={type:'Polygon',coordinates:[[[20,0],[20.2,0],[40,40],[39.8,40],[20,0]]]};
+  const border=buildBorders({features:[{properties:{ADM0_A3:'ISL'},geometry:{type:'MultiPolygon',coordinates:[mainland.coordinates,sliver.coordinates]}}]}).get('ISL');
+  const random=seededRandom('weights');
+  let onMainland=0;
+  for(let i=0;i<500;i++)if(pointInCountry(border,random).lon<=10)onMainland++;
+  assert.ok(onMainland>400,'mainland should get most points, got '+onMainland);
 });
 test('keeps coordinates supplied by Jamendo',()=>{
   const placed=geocode({id:'1',country:'BGR',city:'Sofia',latitude:'42.5',longitude:'23.1'});

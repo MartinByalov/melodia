@@ -380,7 +380,7 @@ body[data-embed=true] #embed-toggle,body[data-embed=true] #embed-options{display
   .header-genres button:after{display:none!important}
   .header-genres button.selected,body[data-mode=day] .header-genres button.selected{color:var(--accent);border:0!important;text-shadow:none}
   body[data-mobile-player=true]{--player-bottom:0px}
-  body[data-mobile-player=true] .player{display:flex;flex-direction:column;left:0;right:0;bottom:0;width:100%;max-width:none;transform:none;border-radius:0;border-left:0;border-right:0;border-bottom:0;height:auto;gap:8px;padding:12px 12px env(safe-area-inset-bottom,0px);overflow:visible}
+  body[data-mobile-player=true] .player{display:flex;flex-direction:column;left:0;right:0;bottom:0;width:100%;max-width:none;transform:none;border-radius:0;border-left:0;border-right:0;border-bottom:0;height:auto;gap:6px;padding:10px 12px max(6px,env(safe-area-inset-bottom,0px));overflow:visible}
   body[data-mobile-player=true] header,body[data-mobile-player=true][data-mode=day] header{justify-content:center}
   body[data-mobile-player=true] .brand{display:flex;margin:0;flex:0 0 auto;font-size:16px;letter-spacing:-.8px;gap:4px}
   body[data-mobile-player=true] .brand-icon{font-size:25px}
@@ -656,7 +656,6 @@ body[data-landscape-phone=true] .intro{top:0;bottom:calc(var(--player-bottom) + 
 body[data-landscape-phone=true] .player-right{margin-left:-16px;display:flex;align-items:center;gap:0}
 body[data-landscape-phone=true] .player-right .volume{margin:0 auto}
 body[data-landscape-phone=true] .player-right #share{margin-left:10px}
-body[data-landscape-phone=true] footer{border-top:0;box-shadow:none}
 /* Phones held sideways: the information tabs share the row of the X button, and the directory scrolls. */
 body[data-landscape-phone=true] #info-dialog[open]{padding:0 66px 12px}
 body[data-landscape-phone=true] #info-dialog .info-tabs{margin:16px 0 0;height:40px;flex-wrap:nowrap;justify-content:center;align-items:center;gap:6px}
@@ -790,8 +789,6 @@ body:not([data-mobile-player=true]):not([data-embed=true]):not([data-landscape-p
 body:not([data-mobile-player=true]):not([data-embed=true]):not([data-landscape-phone=true]) .player-right #mute{width:34px;height:34px}
 body[data-landscape-phone=true] .player-right #mute{width:34px;height:34px}
 #favorites-dialog #favorites-incoming{margin-bottom:12px}
-/* Sideways phone: the footer would be an empty band behind the player, so it is not shown. */
-body[data-landscape-phone=true] footer{display:none}
 /* Sideways phone: while a message is shown, it takes the room of the volume control so it can be read. */
 body[data-landscape-phone=true] .player-right:has(#player-notice:not([hidden])) .volume{display:none}
 /* Dialog action buttons (Copy Link, Embed, Download file, Copy track address) share one look. Open or hovered buttons use the common active look. */
@@ -821,7 +818,7 @@ body:not([data-embed=true])[data-catalog-open=true] .discover-panel,body[data-mo
 body[data-mode=day] .discover-panel .catalog-actions #explore{color:#52627a}
 /* Phone portrait: the intro is centred on the screen, the line above the track runs edge to edge like the header line, and the bottom row has equal space above and below. */
 body[data-mobile-player=true] .intro{left:0;right:0;width:auto;padding:0 12px}
-body[data-mobile-player=true] .player .mobile-player-bottom{width:calc(100% + 24px);margin:0 -12px;padding:8px 12px}
+body[data-mobile-player=true] .player .mobile-player-bottom{width:calc(100% + 24px);margin:0 -12px;padding:6px 12px 0}
 body[data-mobile-player=true] .mobile-header-row{gap:16px}
 body[data-mobile-player=true] .mobile-header-row .header-genres{gap:10px;justify-content:center}
 /* The artist name and the line under it start at the same x, and the info icon sits on the text line. */
