@@ -380,7 +380,7 @@ body[data-embed=true] #embed-toggle,body[data-embed=true] #embed-options{display
   .header-genres button:after{display:none!important}
   .header-genres button.selected,body[data-mode=day] .header-genres button.selected{color:var(--accent);border:0!important;text-shadow:none}
   body[data-mobile-player=true]{--player-bottom:0px}
-  body[data-mobile-player=true] .player{display:flex;flex-direction:column;left:0;right:0;bottom:0;width:100%;max-width:none;transform:none;border-radius:0;border-left:0;border-right:0;border-bottom:0;height:auto;gap:6px;padding:10px 12px max(6px,env(safe-area-inset-bottom,0px));overflow:visible}
+  body[data-mobile-player=true] .player{display:flex;flex-direction:column;left:0;right:0;bottom:0;width:100%;max-width:none;transform:none;border-radius:0;border-left:0;border-right:0;border-bottom:0;height:auto;gap:6px;padding:10px 12px 6px;overflow:visible}
   body[data-mobile-player=true] header,body[data-mobile-player=true][data-mode=day] header{justify-content:center}
   body[data-mobile-player=true] .brand{display:flex;margin:0;flex:0 0 auto;font-size:16px;letter-spacing:-.8px;gap:4px}
   body[data-mobile-player=true] .brand-icon{font-size:25px}
