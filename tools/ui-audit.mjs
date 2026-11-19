@@ -152,7 +152,7 @@ async function openDialog(name,open,selector){
     if(Math.abs((Math.min(...lefts)+Math.max(...rights))/2-(dr.left+dr.right)/2)>3)problems.push('info tabs are not centred in the window');
   }
   for(const b of d.querySelectorAll('.copy-button, #copy-link, #embed-toggle'))if(visible(b)){const r=getComputedStyle(b);if(r.borderTopWidth!=='1px'||parseFloat(r.height)<39.5)problems.push(name+' button '+label(b)+' differs: '+r.height)}
-  for(const b of d.querySelectorAll('.copy-button, #copy-link, #embed-toggle'))if(visible(b)){const wide=Math.min(260,b.parentElement.clientWidth),w=b.getBoundingClientRect().width;if(Math.abs(w-wide)>1.5)problems.push(name+' button '+label(b)+' is '+w.toFixed(0)+' px wide, expected '+wide.toFixed(0)+' px (the QR code width)')}
+  for(const b of d.querySelectorAll('.copy-button, #copy-link, #embed-toggle'))if(visible(b)){const wide=Math.min(260,b.parentElement.clientWidth),r=b.getBoundingClientRect(),w=r.width;if(Math.abs(w-wide)>1.5)problems.push(name+' button '+label(b)+' is '+w.toFixed(0)+' px wide, expected '+wide.toFixed(0)+' px (the QR code width)');const pr=b.parentElement.getBoundingClientRect(),cs=getComputedStyle(b.parentElement),cx=(pr.left+parseFloat(cs.paddingLeft)+pr.right-parseFloat(cs.paddingRight))/2,dx=(r.left+r.right)/2-cx;if(Math.abs(dx)>1.5)problems.push(name+' button '+label(b)+' is '+dx.toFixed(1)+' px off center');}
 }
 const infoOpener=document.querySelector('#mobile-info')&&visible(document.querySelector('#mobile-info'))?document.querySelector('#mobile-info'):document.querySelector('footer [data-info=about]');
 await openDialog('info',()=>infoOpener.click(),'#info-dialog');

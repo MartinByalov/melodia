@@ -863,7 +863,7 @@ body[data-mode] #info-dialog .dialog-close:active{color:var(--on-accent);backgro
 /* Dialog action buttons are as wide as the QR code, which is the width of this kind of button everywhere. */
 :root{--action-width:260px}
 .qr-box{width:min(var(--action-width),100%)}
-body[data-mode] #share-dialog #copy-link,body[data-mode] #share-dialog #embed-toggle,body[data-mode] #favorites-dialog .copy-button,body[data-mode] #station-dialog .copy-button{width:min(var(--action-width),100%);margin-inline:auto}
+body[data-mode] #share-dialog #copy-link,body[data-mode] #share-dialog #embed-toggle,body[data-mode] #favorites-dialog .copy-button,body[data-mode] #station-dialog .copy-button{display:flex;align-items:center;justify-content:center;width:min(var(--action-width),100%);margin-inline:auto}
 #favorites-dialog .fav-actions{justify-items:center}
 body[data-mode] #station-dialog .artist-actions #copy-stream{width:min(var(--action-width),100%);margin-inline:auto}
 /* Information tabs on phones: portrait puts About, Privacy and Contact on the row of the X and Sources & Credits under them. Sideways, all four are on the row of the X and as high as it. */
